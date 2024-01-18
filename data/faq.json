@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Frequently Asked Questions",
+    "content": "Please read the rules and the FAQ before asking questions in chat. If you have a question that is not answered here, please ask in chat.",
+    "image": "https://i.pinimg.com/originals/b7/e5/68/b7e568c3e0aae3049ef11dee60af1d9f.jpg"
+  },
+  {
+    "title": "Is offline raiding allowed?",
+    "content": "Yes, offline raiding is allowed however, it is discouraged. If we receive multiple complaints about your team doing offline raids, we will demolish your base and allow players to grab the loot.",
+    "footerImage": 1
+  },
+  {
+    "title": "What action do you take against players using modified devices?",
+    "content": "Xim / Zen devices are strictly prohibited, if there is concrete evidence of a player using such devices, they will be banned from the server. Please take into consideration, it is hard to prove who is using such devices based on clips, so don't be surprised if no action is taken immediately.",
+    "footerImage": 1
+  },
+  {
+    "title": "Can I get a start?",
+    "content": "There are starts available at Outpost in the vending machine next to the resources vending machine. This contains a Semi-Automatic Pistol, Pistol Bullets and Medical Syringes which you can purchase cheap using scrap.",
+    "footerImage": 1
+  },
+  {
+    "title": "Can I get teleported?",
+    "content": "No, you can't.",
+    "footerImage": 2
+  }
+]

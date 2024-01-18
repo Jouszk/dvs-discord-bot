@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Discord Server Rules",
+    "content": "Please read the rules carefully. If you have any questions, please ask a staff member. If you are caught breaking any of these rules, you will be punished accordingly. If you see someone breaking any of these rules, please report them via a ticket.",
+    "image": "https://i.pinimg.com/originals/b7/e5/68/b7e568c3e0aae3049ef11dee60af1d9f.jpg"
+  },
+  {
+    "title": "Respect",
+    "content": "Please respect everyone in the server. This includes staff and members. Do not be rude to anyone. If you have a problem with someone, please contact a staff member.",
+    "footerImage": 1
+  },
+  {
+    "title": "Harassment",
+    "content": "Harassment of any kind will not be tolerated. This includes but is not limited to: racism, sexism, homophobia, transphobia, etc. If you are caught harassing someone, you will be punished accordingly.",
+    "footerImage": 1
+  },
+  {
+    "title": "NSFW",
+    "content": "NSFW content is prohibited. This includes but is not limited to; gore, nudity, etc. If you are caught posting NSFW content, you will be punished accordingly.",
+    "footerImage": 1
+  },
+  {
+    "title": "Spamming",
+    "content": "Spamming is prohibited. This includes but is not limited to; text, images, emojis, etc. If you are caught spamming, you will be punished accordingly.",
+    "footerImage": 1
+  },
+  {
+    "title": "Advertising",
+    "content": "Advertising is prohibited. This includes but is not limited to; servers, social media, etc. If you are caught advertising, you will be punished accordingly.",
+    "footerImage": 1
+  },
+  {
+    "title": "Impersonation",
+    "content": "Impersonation is prohibited. This includes but is not limited to; staff, members, etc. If you are caught impersonating someone, you will be punished accordingly.",
+    "footerImage": 1
+  },
+  {
+    "title": "Staff",
+    "content": "Staff have the final say. If you are told to stop doing something by a staff member, please stop. If you have a problem with a staff member, please contact a higher up.",
+    "footerImage": 1
+  }
+]

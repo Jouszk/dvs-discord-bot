@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Staff Team",
+    "content": "Meet the staff team of our Rust server and Discord server!",
+    "image": "https://images2.alphacoders.com/542/542414.jpg"
+  },
+  {
+    "title": "Saucey Hub",
+    "content": "Owner / Founder of DvS",
+    "footerImage": 1,
+    "userId": "1005186019391442944"
+  },
+  {
+    "title": "SixtyFatGuys",
+    "content": "Manager of DvS",
+    "footerImage": 1,
+    "userId": "980202628384432248"
+  },
+  {
+    "title": "Enrique",
+    "content": "Manager / Programmer of DvS",
+    "footerImage": 1,
+    "userId": "581235801900318741"
+  },
+  {
+    "title": "HANDMEYOURGUN",
+    "content": "Admin of DvS",
+    "footerImage": 1,
+    "userId": "731466813854187520"
+  },
+  {
+    "title": "ItsRawAbility",
+    "content": "Moderator of DvS Discord",
+    "footerImage": 2,
+    "userId": "726469879321985084"
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "title": "Upgrade to VIP",
+    "content": "If you upgrade to DvS VIP, you will receive the following perks:\n\n- Queue Skipping\n- Priority Support\n- Tier 2 Raid Insurance\n- Access to VIP Discord channel\n- Special VIP Events / Giveaways",
+    "image": "https://i.ytimg.com/vi/RNdlCTjbv4I/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGogJyh_MA8=&rs=AOn4CLDcWZBC8n1GqBLKQZpG1OuBthYtOA"
+  },
+  {
+    "title": "CashApp",
+    "content": "We accept CashApp payments. Please send $10.00 to `$DvSCollective` and include your Discord User ID as well as your Xbox / PSN username in the seller notes. We will manually give VIP from there.",
+    "footerImage": 1,
+    "thumbnail": "https://i.imgur.com/JSLLuMF.png"
+  },
+  {
+    "title": "Credit/Debit Card (WHOP)",
+    "content": "We accept Credit/Debit Card payments via a third-party service known as 'WHOP'. Please send $10.00 by clicking the button below and follow the steps. We will have to give you VIP manually after your purchase.",
+    "footerImage": 2,
+    "buttons": [
+      {
+        "text": "Go to WHOP",
+        "url": "https://whop.com/checkout/plan_YYkeoEoLPRNrM?d2c=true",
+        "style": 5
+      }
+    ]
+  }
+]

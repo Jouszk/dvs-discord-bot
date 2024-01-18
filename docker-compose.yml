@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  app:
+    container_name: DvSBot
+    restart: always
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    networks:
+      - NginxProxy
+networks:
+  NginxProxy:
+    external: true
+    name: "NginxProxy"
