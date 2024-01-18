@@ -6,6 +6,7 @@ COPY src src
 COPY prisma prisma 
 COPY data data
 COPY package.json package-lock.json config.swcrc .env start.sh ./
+RUN chmod +x start.sh
 RUN npm i -g @swc/cli @swc/core
 RUN npm install && npm run build
 
