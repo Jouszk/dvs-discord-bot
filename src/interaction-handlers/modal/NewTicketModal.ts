@@ -6,6 +6,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 import TicketManager from "../../util/TicketManager";
 import { ModalQuestion, modalQuestions } from "../select/TicketCategorySelect";
+import StringUtils from "../../util/StringUtils";
 
 const readableSubjects = {
   raid_insurance: "Raid Insurance Claim",
@@ -50,7 +51,10 @@ export class NewTicketModal extends InteractionHandler {
     modalFields.map((field) => {
       embed.addField(
         field.label,
-        interaction.fields.getField(field.id).value || "-",
+        StringUtils.smartTrim(
+          interaction.fields.getField(field.id).value || "-",
+          1024
+        ),
         false
       );
     });

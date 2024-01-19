@@ -24,6 +24,6 @@ export default class ReadyListener extends Listener {
     );
 
     // Send rules embeds to the rules channel
-    EmbedSender.sendEmbeds("1152707745808650321", openTicketJson);
+    // EmbedSender.sendEmbeds("1152707745808650321", openTicketJson);
   }
 }
