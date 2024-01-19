@@ -148,6 +148,14 @@ export default class CustomLogger implements ILogger {
       } accessed from ${ConsoleColor.FgYellow}${address}${ConsoleColor.Reset}`
     );
   }
+
+  public ws(message: string) {
+    return console.log(
+      `${this.getTimestamp()} ${ConsoleColor.BgCyan}WS${ConsoleColor.Reset} ${
+        ConsoleColor.FgCyan
+      }${message}${ConsoleColor.Reset}`
+    );
+  }
 }
 
 declare module "@sapphire/framework" {
@@ -158,5 +166,6 @@ declare module "@sapphire/framework" {
       endpoint: string,
       address: string
     ): void;
+    ws(message: string): void;
   }
 }

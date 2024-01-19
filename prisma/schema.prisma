@@ -10,11 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Setting {
+  id       String @id
+  settings Json   @default("{}")
+}
+
 model Tag {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   content   String
   author    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ticket {
+  id        Int      @id @default(autoincrement())
+  category  String
+  author    String
+  channel   String
+  messages  TicketMessage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketMessage {
+  id        Int      @id @default(autoincrement())
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId  Int
+  author    String
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -10,6 +10,7 @@ import vipUpgradeJson from "../../../data/vipUpgrade.json";
 import raidInsuranceJson from "../../../data/raidInsurance.json";
 import staffTeamJson from "../../../data/staffTeam.json";
 import staffApplicationJson from "../../../data/staffApplication.json";
+import openTicketJson from "../../../data/openTicket.json";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -23,6 +24,6 @@ export default class ReadyListener extends Listener {
     );
 
     // Send rules embeds to the rules channel
-    // EmbedSender.sendEmbeds("1153786004541546557", welcomeJson);
+    EmbedSender.sendEmbeds("1152707745808650321", openTicketJson);
   }
 }

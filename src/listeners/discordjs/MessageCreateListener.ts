@@ -2,6 +2,7 @@ import { Listener } from "@sapphire/framework";
 import { PermissionFlagsBits, type Message } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 import { Time } from "@sapphire/time-utilities";
+import TicketManager from "../../util/TicketManager";
 
 const DISCORD_INVITE_REGEX =
   /(?:https?:\/\/)?(?:www\.)?(?:discord\.gg|discord\.com\/invite)\/([a-zA-Z0-9-]{2,32})/g;
@@ -65,6 +66,11 @@ export default class MessageCreateListener extends Listener {
           }
         }
       }
+    }
+
+    // Check if the message is a ticket message.
+    if (await TicketManager.isValidTicketChannel(message.channel.id)) {
+      await TicketManager.addReplyToTicket(message);
     }
   }
 }

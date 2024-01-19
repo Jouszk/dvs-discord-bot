@@ -6,8 +6,21 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   User,
+  StringSelectMenuBuilder,
 } from "discord.js";
 import { container } from "@sapphire/framework";
+
+interface EmbedSelectMenuOption {
+  label: string;
+  value: string;
+  description?: string;
+}
+
+interface EmbedSelectMenu {
+  id: string;
+  placeholder?: string;
+  options: EmbedSelectMenuOption[];
+}
 
 interface EmbedButton {
   id?: string;
@@ -22,6 +35,7 @@ interface EmbedContent {
   footerImage?: number;
   image?: string;
   buttons?: EmbedButton[];
+  selectMenu?: EmbedSelectMenu;
   thumbnail?: string;
   userId?: string;
 }
@@ -73,31 +87,49 @@ class EmbedSender {
         }
 
         // If buttons are provided, create an action row and add the buttons
-        const actionRow = embed.buttons
-          ? [
-              new ActionRowBuilder<ButtonBuilder>().addComponents(
-                embed.buttons.map((button) => {
-                  const buttonBuilder = new ButtonBuilder()
-                    .setLabel(button.text)
-                    .setStyle(button.style);
+        const btnActionRow = embed.buttons
+          ? new ActionRowBuilder<ButtonBuilder>().addComponents(
+              embed.buttons.map((button) => {
+                const buttonBuilder = new ButtonBuilder()
+                  .setLabel(button.text)
+                  .setStyle(button.style);
 
-                  if (button.url) {
-                    buttonBuilder.setURL(button.url);
-                  }
+                if (button.url) {
+                  buttonBuilder.setURL(button.url);
+                }
 
-                  if (button.id) {
-                    buttonBuilder.setCustomId(button.id);
-                  }
+                if (button.id) {
+                  buttonBuilder.setCustomId(button.id);
+                }
 
-                  return buttonBuilder;
-                })
-              ),
-            ]
+                return buttonBuilder;
+              })
+            )
           : undefined;
+
+        // If select menu is provided, add it to the embed
+        const selectMenuActionRow = embed.selectMenu
+          ? new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+              new StringSelectMenuBuilder()
+                .setCustomId(embed.selectMenu.id)
+                .setPlaceholder(embed.selectMenu.placeholder || "")
+                .addOptions(
+                  embed.selectMenu.options.map((option) => ({
+                    label: option.label,
+                    value: option.value,
+                    description: option.description,
+                  }))
+                )
+            )
+          : undefined;
+
+        const components = new Array();
+        if (btnActionRow) components.push(btnActionRow);
+        if (selectMenuActionRow) components.push(selectMenuActionRow);
 
         await channel.send({
           embeds: [newEmbed],
-          components: actionRow,
+          components,
         });
       });
     }

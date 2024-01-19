@@ -8,6 +8,7 @@ import {
 import { Partials, ActivityType } from "discord.js";
 import CustomLogger from "../util/CustomLogger";
 import { PrismaClient } from "@prisma/client";
+import RCEManager from "../util/RCEManager";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
@@ -45,6 +46,9 @@ export default class BotClient extends SapphireClient {
     // Connect to the database
     container.db = new PrismaClient();
 
+    // Connect to the RCE server
+    container.rce = new RCEManager();
+
     // Login to discord
     return super.login(token);
   }
@@ -53,5 +57,6 @@ export default class BotClient extends SapphireClient {
 declare module "@sapphire/pieces" {
   interface Container {
     db: PrismaClient;
+    rce: RCEManager;
   }
 }
