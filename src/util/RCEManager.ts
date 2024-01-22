@@ -2,7 +2,6 @@ import { container } from "@sapphire/framework";
 import { WebSocket } from "ws";
 import { EventEmitter } from "events";
 import nodeCron from "node-cron";
-import { CronTask } from "../interfaces";
 
 const ignoredAttacker = [
   "thirst",
@@ -14,6 +13,7 @@ const ignoredAttacker = [
   "wall.external.high",
   "gates.external.high.wood",
   "gates.external.high.stone",
+  "gates.external.high.stone (entity)",
   "bear",
   "autoturret_deployed",
   "cold",
@@ -34,6 +34,17 @@ const ignoredAttacker = [
   "wall.external.high.stone (entity)",
   "barricade.metal (entity)",
   "spikes.floor (entity)",
+  "sentry.bandit.static (entity)",
+  "cactus-6 (entity)",
+  "cactus-5 (entity)",
+  "cactus-4 (entity)",
+  "cactus-3 (entity)",
+  "cactus-2 (entity)",
+  "cactus-1 (entity)",
+  "landmine (entity)",
+  "wall.external.high.wood (entity)",
+  "sentry.scientist.static (entity)",
+  "patrolhelicopter (entity)",
 ];
 
 export enum RCEEventType {

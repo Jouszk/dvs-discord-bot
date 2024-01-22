@@ -17,4 +17,28 @@ export const keyPresets: KeyPreset[] = [
     name: "Tier 2 Raid Insurance",
     commands: ["kit givetoplayer vipins {username}"],
   },
+  {
+    name: "Tier 1 Base Pack",
+    commands: ["kit givetoplayer t1base {username}"],
+  },
+  {
+    name: "Tier 2 Base Pack",
+    commands: ["kit givetoplayer t2base {username}"],
+  },
+  {
+    name: "Tier 3 Base Pack",
+    commands: ["kit givetoplayer t3base {username}"],
+  },
+  {
+    name: "Tier 1 Kit",
+    commands: ["kit givetoplayer t1kit {username}"],
+  },
+  {
+    name: "Tier 2 Kit",
+    commands: ["kit givetoplayer t2kit {username}"],
+  },
+  {
+    name: "Tier 3 Kit",
+    commands: ["kit givetoplayer t3kit {username}"],
+  },
 ];

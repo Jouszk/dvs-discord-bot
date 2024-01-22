@@ -26,6 +26,11 @@ export default class ReadyListener extends Listener {
       `${this.container.client.user!.tag} is online and ready`
     );
 
+    // Fetch members
+    this.container.client.guilds.cache.map((guild) => {
+      guild.members.fetch();
+    });
+
     // Setup cron jobs
     const crons: CronTask[] = this.container.settings.get(
       "global",
@@ -44,6 +49,6 @@ export default class ReadyListener extends Listener {
     });
 
     // Send rules embeds to the rules channel
-    // EmbedSender.sendEmbeds("1152707745808650321", openTicketJson);
+    // EmbedSender.sendEmbeds("1198925908711583744", shopJson);
   }
 }
