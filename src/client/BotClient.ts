@@ -9,6 +9,7 @@ import { Partials, ActivityType } from "discord.js";
 import CustomLogger from "../util/CustomLogger";
 import { PrismaClient } from "@prisma/client";
 import RCEManager from "../util/RCEManager";
+import { SettingsProvider } from "../util/SettingsProvider";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
@@ -37,7 +38,7 @@ export default class BotClient extends SapphireClient {
     });
   }
 
-  public override login(token?: string) {
+  public override async login(token?: string) {
     // Overwrite the default behavior of the application command registries
     ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
       RegisterBehavior.Overwrite
@@ -45,6 +46,8 @@ export default class BotClient extends SapphireClient {
 
     // Connect to the database
     container.db = new PrismaClient();
+    container.settings = new SettingsProvider(container.db);
+    await container.settings.init();
 
     // Connect to the RCE server
     container.rce = new RCEManager();
@@ -58,5 +61,6 @@ declare module "@sapphire/pieces" {
   interface Container {
     db: PrismaClient;
     rce: RCEManager;
+    settings: SettingsProvider;
   }
 }

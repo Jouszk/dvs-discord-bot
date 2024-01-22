@@ -10,6 +10,8 @@ import StringUtils from "../../util/StringUtils";
 
 const readableSubjects = {
   raid_insurance: "Raid Insurance Claim",
+  purchase_shop: "Purchase from Shop",
+  land_demolition: "Land Demolition Request",
   report_player: "Report a Player",
   vip_questions: "VIP Questions",
   other: "Other",

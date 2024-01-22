@@ -43,6 +43,29 @@ export const modalQuestions = {
       placeholder: "i.e. I would like to claim my raid insurance.",
     },
   ],
+  land_demolition: [
+    {
+      label: "What is your Xbox / PSN Username?",
+      id: "in_game_name",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. Saucey Hub",
+    },
+    {
+      label: "What grid would you like demolished?",
+      id: "base_grid",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. T12 (NOTE: It must be decaying)",
+    },
+    {
+      label: "Justification",
+      id: "message",
+      style: "PARAGRAPH",
+      required: true,
+      placeholder: "i.e. I would like to demolish this base because...",
+    },
+  ],
   report_player: [
     {
       label: "What is your Xbox / PSN Username?",
@@ -94,6 +117,22 @@ export const modalQuestions = {
       style: "PARAGRAPH",
       required: true,
       placeholder: "i.e. How long do I keep VIP for?",
+    },
+  ],
+  purchase_shop: [
+    {
+      label: "What is your Xbox / PSN Username?",
+      id: "in_game_name",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. Saucey Hub",
+    },
+    {
+      label: "Which package ID would you like to purchase?",
+      id: "package_id",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. #3 (Tier 3 Workbench Package)",
     },
   ],
   other: [

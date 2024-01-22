@@ -19,8 +19,11 @@
     "@sapphire/framework": "^5.0.6",
     "@sapphire/plugin-subcommands": "^6.0.2",
     "@sapphire/time-utilities": "^1.7.11",
+    "common-tags": "^1.8.2",
     "discord.js": "^14.14.1",
+    "dot-prop": "^6.0.1",
     "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
     "prisma": "^5.8.1",
     "ws": "^8.16.0"
   }

@@ -1,0 +1,43 @@
+[
+  {
+    "title": "Shop",
+    "content": "You can buy set packages from the shop, please open a ticket via <#1152707745808650321> and choose the 'Purchase from Shop' option, take note of the package ID you wish to purchase.",
+    "image": "https://wallpapers.com/images/hd/minimalist-forest-rust-art-69cv6v3w9wpwmsws.jpg"
+  },
+  {
+    "title": "#1 - Tier 1 Base Bundle ($2.00)",
+    "content": "- Tier 1 Workbench\n- x2 Sheet Metal Door\n- x3,000 Wood\n-x3,000 Stone\n-x1 Furnace\n- x1 Sleeping Bag\n- x4 Large Wooden Box\n-x1 Pump Shotgun\n- x10 12 Guage Buckshot\n- x1 Wetsuit\n- x1 Hatchet\n- x1 Metal Pickaxe",
+    "footerImage": 1,
+    "thumbnail": "https://rustlabs.com/img/items180/workbench1.png"
+  },
+  {
+    "title": "#2 - Tier 2 Base Bundle ($5.00)",
+    "content": "- Tier 2 Workbench\n- x2 Sheet Metal Door\n- x3 Garage Door\n- x9,000 Wood\n- x9,000 Stone\n- x3,000 Metal Fragments\n- x3 Furnace\n- x2 Bed\n- x8 Large Wooden Box\n- x2 Hazmat Suit\n- x2 Thompson\n- x12 Medical Syringe\n- x1 Jackhammer\n- x1 Chainsaw\n- x750 Low Grade Fuel",
+    "footerImage": 1,
+    "thumbnail": "https://rustlabs.com/img/items180/workbench2.png"
+  },
+  {
+    "title": "#3 - Tier 3 Base Bundle ($15.00)",
+    "content": "- Tier 3 Workbench\n- x2 Armored Door\n- x10 Garage Door\n- x20,000 Wood\n- x20,000 Stone\n- x20,000 Metal Fragments\n- x200 High Quality Metal\n- x3 Furnace\n- x1 Large Furnace\n- x20 High External Stone Wall\n- x3 Bed\n- x8 Large Wooden Box\n- x3 Metal Facemask\n- x3 Metal Chestplate\n- x3 Tactical Gloves\n- x3 Hoodie\n- x3 Pants\n- x3 Roadsign Kilt\n- x3 Boots\n- x12 Medical Syringe\n- x3 Jackhammer\n- x1 Chainsaw\n- x1,500 Low Grade Fuel",
+    "footerImage": 1,
+    "thumbnail": "https://rustlabs.com/img/items180/workbench3.png"
+  },
+  {
+    "title": "#4 - Tier 1 Kit Bundle ($1.00)",
+    "content": "- x1 Thompson\n- x1 Hazmat Suit\n- x3 Medical Syringe\n- x60 Pistol Bullet",
+    "footerImage": 1,
+    "thumbnail": "https://rustlabs.com/img/items180/hazmatsuit.png"
+  },
+  {
+    "title": "#5 - Tier 2 Kit Bundle ($3.00)",
+    "content": "- x1 Coffee Can Helmet\n- x1 Roadsign Jacket\n- x1 Roadsign Kilt\n- x1 Hoodie\n- x1 Pants\n- x1 Tactical Gloves\n- x1 Boots\n- x1 MP5A4 **or** LR-300 Assault Rifle\n- x120 Pistol Bullet **or** 5.56 Rifle Ammo\n- x6 Medical Syringe",
+    "footerImage": 1,
+    "thumbnail": "https://rustlabs.com/img/items180/coffeecan.helmet.png"
+  },
+  {
+    "title": "#6 - Tier 3 Kit Bundle ($5.00)",
+    "content": "- x1 Metal Facemask\n- x1 Metal Chestplate\n- x1 Roadsign Kilt\n- x1 Hoodie\n- x1 Boots\n- x1 Pants\n- x1 Assault Rifle\n- x12 Medical Syringe\n- x384 5.56 Rifle Ammo",
+    "footerImage": 2,
+    "thumbnail": "https://rustlabs.com/img/items180/metal.facemask.png"
+  }
+]
