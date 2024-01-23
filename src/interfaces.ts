@@ -3,3 +3,35 @@ export interface CronTask {
   time: string;
   commands: string;
 }
+
+export interface SocketData {
+  Message: string;
+  Identifier: number;
+  Type: "Generic" | "Chat";
+  Stacktrace?: string;
+}
+
+export interface ItemSpawn {
+  item: string;
+  amount: number;
+  receiver: string;
+}
+
+export interface ChatMessage {
+  Channel: number;
+  Message: string;
+  UserId: number;
+  Username: string;
+  Color: string;
+  Time: number;
+}
+
+export interface KillMessage {
+  attacker: string;
+  victim: string;
+}
+
+export interface KeyPreset {
+  name: string;
+  commands: string[];
+}

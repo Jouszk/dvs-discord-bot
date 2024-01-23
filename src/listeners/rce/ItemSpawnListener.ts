@@ -1,6 +1,7 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { RCEEventType, ItemSpawn } from "../../util/RCEManager";
+import { ItemSpawn } from "../../interfaces";
+import { RCEEventType } from "../../vars";
 import { PermissionFlagsBits, type TextChannel } from "discord.js";
 
 @ApplyOptions<Listener.Options>({

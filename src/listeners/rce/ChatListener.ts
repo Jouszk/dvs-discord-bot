@@ -1,6 +1,7 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { RCEEventType, ChatMessage } from "../../util/RCEManager";
+import { ChatMessage } from "../../interfaces";
+import { RCEEventType } from "../../vars";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.ChatMessage,
@@ -8,8 +9,8 @@ import { RCEEventType, ChatMessage } from "../../util/RCEManager";
 })
 export default class MessageDeleteListener extends Listener {
   public async run(message: ChatMessage) {
-    this.container.logger.debug(
-      `[RCE] ${message.Username}: ${message.Message}`
-    );
+    // this.container.logger.debug(
+    //   `[RCE] ${message.Username}: ${message.Message}`
+    // );
   }
 }

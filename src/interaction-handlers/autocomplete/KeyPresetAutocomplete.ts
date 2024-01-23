@@ -4,7 +4,7 @@ import {
 } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
 import { type AutocompleteInteraction } from "discord.js";
-import { keyPresets } from "../../keyPresets";
+import { keyPresets } from "../../vars";
 
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.Autocomplete,

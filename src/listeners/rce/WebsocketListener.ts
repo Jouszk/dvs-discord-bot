@@ -1,6 +1,7 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { RCEEventType, SocketData } from "../../util/RCEManager";
+import { SocketData } from "../../interfaces";
+import { RCEEventType } from "../../vars";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.WebSocketMessage,
@@ -8,6 +9,6 @@ import { RCEEventType, SocketData } from "../../util/RCEManager";
 })
 export default class WebsocketListener extends Listener {
   public async run(data: SocketData) {
-    this.container.logger.debug(`[RCE] ${data.Type}: ${data.Message}`);
+    this.container.logger.gportal(data.Message);
   }
 }

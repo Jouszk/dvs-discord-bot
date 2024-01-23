@@ -2,105 +2,63 @@ import { container } from "@sapphire/framework";
 import { WebSocket } from "ws";
 import { EventEmitter } from "events";
 import nodeCron from "node-cron";
-
-const ignoredAttacker = [
-  "thirst",
-  "hunger",
-  "guntrap.deployed",
-  "pee pee 9000",
-  "barricade.wood",
-  "wall.external.high.stone",
-  "wall.external.high",
-  "gates.external.high.wood",
-  "gates.external.high.stone",
-  "gates.external.high.stone (entity)",
-  "bear",
-  "autoturret_deployed",
-  "cold",
-  "bleeding",
-  "boar",
-  "wolf",
-  "fall",
-  "drowned",
-  "radiation",
-  "autoturret_deployed (entity)",
-  "bear (bear)",
-  "boar (boar)",
-  "wolf (wolf)",
-  "guntrap.deployed (entity)",
-  "fall!",
-  "lock.code (entity)",
-  "bradleyapc (entity)",
-  "wall.external.high.stone (entity)",
-  "barricade.metal (entity)",
-  "spikes.floor (entity)",
-  "sentry.bandit.static (entity)",
-  "cactus-6 (entity)",
-  "cactus-5 (entity)",
-  "cactus-4 (entity)",
-  "cactus-3 (entity)",
-  "cactus-2 (entity)",
-  "cactus-1 (entity)",
-  "landmine (entity)",
-  "wall.external.high.wood (entity)",
-  "sentry.scientist.static (entity)",
-  "patrolhelicopter (entity)",
-];
-
-export enum RCEEventType {
-  ChatMessage = "rce-chat-message",
-  WebSocketMessage = "rce-ws-message",
-  KillMessage = "rce-kill-message",
-  ItemSpawnMessage = "rce-item-spawn-message",
-  EventMessage = "rce-event-message",
-}
-
-export interface SocketData {
-  Message: string;
-  Identifier: number;
-  Type: "Generic" | "Chat";
-  Stacktrace?: string;
-}
-
-export interface ItemSpawn {
-  item: string;
-  amount: number;
-  receiver: string;
-}
-
-export interface ChatMessage {
-  Channel: number;
-  Message: string;
-  UserId: number;
-  Username: string;
-  Color: string;
-  Time: number;
-}
-
-export interface KillMessage {
-  attacker: string;
-  victim: string;
-}
+import { Time } from "@sapphire/time-utilities";
+import { ignoredAttacker, RCEEventType } from "../vars";
+import { ChatMessage, ItemSpawn, KillMessage, SocketData } from "../interfaces";
 
 class RCEManagerEvents extends EventEmitter {}
 
 export default class RCEManager {
   private socket: WebSocket;
+  private isReconnecting: boolean;
   public emitter: RCEManagerEvents;
 
   public constructor() {
-    this.socket = new WebSocket(
-      `ws://${process.env.RUST_IP_ADDRESS}:${process.env.RUST_RCON_PORT}/${process.env.RUST_FTP_PASSWORD}`
-    );
+    this.isReconnecting = false;
+    this.connectWs();
 
     this.emitter = new RCEManagerEvents();
+  }
 
-    this.socket.addEventListener("open", () => {
-      container.logger.info("WebSocket connection established with RCE server");
-    });
+  public reconnectWs(): void {
+    if (!this.isReconnecting) {
+      this.isReconnecting = true;
+      this.connectWs();
+    }
+  }
 
+  private async connectWs(): Promise<void> {
+    while (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      try {
+        this.socket = new WebSocket(
+          `ws://${process.env.RUST_IP_ADDRESS}:${process.env.RUST_RCON_PORT}/${process.env.RUST_FTP_PASSWORD}`
+        );
+
+        await new Promise((resolve) => {
+          this.socket.addEventListener("open", () => {
+            this.isReconnecting = false;
+            container.logger.ws(
+              "WebSocket connection established with RCE server"
+            );
+            resolve(null);
+          });
+        });
+      } catch (error) {
+        container.logger.error(error);
+        await new Promise((resolve) => setTimeout(resolve, Time.Second * 5));
+      }
+    }
+
+    this.setupListeners();
+  }
+
+  private setupListeners(): void {
     this.socket.addEventListener("close", () => {
-      container.logger.info("WebSocket connection closed with RCE server");
+      if (!this.isReconnecting) {
+        container.logger.ws("WebSocket connection closed with RCE server");
+        this.isReconnecting = true;
+        this.connectWs();
+      }
     });
 
     this.socket.addEventListener("error", (error) => {

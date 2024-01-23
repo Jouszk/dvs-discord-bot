@@ -1,6 +1,7 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { RCEEventType, KillMessage } from "../../util/RCEManager";
+import { KillMessage } from "../../interfaces";
+import { RCEEventType } from "../../vars";
 import { PermissionFlagsBits, type TextChannel } from "discord.js";
 
 @ApplyOptions<Listener.Options>({
@@ -22,8 +23,8 @@ export default class KillListener extends Listener {
       await channel.send(`**${kill.attacker}** killed **${kill.victim}**`);
     }
 
-    this.container.rce.sendCommand(
-      `say <color=red>${kill.attacker}</color> killed <color=red>${kill.victim}</color>`
-    );
+    // this.container.rce.sendCommand(
+    //   `say <color=red>${kill.attacker}</color> killed <color=red>${kill.victim}</color>`
+    // );
   }
 }

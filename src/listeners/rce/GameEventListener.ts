@@ -1,6 +1,6 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { RCEEventType } from "../../util/RCEManager";
+import { RCEEventType } from "../../vars";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.EventMessage,

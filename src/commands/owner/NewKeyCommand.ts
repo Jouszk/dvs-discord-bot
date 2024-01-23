@@ -7,7 +7,7 @@ import {
   TextInputStyle,
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
-import { keyPresets } from "../../keyPresets";
+import { keyPresets } from "../../vars";
 
 @ApplyOptions<Command.Options>({
   name: "new-key",
