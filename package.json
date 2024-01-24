@@ -19,6 +19,7 @@
     "@sapphire/framework": "^5.0.6",
     "@sapphire/plugin-subcommands": "^6.0.2",
     "@sapphire/time-utilities": "^1.7.11",
+    "canvas": "^2.11.2",
     "common-tags": "^1.8.2",
     "discord.js": "^14.14.1",
     "dot-prop": "^6.0.1",

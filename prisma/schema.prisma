@@ -43,3 +43,17 @@ model TicketMessage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Player {
+  id        String   @id
+  kills     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model XPSystem {
+  id      String @id @unique
+  xp      Int    @default(0)
+  totalXp Int    @default(0)
+  level   Int    @default(1)
+}

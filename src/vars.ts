@@ -91,3 +91,31 @@ export const keyPresets: KeyPreset[] = [
     commands: ['kit givetoplayer t3kit "{username}"'],
   },
 ];
+
+interface RankRoles {
+  level: number;
+  roleId: string;
+}
+
+interface XPSystemConfig {
+  xpRequiredByLevel: number;
+  rankRoles: RankRoles[];
+}
+
+export const XP_SYSTEM_CONFIG: XPSystemConfig = {
+  xpRequiredByLevel: 35,
+  rankRoles: [
+    {
+      level: 10,
+      roleId: "1199798059727593562",
+    },
+    {
+      level: 25,
+      roleId: "1199798146352549909",
+    },
+    {
+      level: 40,
+      roleId: "1199798227931770950",
+    },
+  ],
+};

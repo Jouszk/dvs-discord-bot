@@ -23,8 +23,22 @@ export default class KillListener extends Listener {
       await channel.send(`**${kill.attacker}** killed **${kill.victim}**`);
     }
 
-    // this.container.rce.sendCommand(
-    //   `say <color=red>${kill.attacker}</color> killed <color=red>${kill.victim}</color>`
-    // );
+    this.container.rce.sendCommand(
+      `say <color=red>${kill.attacker}</color> killed <color=red>${kill.victim}</color>`
+    );
+
+    // Log the kill to the leaderboard
+    await this.container.db.player.upsert({
+      where: { id: kill.attacker },
+      update: {
+        kills: {
+          increment: 1,
+        },
+      },
+      create: {
+        id: kill.attacker,
+        kills: 1,
+      },
+    });
   }
 }
