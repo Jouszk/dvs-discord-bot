@@ -14,7 +14,6 @@ RUN apk add --update --no-cache \
 
 COPY src src
 COPY prisma prisma 
-COPY data data
 COPY assets assets
 COPY package.json package-lock.json config.swcrc .env start.sh ./
 RUN chmod +x start.sh
@@ -25,7 +24,6 @@ FROM node:19-alpine
 WORKDIR /usr/bot
 COPY --from=builder /usr/bot/dist /usr/bot/dist
 COPY --from=builder /usr/bot/prisma /usr/bot/prisma
-COPY --from=builder /usr/bot/data /usr/bot/data
 COPY --from=builder /usr/bot/assets /usr/bot/assets
 COPY --from=builder /usr/bot/package.json ./
 COPY --from=builder /usr/bot/package-lock.json ./
