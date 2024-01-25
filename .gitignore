@@ -2,3 +2,5 @@ node_modules
 dist
 json
 data
+.env.prod
+.env.dev
