@@ -14,7 +14,7 @@ services:
   database:
     container_name: DvSBotDB
     restart: always
-    image: "postgres:15.2-alpine"
+    image: "postgres:12.16-alpine"
     environment:
       POSTGRES_USER: dvs
       POSTGRES_PASSWORD: dvs
