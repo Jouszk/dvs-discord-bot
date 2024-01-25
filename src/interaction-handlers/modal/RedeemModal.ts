@@ -15,7 +15,9 @@ export class RedeemModal extends InteractionHandler {
 
   public async run(interaction: ModalSubmitInteraction) {
     // Get the content from the modal
-    const inGameName = interaction.fields.getTextInputValue("in_game_name");
+    const inGameName = interaction.fields
+      .getTextInputValue("in_game_name")
+      .replace("#", "");
     const rKey = interaction.fields.getTextInputValue("redeem_key");
 
     // Get the keys
