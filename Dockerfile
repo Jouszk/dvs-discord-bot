@@ -15,7 +15,7 @@ RUN apk add --update --no-cache \
 COPY src src
 COPY prisma prisma 
 COPY assets assets
-COPY package.json package-lock.json config.swcrc .env start.sh ./
+COPY package.json package-lock.json config.swcrc .env.prod start.sh ./
 RUN chmod +x start.sh
 RUN npm i -g @swc/cli @swc/core
 RUN npm install && npm run build
@@ -27,7 +27,7 @@ COPY --from=builder /usr/bot/prisma /usr/bot/prisma
 COPY --from=builder /usr/bot/assets /usr/bot/assets
 COPY --from=builder /usr/bot/package.json ./
 COPY --from=builder /usr/bot/package-lock.json ./
-COPY --from=builder /usr/bot/.env ./
+COPY --from=builder /usr/bot/.env.prod ./
 COPY --from=builder /usr/bot/start.sh ./
 
 RUN apk add --update --no-cache \
