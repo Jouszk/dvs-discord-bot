@@ -72,7 +72,9 @@ export default class XPUtils {
       data.level++;
       data.xp = 0;
 
-      await handleRankRoles(user, data.level);
+      if (process.env.NODE_ENV !== "production") {
+        await handleRankRoles(user, data.level);
+      }
     }
 
     // Update database

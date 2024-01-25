@@ -8,7 +8,24 @@ services:
       dockerfile: "Dockerfile"
     networks:
       - NginxProxy
+      - DvS
+    environment:
+      - DATABASE_URL=postgres://dvs:dvs@database:5432/dvs?schema=public
+  database:
+    container_name: DvSBotDB
+    restart: always
+    image: "postgres:15.2-alpine"
+    environment:
+      POSTGRES_USER: dvs
+      POSTGRES_PASSWORD: dvs
+      POSTGRES_DB: dvs
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - DvS
 networks:
   NginxProxy:
     external: true
     name: "NginxProxy"
+  DvS:
+    name: "DvS"

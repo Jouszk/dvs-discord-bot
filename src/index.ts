@@ -1,5 +1,8 @@
 import dotenv from "dotenv";
-dotenv.config();
+
+process.env.NODE_ENV === "production"
+  ? dotenv.config({ path: ".env.prod" })
+  : dotenv.config({ path: ".env.dev" });
 
 import BotClient from "./client/BotClient";
 
