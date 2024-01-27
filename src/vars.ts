@@ -50,6 +50,7 @@ export const ignoredAttacker = [
   "wall.external.high.wood (entity)",
   "sentry.scientist.static (entity)",
   "patrolhelicopter (entity)",
+  "flameturret.deployed (entity)",
 ];
 
 // {username} - The username of the user who redeemed the key
