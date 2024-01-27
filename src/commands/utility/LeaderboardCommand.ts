@@ -1,5 +1,11 @@
 import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
-import { EmbedBuilder, type ChatInputCommandInteraction } from "discord.js";
+import {
+  EmbedBuilder,
+  type ChatInputCommandInteraction,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 import { Player } from "@prisma/client";
 
@@ -28,7 +34,14 @@ export default class LeaderboardCommand extends Command {
           .join("\n")
       );
 
-    await interaction.reply({ embeds: [embed] });
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId("wipe_kills")
+        .setLabel("Wipe Player Kills (Admin Only)")
+        .setStyle(ButtonStyle.Danger)
+    );
+
+    await interaction.reply({ embeds: [embed], components: [actionRow] });
   }
 
   private async getLeaderboard(limit: number) {
