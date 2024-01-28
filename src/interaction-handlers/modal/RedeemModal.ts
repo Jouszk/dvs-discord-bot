@@ -3,7 +3,11 @@ import {
   InteractionHandlerTypes,
 } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { ModalSubmitInteraction } from "discord.js";
+import {
+  ModalSubmitInteraction,
+  PermissionFlagsBits,
+  TextChannel,
+} from "discord.js";
 
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
@@ -47,6 +51,28 @@ export class RedeemModal extends InteractionHandler {
 
     // Execute the commands
     this.container.rce.sendCommands(redeemKey.commands);
+
+    // Send to code redemption channel
+    const channel = this.container.client.channels.cache.get(
+      process.env.CODE_REDEMPTION_LOG_CHANNEL_ID
+    ) as TextChannel;
+
+    if (
+      channel &&
+      channel
+        .permissionsFor(interaction.guild.members.me)
+        .has([PermissionFlagsBits.SendMessages])
+    ) {
+      channel.send({
+        content: `**${interaction.user.tag}** redeemed \`${
+          redeemKey.name
+        }\` for \`${inGameName}\`\n\`\`\`\n${redeemKey.commands.join(
+          "\n"
+        )}\n\`\`\`\n**Key:** \`${
+          redeemKey.key
+        }\`\n**In-Game Username:** \`${inGameName}\``,
+      });
+    }
 
     // Send a response
     return interaction.reply({
