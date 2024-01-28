@@ -20,6 +20,7 @@ export class TagEditModal extends InteractionHandler {
   public async run(interaction: ModalSubmitInteraction, name: string) {
     // Get the content from the modal
     const content = interaction.fields.getTextInputValue("tag_content");
+    const image = interaction.fields.getTextInputValue("tag_image") || null;
 
     // Create the tag
     await this.container.db.tag.update({
@@ -28,6 +29,7 @@ export class TagEditModal extends InteractionHandler {
       },
       data: {
         content,
+        image,
       },
     });
 

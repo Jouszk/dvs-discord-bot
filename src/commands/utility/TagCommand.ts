@@ -8,6 +8,7 @@ import {
   TextInputStyle,
   PermissionFlagsBits,
   EmbedBuilder,
+  ColorResolvable,
 } from "discord.js";
 
 @ApplyOptions<Subcommand.Options>({
@@ -132,6 +133,14 @@ export default class TagCommand extends Subcommand {
             .setRequired(true)
             .setMinLength(10)
             .setMaxLength(4000)
+        ),
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId("tag_image")
+            .setLabel("Image URL")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(false)
+            .setMaxLength(1000)
         )
       );
 
@@ -231,6 +240,15 @@ export default class TagCommand extends Subcommand {
             .setMinLength(10)
             .setMaxLength(4000)
             .setValue(tag.content)
+        ),
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId("tag_image")
+            .setLabel("Image URL")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(false)
+            .setMaxLength(1000)
+            .setValue(tag.image || "")
         )
       );
 
@@ -279,9 +297,14 @@ export default class TagCommand extends Subcommand {
       });
     }
 
+    const embed = new EmbedBuilder()
+      .setDescription(tag.content)
+      .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
+      .setImage(tag.image);
+
     // Send Response
     return interaction.reply({
-      content: tag.content,
+      embeds: [embed],
     });
   }
 }
