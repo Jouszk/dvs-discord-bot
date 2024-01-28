@@ -64,11 +64,9 @@ export class RedeemModal extends InteractionHandler {
         .has([PermissionFlagsBits.SendMessages])
     ) {
       channel.send({
-        content: `**${interaction.user.tag}** redeemed \`${
+        content: `**${interaction.user}** redeemed \`${
           redeemKey.name
-        }\` for \`${inGameName}\`\n\`\`\`\n${redeemKey.commands.join(
-          "\n"
-        )}\n\`\`\`\n**Key:** \`${
+        }\`\n\`\`\`\n${redeemKey.commands.join("\n")}\n\`\`\`\n**Key:** \`${
           redeemKey.key
         }\`\n**In-Game Username:** \`${inGameName}\``,
       });
