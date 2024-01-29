@@ -49,13 +49,8 @@ export class NewKeyModal extends InteractionHandler {
 
     // Send Response
     interaction.reply({
-      content: `The key \`${key}\` has been created for \`${name}\`!`,
-      ephemeral: true,
-    });
-
-    return interaction.followUp({
-      ephemeral: true,
       content: key,
+      ephemeral: true,
     });
   }
 
