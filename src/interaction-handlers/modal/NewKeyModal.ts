@@ -48,9 +48,14 @@ export class NewKeyModal extends InteractionHandler {
     this.container.settings.set("global", "keys", redeemKeys);
 
     // Send Response
-    return interaction.reply({
+    interaction.reply({
       content: `The key \`${key}\` has been created for \`${name}\`!`,
       ephemeral: true,
+    });
+
+    return interaction.followUp({
+      ephemeral: true,
+      content: key,
     });
   }
 
