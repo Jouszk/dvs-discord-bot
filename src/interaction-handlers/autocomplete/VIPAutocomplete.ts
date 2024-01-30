@@ -21,7 +21,9 @@ export class VIPAutocomplete extends InteractionHandler {
     }
 
     // Get all existing vips
-    const vips = this.container.vipManager.vips;
+    const vips = this.container.vipManager.vips.filter((vip) =>
+      vip.id.toLowerCase().includes(focused.value.toLowerCase())
+    );
 
     // Return the VIPs
     return this.some(vips.map((vip) => ({ name: vip.id, value: vip.id })));
