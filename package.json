@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "swc src -d dist --config-file config.swcrc"
+    "build": "swc src -d dist --config-file config.swcrc",
+    "start": "tsc && node dist/index.js"
   },
   "keywords": [],
   "author": "",
