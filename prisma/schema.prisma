@@ -58,3 +58,11 @@ model XPSystem {
   totalXp Int    @default(0)
   level   Int    @default(1)
 }
+
+model VIPUser {
+  id        String   @id
+  discordId String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

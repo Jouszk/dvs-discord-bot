@@ -4,7 +4,13 @@ import { EventEmitter } from "events";
 import nodeCron from "node-cron";
 import { Time } from "@sapphire/time-utilities";
 import { ignoredAttacker, RCEEventType } from "../vars";
-import { ChatMessage, ItemSpawn, KillMessage, SocketData } from "../interfaces";
+import {
+  ChatMessage,
+  ItemSpawn,
+  RCERole,
+  KillMessage,
+  SocketData,
+} from "../interfaces";
 
 class RCEManagerEvents extends EventEmitter {}
 
@@ -88,6 +94,17 @@ export default class RCEManager {
         this.emitter.emit(RCEEventType.KillMessage, killObject);
       }
 
+      // Add to Role
+      const roleMatch = data.Message.match(/\[(.*?)\]/g);
+      if (roleMatch && data.Message.includes("Added")) {
+        const rceRole: RCERole = {
+          inGameName: roleMatch[1],
+          role: roleMatch[2],
+        };
+
+        this.emitter.emit(RCEEventType.AddRole, rceRole);
+      }
+
       // Item Spawning
       const itemSpawnMatch = data.Message.match(
         /\[ServerVar\] giving\s+(\w+)\s+(\d+)\s*x\s+(.+)\x00/
@@ -156,5 +173,30 @@ export default class RCEManager {
       container.logger.info(`Executing cron job: ${name}`);
       this.sendCommands(commands);
     });
+  }
+
+  public async fetchTickets(category: string): Promise<string> {
+    const tickets = await container.db.ticket.findMany({
+      where: {
+        category,
+      },
+      include: {
+        messages: true,
+      },
+    });
+
+    const request = await fetch("https://hastebin.com/documents", {
+      method: "POST",
+      body: JSON.stringify(tickets),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.HASTEBIN_TOKEN}`,
+      },
+    });
+
+    const response = await request.json();
+    container.logger.debug(response);
+
+    return `https://hastebin.com/${response.key}`;
   }
 }

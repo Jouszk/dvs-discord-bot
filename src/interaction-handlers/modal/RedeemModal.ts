@@ -49,8 +49,23 @@ export class RedeemModal extends InteractionHandler {
       command.replace(/{username}/g, inGameName)
     );
 
+    // Add VIP if the command starts with VIPID
+    if (redeemKey.commands[0].startsWith("VIPID")) {
+      // Add VIP with discord ID
+      await this.container.vipManager.addVIP(
+        inGameName,
+        undefined,
+        interaction.user.id
+      );
+
+      // Remove the VIPID command
+      redeemKey.commands.shift();
+    }
+
     // Execute the commands
-    this.container.rce.sendCommands(redeemKey.commands);
+    if (redeemKey.commands.length) {
+      this.container.rce.sendCommands(redeemKey.commands);
+    }
 
     // Send to code redemption channel
     const channel = this.container.client.channels.cache.get(

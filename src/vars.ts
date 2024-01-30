@@ -6,6 +6,7 @@ export enum RCEEventType {
   KillMessage = "rce-kill-message",
   ItemSpawnMessage = "rce-item-spawn-message",
   EventMessage = "rce-event-message",
+  AddRole = "rce-add-role",
 }
 
 export const ignoredAttacker = [
@@ -40,6 +41,7 @@ export const ignoredAttacker = [
   "barricade.metal (entity)",
   "spikes.floor (entity)",
   "sentry.bandit.static (entity)",
+  "cactus-7 (entity)",
   "cactus-6 (entity)",
   "cactus-5 (entity)",
   "cactus-4 (entity)",
@@ -51,6 +53,7 @@ export const ignoredAttacker = [
   "sentry.scientist.static (entity)",
   "patrolhelicopter (entity)",
   "flameturret.deployed (entity)",
+  "oilfireballsmall (entity)",
 ];
 
 // {username} - The username of the user who redeemed the key
@@ -58,6 +61,10 @@ export const keyPresets: KeyPreset[] = [
   {
     name: "Add VIP",
     commands: ['VIPID "{username}"'],
+  },
+  {
+    name: "Add VIP Plus",
+    commands: ['VIPID "{username}"', 'kit givetoplayer t3base "{username}"'],
   },
   {
     name: "Tier 1 Raid Insurance",

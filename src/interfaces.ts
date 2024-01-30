@@ -17,6 +17,11 @@ export interface ItemSpawn {
   receiver: string;
 }
 
+export interface RCERole {
+  inGameName: string;
+  role: string;
+}
+
 export interface ChatMessage {
   Channel: number;
   Message: string;

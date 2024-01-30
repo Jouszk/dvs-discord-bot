@@ -10,6 +10,7 @@ import CustomLogger from "../util/CustomLogger";
 import { PrismaClient } from "@prisma/client";
 import RCEManager from "../util/RCEManager";
 import { SettingsProvider } from "../util/SettingsProvider";
+import VIPManager from "../util/VIPManager";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
@@ -52,6 +53,9 @@ export default class BotClient extends SapphireClient {
     // Connect to the RCE server
     container.rce = new RCEManager();
 
+    // Initialize VIP manager
+    container.vipManager = new VIPManager();
+
     // Login to discord
     return super.login(token);
   }
@@ -62,5 +66,6 @@ declare module "@sapphire/pieces" {
     db: PrismaClient;
     rce: RCEManager;
     settings: SettingsProvider;
+    vipManager: VIPManager;
   }
 }
