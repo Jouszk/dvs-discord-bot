@@ -52,11 +52,21 @@ export class RedeemModal extends InteractionHandler {
     // Add VIP if the command starts with VIPID
     if (redeemKey.commands[0].startsWith("VIPID")) {
       // Add VIP with discord ID
-      await this.container.vipManager.addVIP(
-        inGameName,
-        undefined,
-        interaction.user.id
-      );
+      const existingVIP = this.container.vipManager.getVIP(inGameName);
+
+      if (!existingVIP) {
+        await this.container.vipManager.addVIP(
+          inGameName,
+          30,
+          interaction.user.id
+        );
+      } else {
+        await this.container.vipManager.updateVIP(
+          inGameName,
+          30,
+          interaction.user.id
+        );
+      }
 
       // Remove the VIPID command
       redeemKey.commands.shift();
