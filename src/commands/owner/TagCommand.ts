@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 
 @ApplyOptions<Command.Options>({
-  name: "Tag",
+  name: "Tag Message",
 })
 export class TagCommand extends Command {
   public async contextMenuRun(
