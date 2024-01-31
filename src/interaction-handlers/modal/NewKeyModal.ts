@@ -12,6 +12,11 @@ interface RedeemKey {
   name: string;
 }
 
+interface Params {
+  name: string;
+  quantity: number;
+}
+
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
@@ -21,16 +26,20 @@ export class NewKeyModal extends InteractionHandler {
       return this.none();
     }
 
-    return this.some(interaction.customId.split("_")[2]);
+    return this.some({
+      quantity: parseInt(interaction.customId.split("_")[2]),
+      name: interaction.customId.split("_")[3],
+    });
   }
 
-  public async run(interaction: ModalSubmitInteraction, name: string) {
+  public async run(interaction: ModalSubmitInteraction, params: Params) {
+    // Temporary variable for keys
+    const keys: string[] = [];
+
     // Get the content from the modal
     const commands = interaction.fields.getTextInputValue("key_commands");
 
-    // Create the key
-    const key = this.generateKey(12);
-
+    // Create the keys
     const redeemKeys: RedeemKey[] = this.container.settings.get(
       "global",
       "keys",
@@ -38,18 +47,24 @@ export class NewKeyModal extends InteractionHandler {
     );
 
     // Add the key to the list
-    redeemKeys.push({
-      key,
-      commands: commands.split("\n"),
-      name,
-    });
+    for (let i = 0; i < params.quantity; i++) {
+      const key = this.generateKey(12);
+
+      redeemKeys.push({
+        key,
+        commands: commands.split("\n"),
+        name: params.name,
+      });
+
+      keys.push(key);
+    }
 
     // Save the keys
     this.container.settings.set("global", "keys", redeemKeys);
 
     // Send Response
     interaction.reply({
-      content: key,
+      content: keys.join("\n"),
       ephemeral: true,
     });
   }

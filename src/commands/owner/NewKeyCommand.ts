@@ -36,6 +36,14 @@ export default class NewKeyCommand extends Command {
               .setRequired(false)
               .setAutocomplete(true)
           )
+          .addNumberOption((option) =>
+            option
+              .setName("key-quantity")
+              .setDescription("How many keys to generate")
+              .setRequired(false)
+              .setMinValue(1)
+              .setMaxValue(10)
+          )
           .setDefaultMemberPermissions(8);
       },
       {
@@ -47,13 +55,15 @@ export default class NewKeyCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const keyName = interaction.options.getString("key-name", true);
     const keyPreset = interaction.options.getString("key-preset", false);
+    const keyQuantity =
+      interaction.options.getNumber("key-quantity", false) ?? 1;
 
     const preset = keyPresets.find(
       (preset) => preset.name.toLowerCase() === keyPreset?.toLowerCase()
     );
 
     const modal = new ModalBuilder()
-      .setCustomId(`new_key_${keyName}`)
+      .setCustomId(`new_key_${keyQuantity}_${keyName}`)
       .setTitle("Create Redeem Key")
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(
