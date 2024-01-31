@@ -41,15 +41,7 @@ export default class TagCommand extends Subcommand {
           .setName(this.name)
           .setDescription(this.description)
           .addSubcommand((subCommand) =>
-            subCommand
-              .setName("create")
-              .setDescription("Create a tag")
-              .addStringOption((option) =>
-                option
-                  .setName("name")
-                  .setDescription("The name of the tag")
-                  .setRequired(true)
-              )
+            subCommand.setName("create").setDescription("Create a tag")
           )
           .addSubcommand((subCommand) =>
             subCommand
@@ -93,10 +85,6 @@ export default class TagCommand extends Subcommand {
 
   public async chatInputCreate(interaction: ChatInputCommandInteraction) {
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    const name = interaction.options
-      .getString("name", true)
-      .toLowerCase()
-      .replace(/ /g, "-");
 
     // Only allow admins to create tags
     if (!member.permissions.has(PermissionFlagsBits.Administrator)) {
@@ -106,25 +94,20 @@ export default class TagCommand extends Subcommand {
       });
     }
 
-    const tag = await this.container.db.tag.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    // Check if the tag already exists
-    if (tag) {
-      return interaction.reply({
-        content: `A tag with the name \`${name}\` already exists.`,
-        ephemeral: true,
-      });
-    }
-
     // Create Modal
     const modal = new ModalBuilder()
-      .setCustomId(`tag_create_${name}`)
+      .setCustomId("tag_create")
       .setTitle("Tag Creation")
       .addComponents(
+        new ActionRowBuilder<TextInputBuilder>().addComponents(
+          new TextInputBuilder()
+            .setCustomId("tag_name")
+            .setLabel("Name")
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true)
+            .setMinLength(1)
+            .setMaxLength(25)
+        ),
         new ActionRowBuilder<TextInputBuilder>().addComponents(
           new TextInputBuilder()
             .setCustomId("tag_content")

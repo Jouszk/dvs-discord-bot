@@ -66,3 +66,15 @@ model VIPUser {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Moderation {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  moderatorId String
+  reason      String
+  note        String?
+  type        Int
+  createdAt   DateTime @default(now())
+  lastAppeal  DateTime @default(now())
+  logId       String?
+}

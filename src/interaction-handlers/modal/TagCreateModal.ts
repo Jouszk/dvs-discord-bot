@@ -10,17 +10,28 @@ import { ModalSubmitInteraction } from "discord.js";
 })
 export class TagCreateModal extends InteractionHandler {
   public async parse(interaction: ModalSubmitInteraction) {
-    if (!interaction.customId.startsWith("tag_create_")) {
-      return this.none();
-    }
-
-    return this.some(interaction.customId.split("_")[2]);
+    return interaction.customId === "tag_create" ? this.some() : this.none();
   }
 
-  public async run(interaction: ModalSubmitInteraction, name: string) {
+  public async run(interaction: ModalSubmitInteraction) {
     // Get the content from the modal
+    const name = interaction.fields.getTextInputValue("tag_name");
     const content = interaction.fields.getTextInputValue("tag_content");
     const image = interaction.fields.getTextInputValue("tag_image") || null;
+
+    // Check if the tag already exists
+    const tag = await this.container.db.tag.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    if (tag) {
+      return interaction.reply({
+        content: `A tag with the name \`${name}\` already exists.`,
+        ephemeral: true,
+      });
+    }
 
     // Create the tag
     await this.container.db.tag.create({
