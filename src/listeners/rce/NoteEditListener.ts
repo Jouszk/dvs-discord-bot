@@ -15,6 +15,10 @@ export default class NoteEditListener extends Listener {
   public async run(note: NoteEdit) {
     // this.container.logger.debug(note);
 
+    // Anti-Code Leak
+    // If the note contains a 4 digit number, it's probably a code leak
+    if (/\d{4}/.test(note.newContent)) return;
+
     // Blacklist handler
     const blacklist = this.container.settings.get(
       "global",
@@ -60,7 +64,7 @@ export default class NoteEditListener extends Listener {
       channel &&
       channel
         .permissionsFor(channel.guild.members.me)
-        .has(PermissionFlagsBits.ManageWebhooks)
+        .has(PermissionFlagsBits.SendMessages)
     ) {
       channel.send({
         content: `**${note.username}**: ${note.newContent}`,
