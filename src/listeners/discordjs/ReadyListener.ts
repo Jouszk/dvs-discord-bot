@@ -2,6 +2,8 @@ import { Listener } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
 
 import { CronTask } from "../../interfaces";
+import EmbedSender from "../../util/EmbedSender";
+import shopJson from "../../../json/shop.json";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",

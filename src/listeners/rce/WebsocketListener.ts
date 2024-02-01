@@ -9,6 +9,6 @@ import { RCEEventType } from "../../vars";
 })
 export default class WebsocketListener extends Listener {
   public async run(data: SocketData) {
-    this.container.logger.gportal(data.Message);
+    //this.container.logger.gportal(data.Message);
   }
 }

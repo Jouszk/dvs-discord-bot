@@ -17,6 +17,12 @@ export interface ItemSpawn {
   receiver: string;
 }
 
+export interface NoteEdit {
+  username: string;
+  oldContent: string;
+  newContent: string;
+}
+
 export interface RCERole {
   inGameName: string;
   role: string;

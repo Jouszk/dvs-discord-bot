@@ -1,5 +1,12 @@
 import { KeyPreset } from "./interfaces";
 
+export const RUST_ADMINS = [
+  "b1nzeee",
+  "Saucey Hub",
+  "HANDMEYOURGUN",
+  "SixtyFatGuys",
+];
+
 export enum RCEEventType {
   ChatMessage = "rce-chat-message",
   WebSocketMessage = "rce-ws-message",
@@ -7,6 +14,7 @@ export enum RCEEventType {
   ItemSpawnMessage = "rce-item-spawn-message",
   EventMessage = "rce-event-message",
   AddRole = "rce-add-role",
+  NoteEdit = "rce-note-edit",
 }
 
 export const ignoredAttacker = [

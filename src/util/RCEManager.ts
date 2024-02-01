@@ -10,6 +10,7 @@ import {
   RCERole,
   KillMessage,
   SocketData,
+  NoteEdit,
 } from "../interfaces";
 
 class RCEManagerEvents extends EventEmitter {}
@@ -117,6 +118,29 @@ export default class RCEManager {
         };
 
         this.emitter.emit(RCEEventType.ItemSpawnMessage, itemSpawn);
+      }
+
+      // Note Editing
+      const noteEditMatch = data.Message.match(
+        /\[NOTE PANEL\] Player \[ ([^\]]+) \] changed name from \[\s*([\s\S]*?)\s*\] to \[\s*([\s\S]*?)\s*\]/
+      );
+      if (noteEditMatch) {
+        const username = noteEditMatch[1].trim();
+        const oldContent = noteEditMatch[2].trim();
+        const newContent = noteEditMatch[3].trim();
+
+        const noteEdit: NoteEdit = {
+          username,
+          oldContent: oldContent.split("\n")[0],
+          newContent: newContent.split("\n")[0],
+        };
+
+        if (
+          noteEdit.newContent.length > 0 &&
+          noteEdit.oldContent !== noteEdit.newContent
+        ) {
+          this.emitter.emit(RCEEventType.NoteEdit, noteEdit);
+        }
       }
 
       // Events
