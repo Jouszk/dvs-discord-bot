@@ -1,10 +1,26 @@
-import { KeyPreset } from "./interfaces";
+import { KeyPreset, RustAdmin } from "./interfaces";
 
-export const RUST_ADMINS = [
-  "b1nzeee",
-  "Saucey Hub",
-  "HANDMEYOURGUN",
-  "SixtyFatGuys",
+export const RUST_ADMINS: RustAdmin[] = [
+  {
+    ign: "b1nzeee",
+    discord: "581235801900318741",
+    owner: true,
+  },
+  {
+    ign: "Saucey Hub",
+    discord: "1005186019391442944",
+    owner: true,
+  },
+  {
+    ign: "SixtyFatGuys",
+    discord: "980202628384432248",
+    owner: true,
+  },
+  {
+    ign: "HANDMEYOURGUN",
+    discord: "731466813854187520",
+    owner: false,
+  },
 ];
 
 export enum RCEEventType {

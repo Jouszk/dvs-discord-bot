@@ -5,6 +5,7 @@ import {
   ActionRowBuilder,
   TextInputBuilder,
   TextInputStyle,
+  PermissionFlagsBits,
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 import { keyPresets } from "../../vars";
@@ -12,7 +13,7 @@ import { keyPresets } from "../../vars";
 @ApplyOptions<Command.Options>({
   name: "new-key",
   description: "Generate a new redeem key",
-  preconditions: ["OwnerOnly"],
+  preconditions: ["GameAdminOnly"],
 })
 export default class NewKeyCommand extends Command {
   public override registerApplicationCommands(
@@ -44,7 +45,7 @@ export default class NewKeyCommand extends Command {
               .setMinValue(1)
               .setMaxValue(10)
           )
-          .setDefaultMemberPermissions(8);
+          .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers);
       },
       {
         idHints: [],

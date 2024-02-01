@@ -23,6 +23,12 @@ export interface NoteEdit {
   newContent: string;
 }
 
+export interface RustAdmin {
+  ign: string;
+  discord: string;
+  owner: boolean;
+}
+
 export interface RCERole {
   inGameName: string;
   role: string;

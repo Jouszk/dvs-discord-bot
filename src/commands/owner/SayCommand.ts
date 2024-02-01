@@ -4,13 +4,14 @@ import {
   type ChatInputCommandInteraction,
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
+import { RUST_ADMINS } from "../../vars";
 
 @ApplyOptions<Command.Options>({
-  name: "chat-blacklist",
-  description: "Toggle chat blacklist for a user",
+  name: "say",
+  description: "Send a message to the server chat",
   preconditions: ["GameAdminOnly"],
 })
-export default class ChatBlacklistCommand extends Command {
+export default class SayCommand extends Command {
   public override registerApplicationCommands(
     registry: ApplicationCommandRegistry
   ) {
@@ -21,8 +22,8 @@ export default class ChatBlacklistCommand extends Command {
           .setDescription(this.description)
           .addStringOption((option) =>
             option
-              .setName("ign")
-              .setDescription("In-game name of the user to blacklist")
+              .setName("msg")
+              .setDescription("The message to send to the server")
               .setRequired(true)
           )
           .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers);
@@ -34,28 +35,17 @@ export default class ChatBlacklistCommand extends Command {
   }
 
   public chatInputRun(interaction: ChatInputCommandInteraction) {
-    const ign = interaction.options.getString("ign", true).toLowerCase();
-
-    const blacklist = this.container.settings.get(
-      "global",
-      "chat.blacklist",
-      []
+    const message = interaction.options.getString("msg", true);
+    const admin = RUST_ADMINS.find(
+      (admin) => admin.discord === interaction.user.id
     );
 
-    const index = blacklist.indexOf(ign);
-
-    if (index === -1) {
-      blacklist.push(ign);
-    } else {
-      blacklist.splice(index, 1);
-    }
-
-    this.container.settings.set("global", "chat.blacklist", blacklist);
+    this.container.rce.sendCommand(
+      `say [<color=#ff0000>${admin.ign}</color>]: ${message}`
+    );
 
     interaction.reply({
-      content: `Successfully ${index === -1 ? "added" : "removed"} **${ign}** ${
-        index === -1 ? "to" : "from"
-      } the chat blacklist!`,
+      content: `Successfully sent message to the server chat!`,
       ephemeral: true,
     });
   }

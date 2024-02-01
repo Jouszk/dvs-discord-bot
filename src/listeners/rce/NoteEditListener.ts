@@ -30,7 +30,7 @@ export default class NoteEditListener extends Listener {
 
     // Change username color
     let color = "#ffffff";
-    if (RUST_ADMINS.includes(note.username)) {
+    if (RUST_ADMINS.some((admin) => admin.ign === note.username)) {
       color = "#ff0000"; // red
     } else {
       const isVip = await container.db.vIPUser.findFirst({
@@ -45,9 +45,12 @@ export default class NoteEditListener extends Listener {
       color = isVip ? "#00ff00" : "#ffffff";
     }
 
-    this.container.rce.sendCommand(
-      `say [<color=${color}>${note.username}</color>]: <color=#ffffff>${note.newContent}</color>`
-    );
+    // Send to RCE if in production
+    if (process.env.NODE_ENV === "production") {
+      this.container.rce.sendCommand(
+        `say [<color=${color}>${note.username}</color>]: <color=#ffffff>${note.newContent}</color>`
+      );
+    }
 
     // Send to discord
     const channel = this.container.client.channels.cache.get(

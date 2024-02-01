@@ -10,6 +10,7 @@ import {
 @ApplyOptions<Subcommand.Options>({
   name: "vip",
   description: "Manage VIPs",
+  preconditions: ["GameAdminOnly"],
   subcommands: [
     {
       name: "add",
@@ -96,7 +97,7 @@ export default class VIPCommand extends Subcommand {
                   .setRequired(false)
               )
           )
-          .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+          .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers);
       },
       { idHints: [] }
     );
