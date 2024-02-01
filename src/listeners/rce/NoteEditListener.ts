@@ -3,6 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { NoteEdit } from "../../interfaces";
 import { RCEEventType, RUST_ADMINS } from "../../vars";
 import { Time } from "@sapphire/time-utilities";
+import { PermissionFlagsBits, TextChannel } from "discord.js";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.NoteEdit,
@@ -47,5 +48,25 @@ export default class NoteEditListener extends Listener {
     this.container.rce.sendCommand(
       `say [<color=${color}>${note.username}</color>]: <color=#ffffff>${note.newContent}</color>`
     );
+
+    // Send to discord
+    const channel = this.container.client.channels.cache.get(
+      process.env.GLOBAL_CHAT_CHANNEL_ID
+    ) as TextChannel;
+    if (
+      channel &&
+      channel
+        .permissionsFor(channel.guild.members.me)
+        .has(PermissionFlagsBits.ManageWebhooks)
+    ) {
+      const hook = await channel.createWebhook({
+        name: note.username,
+        avatar:
+          "https://i0.wp.com/www.stignatius.co.uk/wp-content/uploads/2020/10/default-user-icon.jpg",
+      });
+
+      await hook.send(note.newContent);
+      await hook.delete();
+    }
   }
 }
