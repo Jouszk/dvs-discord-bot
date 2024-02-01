@@ -13,7 +13,7 @@ export default class NoteEditListener extends Listener {
   private rateLimit: Map<string, boolean> = new Map();
 
   public async run(note: NoteEdit) {
-    this.container.logger.debug(note);
+    // this.container.logger.debug(note);
 
     // Blacklist handler
     const blacklist = this.container.settings.get(
@@ -59,14 +59,9 @@ export default class NoteEditListener extends Listener {
         .permissionsFor(channel.guild.members.me)
         .has(PermissionFlagsBits.ManageWebhooks)
     ) {
-      const hook = await channel.createWebhook({
-        name: note.username,
-        avatar:
-          "https://i0.wp.com/www.stignatius.co.uk/wp-content/uploads/2020/10/default-user-icon.jpg",
+      channel.send({
+        content: `**${note.username}**: ${note.newContent}`,
       });
-
-      await hook.send(note.newContent);
-      await hook.delete();
     }
   }
 }
