@@ -36,7 +36,9 @@ export default class NoteEditListener extends Listener {
     let color = "#ffffff";
     let role = "";
     if (RUST_ADMINS.some((admin) => admin.ign === note.username)) {
-      color = "#ff0000"; // red
+      const admin = RUST_ADMINS.find((admin) => admin.ign === note.username);
+
+      color = admin.chatColor;
       role = "[Admin]";
     } else {
       const isVip = await container.db.vIPUser.findFirst({
@@ -48,7 +50,7 @@ export default class NoteEditListener extends Listener {
         },
       });
 
-      color = isVip ? "#00ff00" : "#ffffff";
+      color = isVip ? isVip.chatColor : "#ffffff";
       if (isVip) role = "[VIP]";
     }
 

@@ -52,13 +52,19 @@ export default class VIPCommand extends Subcommand {
                   .setName("days")
                   .setDescription("How many days of VIP to add")
                   .setRequired(false)
-                  .setMinValue(1)
+                  .setMinValue(-365)
                   .setMaxValue(365)
               )
               .addUserOption((option) =>
                 option
                   .setName("discord")
                   .setDescription("The Discord user of the VIP")
+                  .setRequired(false)
+              )
+              .addStringOption((option) =>
+                option
+                  .setName("chat-color")
+                  .setDescription("The chat color of the VIP")
                   .setRequired(false)
               )
           )
@@ -105,8 +111,17 @@ export default class VIPCommand extends Subcommand {
 
   public async chatInputAdd(interaction: ChatInputCommandInteraction) {
     const inGameName = interaction.options.getString("ign", true);
-    const duration = interaction.options.getNumber("days", false) || 30;
+    const duration = interaction.options.getNumber("days", false);
     const discordId = interaction.options.getUser("discord", false)?.id;
+    const chatColor = interaction.options.getString("chat-color", false);
+
+    // Check if chatColor is a valid hex color including the hashtag in a six digit format
+    if (chatColor && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(chatColor)) {
+      return interaction.reply({
+        ephemeral: true,
+        content: "You provided an invalid color hex code",
+      });
+    }
 
     const existingVip = this.container.vipManager.getVIP(inGameName);
 

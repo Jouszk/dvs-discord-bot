@@ -62,6 +62,7 @@ model XPSystem {
 model VIPUser {
   id        String   @id
   discordId String?
+  chatColor String   @default("#f1c40f")
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

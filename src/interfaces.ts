@@ -27,6 +27,7 @@ export interface RustAdmin {
   ign: string;
   discord: string;
   owner: boolean;
+  chatColor: string;
 }
 
 export interface RCERole {

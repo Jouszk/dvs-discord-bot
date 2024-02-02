@@ -6,6 +6,7 @@ interface VIP {
   id: string;
   discordId: string;
   expiresAt: Date;
+  chatColor?: string;
   timeoutRef?: NodeJS.Timeout;
 }
 
@@ -118,8 +119,11 @@ export default class VIPManager {
   public async addVIP(
     inGameName: string,
     duration: number,
-    discordId?: string
+    discordId?: string,
+    chatColor?: string
   ) {
+    if (!duration || duration <= 0) duration = 30;
+
     // Check if VIP already exists
     const existingVip = this.vips.find((v) => v.id === inGameName);
     if (existingVip) {
@@ -136,6 +140,7 @@ export default class VIPManager {
         id: inGameName,
         expiresAt,
         discordId,
+        chatColor,
       },
     });
 
@@ -171,7 +176,8 @@ export default class VIPManager {
   public async updateVIP(
     inGameName: string,
     duration?: number,
-    discordId?: string
+    discordId?: string,
+    chatColor?: string
   ) {
     const vipIndex = this.vips.findIndex((v) => v.id === inGameName);
     if (vipIndex === -1) {
@@ -184,9 +190,9 @@ export default class VIPManager {
       const newExpiryAt = new Date(vip.expiresAt);
       newExpiryAt.setDate(newExpiryAt.getDate() + duration);
       vip.expiresAt = newExpiryAt;
-      console.log(vip.expiresAt);
     }
     vip.discordId = discordId ?? vip.discordId;
+    vip.chatColor = chatColor ?? vip.chatColor;
 
     // Update VIP in database
     await container.db.vIPUser.update({
@@ -196,6 +202,7 @@ export default class VIPManager {
       data: {
         expiresAt: vip.expiresAt,
         discordId: vip.discordId,
+        chatColor: vip.chatColor,
       },
     });
 
