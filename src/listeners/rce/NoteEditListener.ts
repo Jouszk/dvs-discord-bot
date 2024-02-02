@@ -55,7 +55,11 @@ export default class NoteEditListener extends Listener {
     // Send to RCE if in production
     if (process.env.NODE_ENV === "production") {
       this.container.rce.sendCommand(
-        `say <color=${color}>${role}</color> [<color=#ffffff>${note.username}</color>]: <color=${color}>${note.newContent}</color>`
+        `say ${
+          role !== "" ? `<color=${color}>${role}</color> ` : ""
+        }[<color=#ffffff>${note.username}</color>]: <color=${color}>${
+          note.newContent
+        }</color>`
       );
     }
 

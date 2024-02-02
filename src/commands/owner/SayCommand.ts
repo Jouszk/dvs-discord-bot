@@ -41,7 +41,7 @@ export default class SayCommand extends Command {
     );
 
     this.container.rce.sendCommand(
-      `say [<color=#ff0000>Admin</color>] [${admin.ign}]: <color=#ff0000>${message}</color>`
+      `say <color=#ff0000>[Admin]</color> [${admin.ign}]: <color=#ff0000>${message}</color>`
     );
 
     interaction.reply({
