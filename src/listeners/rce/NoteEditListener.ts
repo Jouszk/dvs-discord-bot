@@ -17,7 +17,7 @@ export default class NoteEditListener extends Listener {
 
     // Anti-Code Leak
     // If the note contains a 4 digit number, it's probably a code leak
-    if (/\d{4}/.test(note.newContent)) return;
+    note.newContent = note.newContent.replace(/\d{4}/g, "[REDACTED]");
 
     // Blacklist handler
     const blacklist = this.container.settings.get(
@@ -32,10 +32,12 @@ export default class NoteEditListener extends Listener {
     this.rateLimit.set(note.username, true);
     setTimeout(() => this.rateLimit.delete(note.username), Time.Second * 15);
 
-    // Change username color
+    // Change role color and name
     let color = "#ffffff";
+    let role = "";
     if (RUST_ADMINS.some((admin) => admin.ign === note.username)) {
       color = "#ff0000"; // red
+      role = "[Admin]";
     } else {
       const isVip = await container.db.vIPUser.findFirst({
         where: {
@@ -47,12 +49,13 @@ export default class NoteEditListener extends Listener {
       });
 
       color = isVip ? "#00ff00" : "#ffffff";
+      if (isVip) role = "[VIP]";
     }
 
     // Send to RCE if in production
     if (process.env.NODE_ENV === "production") {
       this.container.rce.sendCommand(
-        `say [<color=${color}>${note.username}</color>]: <color=#ffffff>${note.newContent}</color>`
+        `say [<color=${color}>${role}</color>] [<color=#ffffff>${note.username}<color/>]: <color=${color}>${note.newContent}</color>`
       );
     }
 
