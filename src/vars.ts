@@ -11,7 +11,7 @@ export const RUST_ADMINS: RustAdmin[] = [
     ign: "Saucey Hub",
     discord: "1005186019391442944",
     owner: true,
-    chatColor: "#000000",
+    chatColor: "#FFA500",
   },
   {
     ign: "SixtyFatGuys",

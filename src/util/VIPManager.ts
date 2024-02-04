@@ -1,6 +1,11 @@
 import { container } from "@sapphire/framework";
 import { Time } from "@sapphire/time-utilities";
-import { TextChannel, type GuildMember, EmbedBuilder } from "discord.js";
+import {
+  TextChannel,
+  type GuildMember,
+  EmbedBuilder,
+  ColorResolvable,
+} from "discord.js";
 
 interface VIP {
   id: string;

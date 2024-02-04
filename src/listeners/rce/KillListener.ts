@@ -10,6 +10,8 @@ import { PermissionFlagsBits, type TextChannel } from "discord.js";
 })
 export default class KillListener extends Listener {
   public async run(kill: KillMessage) {
+    if (process.env.NODE_ENV !== "production") return;
+
     const channel = this.container.client.channels.cache.get(
       process.env.DISCORD_KILLFEED_CHANNEL
     ) as TextChannel;

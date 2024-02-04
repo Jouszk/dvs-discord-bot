@@ -126,14 +126,24 @@ export default class VIPCommand extends Subcommand {
     const existingVip = this.container.vipManager.getVIP(inGameName);
 
     if (existingVip) {
-      this.container.vipManager.updateVIP(inGameName, duration, discordId);
+      this.container.vipManager.updateVIP(
+        inGameName,
+        duration,
+        discordId,
+        chatColor
+      );
 
       return interaction.reply({
         ephemeral: true,
         content: `Updated VIP: **${inGameName}**`,
       });
     } else {
-      this.container.vipManager.addVIP(inGameName, duration, discordId);
+      this.container.vipManager.addVIP(
+        inGameName,
+        duration,
+        discordId,
+        chatColor
+      );
 
       return interaction.reply({
         ephemeral: true,
@@ -176,7 +186,9 @@ export default class VIPCommand extends Subcommand {
       ephemeral: true,
       content: `**${vip.id}**\nDiscord: ${
         vip.discordId ? `<@${vip.discordId}>` : "None"
-      }\nExpires at: ${new Date(vip.expiresAt).toLocaleString()}`,
+      }\nExpires at: ${new Date(vip.expiresAt).toLocaleString()}\nChat Color: ${
+        vip.chatColor
+      }`,
     });
   }
 
