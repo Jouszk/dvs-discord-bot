@@ -46,6 +46,7 @@ export default class VIPCommand extends Subcommand {
                   .setName("ign")
                   .setDescription("The in-game name of the VIP")
                   .setRequired(true)
+                  .setAutocomplete(true)
               )
               .addNumberOption((option) =>
                 option

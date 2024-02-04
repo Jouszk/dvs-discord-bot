@@ -10,7 +10,11 @@ import { type AutocompleteInteraction } from "discord.js";
 })
 export class VIPAutocomplete extends InteractionHandler {
   public async parse(interaction: AutocompleteInteraction) {
-    if (!["vip", "vip_delete", "vip_view"].includes(interaction.commandName)) {
+    if (
+      !["vip", "vip_delete", "vip_view", "vip_add"].includes(
+        interaction.commandName
+      )
+    ) {
       return this.none();
     }
 
