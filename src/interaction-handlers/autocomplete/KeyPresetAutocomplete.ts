@@ -31,7 +31,9 @@ export class KeyPresetAutocomplete extends InteractionHandler {
 
     // Return the presets
     return this.some(
-      presets.map((preset) => ({ name: preset.name, value: preset.name }))
+      presets
+        .map((preset) => ({ name: preset.name, value: preset.name }))
+        .slice(0, 25)
     );
   }
 

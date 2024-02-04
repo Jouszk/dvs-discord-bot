@@ -30,7 +30,9 @@ export class VIPAutocomplete extends InteractionHandler {
     );
 
     // Return the VIPs
-    return this.some(vips.map((vip) => ({ name: vip.id, value: vip.id })));
+    return this.some(
+      vips.map((vip) => ({ name: vip.id, value: vip.id })).slice(0, 25)
+    );
   }
 
   public async run(

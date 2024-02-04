@@ -30,10 +30,12 @@ export class CronAutocomplete extends InteractionHandler {
 
     // Return the tags
     return this.some(
-      cronTasks.map((cronTask) => ({
-        name: cronTask.name,
-        value: cronTask.name,
-      }))
+      cronTasks
+        .map((cronTask) => ({
+          name: cronTask.name,
+          value: cronTask.name,
+        }))
+        .slice(0, 25)
     );
   }
 

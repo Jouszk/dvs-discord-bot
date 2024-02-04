@@ -34,7 +34,9 @@ export class TagEditModal extends InteractionHandler {
     });
 
     // Return the tags
-    return this.some(tags.map((tag) => ({ name: tag.name, value: tag.name })));
+    return this.some(
+      tags.map((tag) => ({ name: tag.name, value: tag.name })).slice(0, 25)
+    );
   }
 
   public async run(

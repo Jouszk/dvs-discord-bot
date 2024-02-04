@@ -145,7 +145,7 @@ export default class VIPManager {
         id: inGameName,
         expiresAt,
         discordId,
-        chatColor,
+        chatColor: chatColor ?? "#f1c40f",
       },
     });
 
