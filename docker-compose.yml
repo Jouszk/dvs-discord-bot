@@ -1,31 +1,30 @@
-version: "3.9"
+version: '3.9'
 services:
-  app:
-    container_name: DvSBot
-    restart: always
-    build:
-      context: "./"
-      dockerfile: "Dockerfile"
-    networks:
-      - NginxProxy
-      - DvS
-    environment:
-      - DATABASE_URL=postgres://b1nzee:dvs@database:5432/dvs?schema=public
-  database:
-    container_name: DvSBotDB
-    restart: always
-    image: "postgres:15.2-alpine"
-    environment:
-      POSTGRES_USER: b1nzee
-      POSTGRES_PASSWORD: dvs
-      POSTGRES_DB: dvs
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    networks:
-      - DvS
+    app:
+        container_name: dvs_bot
+        restart: always
+        build:
+            context: './'
+            dockerfile: 'Dockerfile'
+        networks:
+            - caddy_network
+            - dvs_network
+        environment:
+            - DATABASE_URL=postgres://dvs:dvs@dvs_db:5432/dvs?schema=public
+    database:
+        container_name: dvs_db
+        restart: always
+        image: postgres:15.2-alpine
+        environment:
+            - POSTGRES_USER=dvs
+            - POSTGRES_PASSWORD=dvs
+            - POSTGRES_DB=dvs
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+        networks:
+            - dvs_network
 networks:
-  NginxProxy:
-    external: true
-    name: "NginxProxy"
-  DvS:
-    name: "DvS"
+    caddy_network:
+        external: true
+    dvs_network:
+        external: false
