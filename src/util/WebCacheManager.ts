@@ -8,6 +8,7 @@ interface TeamMember {
   color: string;
   avatar: string;
   role: string;
+  position: number;
 }
 
 interface SellixResponse {
@@ -122,6 +123,7 @@ interface SellixProductMinimal {
   description: string;
   price: number;
   visible: boolean;
+  position: number;
 }
 
 interface DvSCache {
@@ -161,6 +163,7 @@ export default class WebCacheManager {
         username: member.user.username,
         color: member.displayHexColor,
         avatar: member.user.displayAvatarURL({ size: 512 }),
+        position: member.roles.highest.position,
         role: member.roles.highest.name
           .replace(
             /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{2B55}]/gu,
@@ -170,7 +173,7 @@ export default class WebCacheManager {
       };
     });
 
-    return members;
+    return members.sort((a, b) => b.position - a.position);
   }
 
   private async fetchShopProducts(): Promise<SellixProductMinimal[]> {
@@ -182,17 +185,22 @@ export default class WebCacheManager {
 
     const data: SellixResponse = await response.json();
 
-    return data.data.products.map((product) => {
-      return {
-        url: `https://${process.env.SELLIX_DOMAIN}/product/${product.slug}`,
-        image_url: product.image_attachments[0]
-          ? `https://cdn.sellix.io/product/${product.image_attachments[0].cloudflare_image_id}`
-          : undefined,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        visible: !product.unlisted,
-      };
-    });
+    const products: SellixProductMinimal[] = data.data.products.map(
+      (product) => {
+        return {
+          url: `https://${process.env.SELLIX_DOMAIN}/product/${product.slug}`,
+          image_url: product.image_attachments[0]
+            ? `https://cdn.sellix.io/product/${product.image_attachments[0].cloudflare_image_id}`
+            : undefined,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          visible: !product.unlisted,
+          position: product.sort_priority,
+        };
+      }
+    );
+
+    return products.sort((a, b) => a.position - b.position);
   }
 }
