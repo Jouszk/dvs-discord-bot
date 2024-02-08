@@ -13,6 +13,8 @@ services:
       - DATABASE_URL=postgres://dvs:dvs@dvs_db:5432/dvs?schema=public
     depends_on:
       - database
+    ports:
+      - "3001:3001"
   database:
     container_name: dvs_db
     restart: always
