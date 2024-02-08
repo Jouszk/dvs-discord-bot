@@ -121,7 +121,7 @@ interface SellixProductMinimal {
   image_url?: string;
   title: string;
   description: string;
-  price: number;
+  price: string;
   visible: boolean;
   position: number;
 }
@@ -194,7 +194,7 @@ export default class WebCacheManager {
             : undefined,
           title: product.title,
           description: product.description,
-          price: product.price,
+          price: product.price.toFixed(2),
           visible: !product.unlisted,
           position: product.sort_priority,
         };
