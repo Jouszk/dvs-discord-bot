@@ -182,9 +182,6 @@ export default class WebCacheManager {
 
     const data: SellixResponse = await response.json();
 
-    container.logger.debug(response.status);
-    container.logger.debug(data);
-
     return data.data.products.map((product) => {
       return {
         url: `https://${process.env.SELLIX_DOMAIN}/product/${product.slug}`,
