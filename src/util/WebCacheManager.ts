@@ -1,7 +1,6 @@
 import { container } from "@sapphire/framework";
 import { Time } from "@sapphire/time-utilities";
-
-interface WebCache {}
+import { Server, servers } from "../servers";
 
 interface TeamMember {
   username: string;
@@ -129,12 +128,14 @@ interface SellixProductMinimal {
 interface DvSCache {
   team: TeamMember[];
   shopProducts: SellixProductMinimal[];
+  servers: Server[];
 }
 
 export default class WebCacheManager {
   public cache: DvSCache = {
     team: [],
     shopProducts: [],
+    servers: servers,
   };
 
   public constructor() {

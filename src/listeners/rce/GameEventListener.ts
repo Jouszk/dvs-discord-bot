@@ -8,6 +8,8 @@ import { RCEEventType } from "../../vars";
 })
 export default class GameEventListener extends Listener {
   public async run(event: string) {
+    if (process.env.NODE_ENV !== "production") return;
+
     this.container.rce.sendCommand(
       `say <color=green>${event}</color> is incoming...`
     );
