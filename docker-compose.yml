@@ -1,30 +1,32 @@
-version: '3.9'
+version: "3.9"
 services:
-    app:
-        container_name: dvs_bot
-        restart: always
-        build:
-            context: './'
-            dockerfile: 'Dockerfile'
-        networks:
-            - caddy_network
-            - dvs_network
-        environment:
-            - DATABASE_URL=postgres://dvs:dvs@dvs_db:5432/dvs?schema=public
-    database:
-        container_name: dvs_db
-        restart: always
-        image: postgres:15.2-alpine
-        environment:
-            - POSTGRES_USER=dvs
-            - POSTGRES_PASSWORD=dvs
-            - POSTGRES_DB=dvs
-        volumes:
-            - ./data/postgres:/var/lib/postgresql/data
-        networks:
-            - dvs_network
+  app:
+    container_name: dvs_bot
+    restart: always
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    networks:
+      - caddy_network
+      - dvs_network
+    environment:
+      - DATABASE_URL=postgres://dvs:dvs@dvs_db:5432/dvs?schema=public
+    depends_on:
+      - database
+  database:
+    container_name: dvs_db
+    restart: always
+    image: postgres:15.2-alpine
+    environment:
+      - POSTGRES_USER=dvs
+      - POSTGRES_PASSWORD=dvs
+      - POSTGRES_DB=dvs
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - dvs_network
 networks:
-    caddy_network:
-        external: true
-    dvs_network:
-        external: false
+  caddy_network:
+    external: true
+  dvs_network:
+    external: false
