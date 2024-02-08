@@ -4,6 +4,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { CronTask } from "../../interfaces";
 import EmbedSender from "../../util/EmbedSender";
 import shopJson from "../../../json/shop.json";
+import WebCacheManager from "../../util/WebCacheManager";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -15,11 +16,6 @@ export default class ReadyListener extends Listener {
     this.container.logger.info(
       `${this.container.client.user!.tag} is online and ready`
     );
-
-    // Fetch members
-    this.container.client.guilds.cache.map((guild) => {
-      guild.members.fetch();
-    });
 
     // Setup cron jobs
     const crons: CronTask[] = this.container.settings.get(
@@ -37,6 +33,9 @@ export default class ReadyListener extends Listener {
         cron.commands.split("\n")
       );
     });
+
+    // Update the web cache
+    this.container.webCache = new WebCacheManager();
 
     // Send embeds to a channel
     if (process.env.NODE_ENV !== "production") {

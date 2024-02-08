@@ -6,6 +6,8 @@ process.env.NODE_ENV === "production"
 
 import BotClient from "./client/BotClient";
 
+import "@sapphire/plugin-api/register";
+
 // Extender Imports
 import "./extenders/EmbedBuilder";
 

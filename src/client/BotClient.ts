@@ -11,10 +11,18 @@ import { PrismaClient } from "@prisma/client";
 import RCEManager from "../util/RCEManager";
 import { SettingsProvider } from "../util/SettingsProvider";
 import VIPManager from "../util/VIPManager";
+import WebCacheManager from "../util/WebCacheManager";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
     super({
+      api: {
+        listenOptions: {
+          port: 3001,
+        },
+        prefix: "/",
+        origin: process.env.MAIN_WEBSITE_URL,
+      },
       intents: [
         "Guilds",
         "GuildMessages",
@@ -30,7 +38,7 @@ export default class BotClient extends SapphireClient {
       presence: {
         activities: [
           {
-            name: "DvS Solo/Duo/Trio",
+            name: "dvs.gg",
             type: ActivityType.Watching,
           },
         ],
@@ -67,5 +75,6 @@ declare module "@sapphire/pieces" {
     rce: RCEManager;
     settings: SettingsProvider;
     vipManager: VIPManager;
+    webCache: WebCacheManager;
   }
 }
