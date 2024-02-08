@@ -190,7 +190,7 @@ export default class WebCacheManager {
         return {
           url: `https://${process.env.SELLIX_DOMAIN}/product/${product.slug}`,
           image_url: product.image_attachments[0]
-            ? `https://imagedelivery.net/95QNzrEeP7RU5l5WdbyrKw/${product.image_attachments[0].cloudflare_image_id}`
+            ? `https://imagedelivery.net/95QNzrEeP7RU5l5WdbyrKw/${product.image_attachments[0].cloudflare_image_id}/shopitem`
             : undefined,
           title: product.title,
           description: product.description,
