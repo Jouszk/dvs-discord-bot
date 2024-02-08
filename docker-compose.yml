@@ -7,7 +7,6 @@ services:
             context: './'
             dockerfile: 'Dockerfile'
         networks:
-            - caddy_network
             - dvs_network
         environment:
             - DATABASE_URL=postgres://dvs:dvs@dvs_db:5432/dvs?schema=public
@@ -23,8 +22,9 @@ services:
             - ./data/postgres:/var/lib/postgresql/data
         networks:
             - dvs_network
+            - pgadmin_network
 networks:
-    caddy_network:
+    pgadmin_network:
         external: true
     dvs_network:
         external: false
