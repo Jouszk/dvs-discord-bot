@@ -19,7 +19,6 @@ export default class BotClient extends SapphireClient {
       api: {
         listenOptions: {
           port: 3001,
-          host: "0.0.0.0",
         },
         prefix: "/",
         origin: process.env.MAIN_WEBSITE_URL,

@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
     app:
         container_name: dvs_bot
@@ -23,6 +23,8 @@ services:
         networks:
             - dvs_network
             - pgadmin_network
+        ports:
+            - "3001:3001"
 networks:
     pgadmin_network:
         external: true
