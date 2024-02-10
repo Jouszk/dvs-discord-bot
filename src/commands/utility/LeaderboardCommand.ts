@@ -27,10 +27,14 @@ export default class LeaderboardCommand extends Command {
       .setFooter({ text: "Showing Top 25 Players - This Wipe ONLY" })
       .setDescription(
         leaderboard
-          .map(
-            (player) =>
-              `#${player.rank}. **${player.id}** | ${player.kills} Kills`
-          )
+          .map((player) => {
+            const kd =
+              player.deaths === 0 ? player.kills : player.kills / player.deaths;
+
+            return `#${player.rank}. **${player.id}** | ${
+              player.kills
+            } Kills | ${player.deaths} Deaths | ${kd.toFixed(2)} K/D`;
+          })
           .join("\n")
       );
 

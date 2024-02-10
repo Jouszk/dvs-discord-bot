@@ -231,7 +231,9 @@ export default class VIPManager {
   }
 
   public getVIP(inGameName: string) {
-    return this.vips.find((vip) => vip.id === inGameName);
+    return this.vips.find(
+      (vip) => vip.id.toLowerCase() === inGameName.toLowerCase()
+    );
   }
 
   public listVIPs() {

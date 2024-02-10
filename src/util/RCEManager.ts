@@ -95,6 +95,15 @@ export default class RCEManager {
         this.emitter.emit(RCEEventType.KillMessage, killObject);
       }
 
+      // Player Joining
+      if (
+        data.Message.includes("joined [xboxone]") ||
+        data.Message.includes("joined [ps4]")
+      ) {
+        const username = data.Message.split(" joined ")[0];
+        this.emitter.emit(RCEEventType.PlayerJoin, { username });
+      }
+
       // Add to Role
       const roleMatch = data.Message.match(/\[(.*?)\]/g);
       if (roleMatch && data.Message.includes("Added")) {

@@ -48,6 +48,7 @@ model TicketMessage {
 model Player {
   id        String   @id
   kills     Int      @default(0)
+  deaths    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

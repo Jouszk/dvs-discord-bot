@@ -23,6 +23,10 @@ export interface NoteEdit {
   newContent: string;
 }
 
+export interface PlayerJoin {
+  username: string;
+}
+
 export interface RustAdmin {
   ign: string;
   discord: string;

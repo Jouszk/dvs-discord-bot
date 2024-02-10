@@ -42,5 +42,19 @@ export default class KillListener extends Listener {
         kills: 1,
       },
     });
+
+    // Log the death to the leaderbaord
+    await this.container.db.player.upsert({
+      where: { id: kill.victim },
+      update: {
+        deaths: {
+          increment: 1,
+        },
+      },
+      create: {
+        id: kill.victim,
+        deaths: 1,
+      },
+    });
   }
 }
