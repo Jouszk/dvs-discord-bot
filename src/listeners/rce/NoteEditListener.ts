@@ -19,6 +19,9 @@ export default class NoteEditListener extends Listener {
     // If the note contains a 4 digit number, it's probably a code leak
     note.newContent = note.newContent.replace(/\d{4}/g, "[REDACTED]");
 
+    // Exploit patch
+    note.newContent = note.newContent.replace("@", "@/");
+
     // Blacklist handler
     const blacklist = this.container.settings.get(
       "global",
