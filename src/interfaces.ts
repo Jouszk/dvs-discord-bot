@@ -11,6 +11,12 @@ export interface SocketData {
   Stacktrace?: string;
 }
 
+export interface TeamData {
+  ign: string;
+  owner: string;
+  teamId: number;
+}
+
 export interface ItemSpawn {
   item: string;
   amount: number;

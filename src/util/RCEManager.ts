@@ -104,6 +104,30 @@ export default class RCEManager {
         this.emitter.emit(RCEEventType.PlayerJoin, { username });
       }
 
+      // Join Team
+      const joinTeamMatch = data.Message.match(
+        /\[(.*?)\] has joined \[(.*?)\]s team, ID: \[(\d+)\]/
+      );
+      if (joinTeamMatch) {
+        this.emitter.emit(RCEEventType.JoinedTeam, {
+          ign: joinTeamMatch[1],
+          owner: joinTeamMatch[2],
+          teamId: parseInt(joinTeamMatch[3], 10),
+        });
+      }
+
+      // Leave Team
+      const leaveTeamMatch = data.Message.match(
+        /\[(.*?)\] has left \[(.*?)\]s team, ID: \[(\d+)\]/
+      );
+      if (leaveTeamMatch) {
+        this.emitter.emit(RCEEventType.LeftTeam, {
+          ign: leaveTeamMatch[1],
+          owner: leaveTeamMatch[2],
+          teamId: parseInt(leaveTeamMatch[3], 10),
+        });
+      }
+
       // Add to Role
       const roleMatch = data.Message.match(/\[(.*?)\]/g);
       if (roleMatch && data.Message.includes("Added")) {

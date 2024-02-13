@@ -26,13 +26,13 @@ model Tag {
 }
 
 model Ticket {
-  id        Int      @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   category  String
   author    String
   channel   String
   messages  TicketMessage[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model TicketMessage {
@@ -79,4 +79,13 @@ model Moderation {
   createdAt   DateTime @default(now())
   lastAppeal  DateTime @default(now())
   logId       String?
+}
+
+model GameTeam {
+  id            Int      @id @default(autoincrement())
+  teamId        Int      @unique
+  activeMembers String[] @default([])
+  pastMembers   String[] @default([])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

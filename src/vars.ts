@@ -36,6 +36,8 @@ export enum RCEEventType {
   AddRole = "rce-add-role",
   NoteEdit = "rce-note-edit",
   PlayerJoin = "rce-player-join",
+  LeftTeam = "rce-left-team",
+  JoinedTeam = "rce-joined-team",
 }
 
 export const ignoredAttacker = [
