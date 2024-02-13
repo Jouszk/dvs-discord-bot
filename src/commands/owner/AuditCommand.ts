@@ -26,23 +26,17 @@ export default class AuditCommand extends Command {
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+    await interaction.guild.members.fetch();
 
     const vips = await this.container.db.vIPUser.findMany();
-    const vipRole: Role = await this.container.client.guilds.cache
-      .first()
-      ?.roles.fetch(process.env.VIP_ROLE_ID)
-      .catch(() => null);
-
-    if (!vipRole) {
-      return interaction.editReply({
-        content: "VIP role not found",
-      });
-    }
+    const members = interaction.guild.members.cache.filter((m) =>
+      m.roles.cache.has(process.env.VIP_ROLE_ID)
+    );
 
     await Promise.all(
-      vipRole.members.map((member) => {
+      members.map((member) => {
         if (!vips.find((vip) => vip.discordId === member.id)) {
-          member.roles.remove(vipRole);
+          member.roles.remove(process.env.VIP_ROLE_ID);
         }
       })
     );
