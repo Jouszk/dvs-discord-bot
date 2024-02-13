@@ -14,7 +14,7 @@ export default class JoinTeamListener extends Listener {
     });
 
     if (existingTeam) {
-      const updatedActiveMembers = existingTeam.activeMembers.filter(
+      const updatedPastMembers = existingTeam.pastMembers.filter(
         (member) => member !== team.ign
       );
 
@@ -24,7 +24,7 @@ export default class JoinTeamListener extends Listener {
           activeMembers: {
             push: team.ign,
           },
-          pastMembers: updatedActiveMembers,
+          pastMembers: updatedPastMembers,
         },
       });
     }
