@@ -59,6 +59,8 @@ export default class TicketsCommand extends Command {
       .setTitle(`${user.username}'s Tickets`)
       .setDescription(
         tickets
+          .sort((a, b) => a.id - b.id)
+          .slice(0, 15)
           .map(
             (ticket) =>
               stripIndents`**ID:** [${
