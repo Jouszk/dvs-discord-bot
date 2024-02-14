@@ -3,7 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 
 import { CronTask } from "../../interfaces";
 import EmbedSender from "../../util/EmbedSender";
-import shopJson from "../../../json/shop.json";
+import vipUpgradeJson from "../../../json/vipUpgrade.json";
 import WebCacheManager from "../../util/WebCacheManager";
 
 @ApplyOptions<Listener.Options>({
@@ -39,7 +39,7 @@ export default class ReadyListener extends Listener {
 
     // Send embeds to a channel
     if (process.env.NODE_ENV !== "production") {
-      // EmbedSender.sendEmbeds("1198925908711583744", shopJson);
+      // EmbedSender.sendEmbeds("1179644648411643914", vipUpgradeJson);
     }
   }
 }
