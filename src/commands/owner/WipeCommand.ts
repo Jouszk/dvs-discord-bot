@@ -30,19 +30,6 @@ export default class WipeCommand extends Command {
     await this.container.db.player.deleteMany({});
     await this.container.db.gameTeam.deleteMany({});
     this.container.settings.delete("global", "crons");
-    const keys = this.container.settings.get("global", "keys", []);
-
-    // Remove all insurance codes from keys
-    const updatedKeys = keys.forEach((key) => {
-      if (
-        key.commands.includes('kit givetoplayer ins "{username}"') ||
-        key.commands.includes('kit givetoplayer vipins "{username}"')
-      ) {
-        keys.splice(keys.indexOf(key), 1);
-      }
-    });
-
-    this.container.settings.set("global", "keys", updatedKeys);
 
     return interaction.editReply({
       content:
