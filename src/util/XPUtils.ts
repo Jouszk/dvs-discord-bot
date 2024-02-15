@@ -72,7 +72,7 @@ export default class XPUtils {
       data.level++;
       data.xp = 0;
 
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV === "production") {
         await handleRankRoles(user, data.level);
       }
     }
