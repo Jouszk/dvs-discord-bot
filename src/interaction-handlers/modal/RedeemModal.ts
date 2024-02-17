@@ -4,10 +4,14 @@ import {
 } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ColorResolvable,
+  EmbedBuilder,
   ModalSubmitInteraction,
-  PermissionFlagsBits,
-  TextChannel,
 } from "discord.js";
+import { stripIndents } from "common-tags";
 
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
@@ -38,69 +42,35 @@ export class RedeemModal extends InteractionHandler {
       });
     }
 
-    // Delete the key
-    redeemKeys.splice(redeemKeys.indexOf(redeemKey), 1);
+    const embed = new EmbedBuilder()
+      .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
+      .setTitle("Redeem Key")
+      .setDescription(
+        stripIndents`
+        You are redeeming \`${redeemKey.name}\` for the in-game username: \`${inGameName}\`
 
-    // Save the keys
-    this.container.settings.set("global", "keys", redeemKeys);
+        Please confirm the following:
 
-    // Replace {username} with the in game name in the commands array
-    redeemKey.commands = redeemKey.commands.map((command) =>
-      command.replace(/{username}/g, inGameName)
+        - Your in-game username: \`${inGameName}\`
+        - You are in-game and ready to receive the items
+        - Your inventory is EMPTY
+        - You're in a safe location
+      `
+      )
+      .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL);
+
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`confirm_redeem@${redeemKey.key}@${inGameName}`)
+        .setLabel("Confirm")
+        .setStyle(ButtonStyle.Success)
     );
-
-    // Add VIP if the command starts with VIPID
-    if (redeemKey.commands[0].startsWith("VIPID")) {
-      // Add VIP with discord ID
-      const existingVIP = this.container.vipManager.getVIP(inGameName);
-
-      if (!existingVIP) {
-        await this.container.vipManager.addVIP(
-          inGameName,
-          30,
-          interaction.user.id
-        );
-      } else {
-        await this.container.vipManager.updateVIP(
-          inGameName,
-          30,
-          interaction.user.id
-        );
-      }
-
-      // Remove the VIPID command
-      redeemKey.commands.shift();
-    }
-
-    // Execute the commands
-    if (redeemKey.commands.length) {
-      this.container.rce.sendCommands(redeemKey.commands);
-    }
-
-    // Send to code redemption channel
-    const channel = this.container.client.channels.cache.get(
-      process.env.CODE_REDEMPTION_LOG_CHANNEL_ID
-    ) as TextChannel;
-
-    if (
-      channel &&
-      channel
-        .permissionsFor(interaction.guild.members.me)
-        .has([PermissionFlagsBits.SendMessages])
-    ) {
-      channel.send({
-        content: `**${interaction.user}** redeemed \`${
-          redeemKey.name
-        }\`\n\`\`\`\n${redeemKey.commands.join("\n")}\n\`\`\`\n**Key:** \`${
-          redeemKey.key
-        }\`\n**In-Game Username:** \`${inGameName}\``,
-      });
-    }
 
     // Send a response
     return interaction.reply({
-      content: `You have successfully redeemed \`${redeemKey.name}\`.`,
+      embeds: [embed],
       ephemeral: true,
+      components: [actionRow],
     });
   }
 }
