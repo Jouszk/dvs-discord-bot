@@ -90,14 +90,6 @@ export const ignoredAttacker = [
 // {username} - The username of the user who redeemed the key
 export const keyPresets: KeyPreset[] = [
   {
-    name: "Add VIP",
-    commands: ['VIPID "{username}"'],
-  },
-  {
-    name: "Add VIP Plus",
-    commands: ['VIPID "{username}"', 'kit givetoplayer t3base "{username}"'],
-  },
-  {
     name: "Tier 1 Raid Insurance",
     commands: ['kit givetoplayer ins "{username}"'],
   },
