@@ -13,7 +13,7 @@ export default class GameEventListener extends Listener {
 
     this.container.rce.sendCommandToServer(
       `${event.server.ipAddress}:${event.server.port}`,
-      `say <color=green>${event}</color> is incoming...`
+      `say <color=green>${event.event}</color> is incoming...`
     );
   }
 }
