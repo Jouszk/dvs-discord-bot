@@ -78,15 +78,15 @@ export default class CronCommand extends Subcommand {
               .setDescription("View a cron task")
               .addStringOption((option) =>
                 option
-                  .setName("name")
-                  .setDescription("The name of the cron task")
+                  .setName("server")
+                  .setDescription("Which server to send the command to")
+                  .setRequired(true)
                   .setAutocomplete(true)
               )
               .addStringOption((option) =>
                 option
-                  .setName("server")
-                  .setDescription("Which server to send the command to")
-                  .setRequired(true)
+                  .setName("name")
+                  .setDescription("The name of the cron task")
                   .setAutocomplete(true)
               )
           )

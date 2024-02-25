@@ -13,7 +13,7 @@ export default class NoteEditListener extends Listener {
   private rateLimit: Map<string, boolean> = new Map();
 
   public async run(note: NoteEditEvent) {
-    // if (process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     // Anti-Code Leak
     // If the note contains a 4 digit number, it's probably a code leak

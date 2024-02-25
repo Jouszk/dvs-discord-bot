@@ -10,7 +10,7 @@ import { PermissionFlagsBits, type TextChannel } from "discord.js";
 })
 export default class ItemSpawnListener extends Listener {
   public async run(spawn: ItemSpawnEvent) {
-    // if (process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     const channel = this.container.client.channels.cache.get(
       process.env.ADMIN_ITEM_SPAWNING_CHANNEL_ID

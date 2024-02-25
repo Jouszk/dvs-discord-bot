@@ -10,7 +10,7 @@ import { PermissionFlagsBits, type TextChannel } from "discord.js";
 })
 export default class KillListener extends Listener {
   public async run(kill: KillEvent) {
-    // if (process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     const serverId = `${kill.server.ipAddress}:${kill.server.port}`;
 

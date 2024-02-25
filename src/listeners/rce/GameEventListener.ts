@@ -9,7 +9,7 @@ import { GameEvent } from "../../interfaces";
 })
 export default class GameEventListener extends Listener {
   public async run(event: GameEvent) {
-    // if (process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     this.container.rce.sendCommandToServer(
       `${event.server.ipAddress}:${event.server.port}`,

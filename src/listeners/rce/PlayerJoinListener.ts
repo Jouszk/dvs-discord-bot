@@ -9,7 +9,7 @@ import { RCEEventType } from "../../vars";
 })
 export default class PlayerJoinListener extends Listener {
   public async run(player: PlayerJoinEvent) {
-    // if (process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     const vipData = this.container.vipManager.getVIP(player.username);
 
