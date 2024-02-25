@@ -1,11 +1,7 @@
 import { container } from "@sapphire/framework";
 import { Time } from "@sapphire/time-utilities";
-import {
-  TextChannel,
-  type GuildMember,
-  EmbedBuilder,
-  ColorResolvable,
-} from "discord.js";
+import { TextChannel, type GuildMember, EmbedBuilder } from "discord.js";
+import { servers } from "../servers";
 
 interface VIP {
   id: string;
@@ -91,7 +87,12 @@ export default class VIPManager {
     });
 
     // Remove VIP in-game
-    container.rce.sendCommand(`RemoveVIP "${vip.id}"`);
+    servers.forEach((server) => {
+      container.rce.sendCommandToServer(
+        `${server.ipAddress}:${server.rconPort}`,
+        `RemoveVIP "${vip.id}"`
+      );
+    });
 
     // Remove VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache
@@ -150,7 +151,12 @@ export default class VIPManager {
     });
 
     // Add VIP in-game
-    container.rce.sendCommand(`VIPID "${vip.id}"`);
+    servers.forEach((server) => {
+      container.rce.sendCommandToServer(
+        `${server.ipAddress}:${server.rconPort}`,
+        `VIPID "${inGameName}"`
+      );
+    });
 
     // Add VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache

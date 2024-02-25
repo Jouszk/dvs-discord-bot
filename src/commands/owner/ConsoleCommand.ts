@@ -22,6 +22,13 @@ export default class ConsoleCommand extends Command {
               .setDescription("Command to send in-game")
               .setRequired(true)
           )
+          .addStringOption((option) =>
+            option
+              .setName("server")
+              .setDescription("Server to send the command to")
+              .setRequired(true)
+              .setAutocomplete(true)
+          )
           .setDefaultMemberPermissions(8);
       },
       {
@@ -32,7 +39,9 @@ export default class ConsoleCommand extends Command {
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const command = interaction.options.getString("command", true);
-    await this.container.rce.sendCommand(command);
+    const server = interaction.options.getString("server", true);
+
+    await this.container.rce.sendCommandToServer(server, command);
     await interaction.reply({
       ephemeral: true,
       content: `Sent command \`${command}\` to RCE server`,

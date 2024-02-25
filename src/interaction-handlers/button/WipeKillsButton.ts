@@ -17,18 +17,20 @@ import {
 })
 export class WipeKillsButton extends InteractionHandler {
   public async parse(interaction: ButtonInteraction) {
-    if (interaction.customId !== "wipe_kills") return this.none();
+    if (!interaction.customId.startsWith("wipe_kills_")) {
+      return this.none();
+    }
 
     const member = interaction.guild.members.cache.get(interaction.user.id);
 
     return member.permissions.has(PermissionFlagsBits.Administrator)
-      ? this.some()
+      ? this.some(interaction.customId.split("_")[2])
       : this.none();
   }
 
-  public async run(interaction: ButtonInteraction) {
+  public async run(interaction: ButtonInteraction, serverId: string) {
     const modal = new ModalBuilder()
-      .setCustomId("wipe_kills")
+      .setCustomId(`wipe_kills_${serverId}`)
       .setTitle("Wipe Player Kills")
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(

@@ -7,6 +7,7 @@ import {
   TextInputStyle,
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
+import { servers } from "../../servers";
 
 @ApplyOptions<Command.Options>({
   name: "redeem",
@@ -18,7 +19,16 @@ export default class RedeemCommand extends Command {
   ) {
     registry.registerChatInputCommand(
       (command) => {
-        command.setName(this.name).setDescription(this.description);
+        command
+          .setName(this.name)
+          .setDescription(this.description)
+          .addStringOption((option) =>
+            option
+              .setName("server")
+              .setDescription("The server to redeem the key on")
+              .setRequired(true)
+              .setAutocomplete(true)
+          );
       },
       {
         idHints: [],
@@ -27,8 +37,20 @@ export default class RedeemCommand extends Command {
   }
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
+    const server = interaction.options.getString("server", true);
+    const serverInfo = servers.find(
+      (s) => s.ipAddress === server.split(":")[0]
+    );
+
+    if (!serverInfo) {
+      return interaction.reply({
+        content: "Invalid server",
+        ephemeral: true,
+      });
+    }
+
     const modal = new ModalBuilder()
-      .setCustomId("redeem_key")
+      .setCustomId(`redeem_key_${server}`)
       .setTitle("Redeem a Key")
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(

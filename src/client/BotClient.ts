@@ -12,6 +12,7 @@ import RCEManager from "../util/RCEManager";
 import { SettingsProvider } from "../util/SettingsProvider";
 import VIPManager from "../util/VIPManager";
 import WebCacheManager from "../util/WebCacheManager";
+import { Server, servers } from "../servers";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
@@ -54,6 +55,9 @@ export default class BotClient extends SapphireClient {
       RegisterBehavior.Overwrite
     );
 
+    // Initialize servers
+    container.servers = servers;
+
     // Connect to the database
     container.db = new PrismaClient();
     container.settings = new SettingsProvider(container.db);
@@ -77,5 +81,6 @@ declare module "@sapphire/pieces" {
     settings: SettingsProvider;
     vipManager: VIPManager;
     webCache: WebCacheManager;
+    servers: Server[];
   }
 }

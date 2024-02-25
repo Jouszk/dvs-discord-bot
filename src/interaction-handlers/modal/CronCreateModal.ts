@@ -15,10 +15,16 @@ export class CronCreateModal extends InteractionHandler {
       return this.none();
     }
 
-    return this.some(interaction.customId.split("_")[2]);
+    return this.some({
+      name: interaction.customId.split("_")[2],
+      serverId: interaction.customId.split("_")[3],
+    });
   }
 
-  public async run(interaction: ModalSubmitInteraction, name: string) {
+  public async run(
+    interaction: ModalSubmitInteraction,
+    { name, serverId }: { name: string; serverId: string }
+  ) {
     // Get the content from the modal
     const time = interaction.fields.getTextInputValue("cron_time");
     const commands = interaction.fields.getTextInputValue("cron_commands");
@@ -28,6 +34,7 @@ export class CronCreateModal extends InteractionHandler {
       name,
       time,
       commands,
+      serverId,
     };
 
     // Save the cron task
@@ -36,7 +43,7 @@ export class CronCreateModal extends InteractionHandler {
     this.container.settings.set("global", "crons", crons);
 
     // Set the cron task
-    this.container.rce.setCron(name, time, commands.split("\n"));
+    this.container.rce.setCron(serverId, name, time, commands.split("\n"));
 
     // Send Response
     return interaction.reply({

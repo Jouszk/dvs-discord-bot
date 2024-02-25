@@ -125,17 +125,31 @@ interface SellixProductMinimal {
   position: number;
 }
 
+interface ServerMinimal {
+  game: string;
+  name: string;
+  features: string[];
+  logo: string;
+}
+
 interface DvSCache {
   team: TeamMember[];
   shopProducts: SellixProductMinimal[];
-  servers: Server[];
+  servers: ServerMinimal[];
 }
 
 export default class WebCacheManager {
   public cache: DvSCache = {
     team: [],
     shopProducts: [],
-    servers: servers,
+    servers: servers.map((server) => {
+      return {
+        game: server.game,
+        name: server.name,
+        features: server.features,
+        logo: server.logo,
+      };
+    }),
   };
 
   public constructor() {

@@ -28,7 +28,6 @@ export default class WipeCommand extends Command {
     await interaction.deferReply({ ephemeral: true });
 
     await this.container.db.player.deleteMany({});
-    await this.container.db.gameTeam.deleteMany({});
     this.container.settings.delete("global", "crons");
 
     return interaction.editReply({

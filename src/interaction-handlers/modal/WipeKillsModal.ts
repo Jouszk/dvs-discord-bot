@@ -10,10 +10,14 @@ import { ModalSubmitInteraction } from "discord.js";
 })
 export class WipeKillsModal extends InteractionHandler {
   public async parse(interaction: ModalSubmitInteraction) {
-    return interaction.customId === "wipe_kills" ? this.some() : this.none();
+    if (!interaction.customId.startsWith("wipe_kills_")) {
+      return this.none();
+    }
+
+    return this.some(interaction.customId.split("_")[2]);
   }
 
-  public async run(interaction: ModalSubmitInteraction) {
+  public async run(interaction: ModalSubmitInteraction, serverId: string) {
     // Get the content from the modal
     const inGameName = interaction.fields.getTextInputValue("in_game_name");
 
@@ -31,6 +35,7 @@ export class WipeKillsModal extends InteractionHandler {
     await this.container.db.player.update({
       where: {
         id: inGameName,
+        serverId,
       },
       data: {
         kills: 0,

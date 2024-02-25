@@ -6,7 +6,6 @@ import {
   ActionRowBuilder,
   TextInputBuilder,
   TextInputStyle,
-  PermissionFlagsBits,
   EmbedBuilder,
 } from "discord.js";
 import { CronTask } from "../../interfaces";
@@ -46,6 +45,13 @@ export default class CronCommand extends Subcommand {
                   .setDescription("The name of the cron task")
                   .setRequired(true)
               )
+              .addStringOption((option) =>
+                option
+                  .setName("server")
+                  .setDescription("Which server to send the command to")
+                  .setRequired(true)
+                  .setAutocomplete(true)
+              )
           )
           .addSubcommand((subCommand) =>
             subCommand
@@ -55,6 +61,13 @@ export default class CronCommand extends Subcommand {
                 option
                   .setName("name")
                   .setDescription("The name of the cron task")
+                  .setRequired(true)
+                  .setAutocomplete(true)
+              )
+              .addStringOption((option) =>
+                option
+                  .setName("server")
+                  .setDescription("Which server to send the command to")
                   .setRequired(true)
                   .setAutocomplete(true)
               )
@@ -69,6 +82,13 @@ export default class CronCommand extends Subcommand {
                   .setDescription("The name of the cron task")
                   .setAutocomplete(true)
               )
+              .addStringOption((option) =>
+                option
+                  .setName("server")
+                  .setDescription("Which server to send the command to")
+                  .setRequired(true)
+                  .setAutocomplete(true)
+              )
           )
           .setDefaultMemberPermissions(0);
       },
@@ -81,6 +101,7 @@ export default class CronCommand extends Subcommand {
       .getString("name", true)
       .toLowerCase()
       .replace(/ /g, "-");
+    const serverId = interaction.options.getString("server", true);
 
     // Check if the cron task already exists
     const crons: CronTask[] = this.container.settings.get(
@@ -88,18 +109,20 @@ export default class CronCommand extends Subcommand {
       "crons",
       []
     );
-    const cron = crons.find((cron) => cron.name === name);
+    const cron = crons.find(
+      (cron) => cron.name === name && cron.serverId === serverId
+    );
 
     if (cron) {
       return interaction.reply({
-        content: `A cron task with the name \`${name}\` already exists.`,
+        content: `A cron task with the name \`${name}\` already exists for this server.`,
         ephemeral: true,
       });
     }
 
     // Create Modal
     const modal = new ModalBuilder()
-      .setCustomId(`cron_create_${name}`)
+      .setCustomId(`cron_create_${name}_${serverId}`)
       .setTitle("Create Cron Task")
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(
@@ -133,6 +156,7 @@ export default class CronCommand extends Subcommand {
       .getString("name", true)
       .toLowerCase()
       .replace(/ /g, "-");
+    const serverId = interaction.options.getString("server", true);
 
     // Check if the cron task exists
     const crons: CronTask[] = this.container.settings.get(
@@ -140,11 +164,13 @@ export default class CronCommand extends Subcommand {
       "crons",
       []
     );
-    const cron = crons.find((cron) => cron.name === name);
+    const cron = crons.find(
+      (cron) => cron.name === name && cron.serverId === serverId
+    );
 
     if (!cron) {
       return interaction.reply({
-        content: `A cron task with the name \`${name}\` doesn't exist.`,
+        content: `A cron task with the name \`${name}\` doesn't exist on this server.`,
         ephemeral: true,
       });
     }
@@ -156,7 +182,7 @@ export default class CronCommand extends Subcommand {
 
     // Send Response
     await interaction.reply({
-      content: `The cron task \`${name}\` has been deleted.`,
+      content: `The cron task \`${name}\` has been deleted for this server.`,
       ephemeral: true,
     });
 
@@ -169,6 +195,7 @@ export default class CronCommand extends Subcommand {
       .getString("name")
       ?.toLowerCase()
       ?.replace(/ /g, "-");
+    const serverId = interaction.options.getString("server", true);
 
     const crons: CronTask[] = this.container.settings.get(
       "global",
@@ -192,12 +219,14 @@ export default class CronCommand extends Subcommand {
     }
 
     // Fetch the cron task if a name is provided
-    const cron = crons.find((cron) => cron.name === name);
+    const cron = crons.find(
+      (cron) => cron.name === name && cron.serverId === serverId
+    );
 
     // Check if the tag already exists
     if (!cron) {
       return interaction.reply({
-        content: `A tag cron task the name \`${name}\` does not exist.`,
+        content: `A tag cron task the name \`${name}\` does not exist on this server.`,
         ephemeral: true,
       });
     }

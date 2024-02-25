@@ -2,8 +2,6 @@ import { Listener } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
 
 import { CronTask } from "../../interfaces";
-import EmbedSender from "../../util/EmbedSender";
-import vipUpgradeJson from "../../../json/vipUpgrade.json";
 import WebCacheManager from "../../util/WebCacheManager";
 
 @ApplyOptions<Listener.Options>({
@@ -28,6 +26,7 @@ export default class ReadyListener extends Listener {
       this.container.logger.info(`Setting up cron job: ${cron.name}`);
 
       this.container.rce.setCron(
+        cron.serverId,
         cron.name,
         cron.time,
         cron.commands.split("\n")

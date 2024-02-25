@@ -47,6 +47,7 @@ model TicketMessage {
 
 model Player {
   id        String   @id
+  serverId  String
   kills     Int      @default(0)
   deaths    Int      @default(0)
   createdAt DateTime @default(now())
@@ -79,13 +80,4 @@ model Moderation {
   createdAt   DateTime @default(now())
   lastAppeal  DateTime @default(now())
   logId       String?
-}
-
-model GameTeam {
-  id            Int      @id @default(autoincrement())
-  teamId        Int      @unique
-  activeMembers String[] @default([])
-  pastMembers   String[] @default([])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
 }

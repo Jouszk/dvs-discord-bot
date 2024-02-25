@@ -7,7 +7,7 @@ import {
   ButtonStyle,
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
-import { Player } from "@prisma/client";
+import { servers } from "../../servers";
 
 @ApplyOptions<Command.Options>({
   name: "leaderboard",
@@ -15,11 +15,23 @@ import { Player } from "@prisma/client";
 })
 export default class LeaderboardCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const leaderboard = await this.getLeaderboard(25);
+    const server = interaction.options.getString("server", true);
+    const serverInfo = servers.find(
+      (s) => s.ipAddress === server.split(":")[0]
+    );
+
+    if (!serverInfo) {
+      return interaction.reply({
+        content: "Invalid server",
+        ephemeral: true,
+      });
+    }
+
+    const leaderboard = await this.getLeaderboard(server, 25);
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: "Kills Leaderboard",
+        name: `Kills Leaderboard | ${serverInfo?.name}`,
         iconURL: interaction.client.user.displayAvatarURL(),
       })
       .setColor("#e615af")
@@ -40,7 +52,7 @@ export default class LeaderboardCommand extends Command {
 
     const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId("wipe_kills")
+        .setCustomId(`wipe_kills_${server}`)
         .setLabel("Wipe Player Kills (Admin Only)")
         .setStyle(ButtonStyle.Danger)
     );
@@ -48,8 +60,11 @@ export default class LeaderboardCommand extends Command {
     await interaction.reply({ embeds: [embed], components: [actionRow] });
   }
 
-  private async getLeaderboard(limit: number) {
+  private async getLeaderboard(serverId: string, limit: number) {
     const data = await this.container.db.player.findMany({
+      where: {
+        serverId,
+      },
       orderBy: {
         kills: "desc",
       },
@@ -66,7 +81,16 @@ export default class LeaderboardCommand extends Command {
   ) {
     registry.registerChatInputCommand(
       (command) => {
-        command.setName(this.name).setDescription(this.description);
+        command
+          .setName(this.name)
+          .setDescription(this.description)
+          .addStringOption((option) =>
+            option
+              .setName("server")
+              .setDescription("Which server to send the command to")
+              .setRequired(true)
+              .setAutocomplete(true)
+          );
       },
       {
         idHints: [],

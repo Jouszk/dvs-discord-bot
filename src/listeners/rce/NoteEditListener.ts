@@ -1,6 +1,6 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { NoteEdit } from "../../interfaces";
+import { NoteEditEvent } from "../../interfaces";
 import { RCEEventType, RUST_ADMINS } from "../../vars";
 import { Time } from "@sapphire/time-utilities";
 import { PermissionFlagsBits, TextChannel } from "discord.js";
@@ -12,15 +12,15 @@ import { PermissionFlagsBits, TextChannel } from "discord.js";
 export default class NoteEditListener extends Listener {
   private rateLimit: Map<string, boolean> = new Map();
 
-  public async run(note: NoteEdit) {
-    if (process.env.NODE_ENV !== "production") return;
+  public async run(note: NoteEditEvent) {
+    // if (process.env.NODE_ENV !== "production") return;
 
     // Anti-Code Leak
     // If the note contains a 4 digit number, it's probably a code leak
-    note.newContent = note.newContent.replace(/\d{4}/g, "[REDACTED]");
+    note.note.newContent = note.note.newContent.replace(/\d{4}/g, "[REDACTED]");
 
     // Exploit patch
-    note.newContent = note.newContent.replace("@", "@/");
+    note.note.newContent = note.note.newContent.replace("@", "@/");
 
     // Blacklist handler
     const blacklist = this.container.settings.get(
@@ -28,18 +28,23 @@ export default class NoteEditListener extends Listener {
       "chat.blacklist",
       []
     );
-    if (blacklist.includes(note.username.toLowerCase())) return;
+    if (blacklist.includes(note.note.username.toLowerCase())) return;
 
     // Set a rate limit of 1 message per 15 seconds
-    if (this.rateLimit.get(note.username)) return;
-    this.rateLimit.set(note.username, true);
-    setTimeout(() => this.rateLimit.delete(note.username), Time.Second * 15);
+    if (this.rateLimit.get(note.note.username)) return;
+    this.rateLimit.set(note.note.username, true);
+    setTimeout(
+      () => this.rateLimit.delete(note.note.username),
+      Time.Second * 15
+    );
 
     // Change role color and name
     let color = "#ffffff";
     let role = "";
-    if (RUST_ADMINS.some((admin) => admin.ign === note.username)) {
-      const admin = RUST_ADMINS.find((admin) => admin.ign === note.username);
+    if (RUST_ADMINS.some((admin) => admin.ign === note.note.username)) {
+      const admin = RUST_ADMINS.find(
+        (admin) => admin.ign === note.note.username
+      );
 
       color = admin.chatColor;
       role = "[Admin]";
@@ -47,7 +52,7 @@ export default class NoteEditListener extends Listener {
       const isVip = await container.db.vIPUser.findFirst({
         where: {
           id: {
-            equals: note.username.toLowerCase(),
+            equals: note.note.username.toLowerCase(),
             mode: "insensitive",
           },
         },
@@ -59,11 +64,12 @@ export default class NoteEditListener extends Listener {
 
     // Send to RCE if in production
     if (process.env.NODE_ENV === "production") {
-      this.container.rce.sendCommand(
+      this.container.rce.sendCommandToServer(
+        `${note.server.ipAddress}:${note.server.port}`,
         `say ${
           role !== "" ? `<color=${color}>${role}</color> ` : ""
-        }[<color=#ffffff>${note.username}</color>]: <color=${color}>${
-          note.newContent
+        }[<color=#ffffff>${note.note.username}</color>]: <color=${color}>${
+          note.note.newContent
         }</color>`
       );
     }
@@ -79,7 +85,7 @@ export default class NoteEditListener extends Listener {
         .has(PermissionFlagsBits.SendMessages)
     ) {
       channel.send({
-        content: `**${note.username}**: ${note.newContent}`,
+        content: `[${note.server.name}] **${note.note.username}**: ${note.note.newContent}`,
       });
     }
   }

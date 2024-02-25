@@ -12,16 +12,21 @@ import {
   ModalSubmitInteraction,
 } from "discord.js";
 import { stripIndents } from "common-tags";
+import { servers } from "../../servers";
 
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
 export class RedeemModal extends InteractionHandler {
   public async parse(interaction: ModalSubmitInteraction) {
-    return interaction.customId === "redeem_key" ? this.some() : this.none();
+    if (!interaction.customId.startsWith("redeem_key_")) {
+      return this.none();
+    }
+
+    return this.some(interaction.customId.split("_")[2]);
   }
 
-  public async run(interaction: ModalSubmitInteraction) {
+  public async run(interaction: ModalSubmitInteraction, serverId: string) {
     // Get the content from the modal
     const inGameName = interaction.fields
       .getTextInputValue("in_game_name")
@@ -42,6 +47,10 @@ export class RedeemModal extends InteractionHandler {
       });
     }
 
+    const serverInfo = servers.find(
+      (s) => s.ipAddress === serverId.split(":")[0]
+    );
+
     const embed = new EmbedBuilder()
       .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
       .setTitle("Redeem Key")
@@ -55,13 +64,16 @@ export class RedeemModal extends InteractionHandler {
         - You are in-game and ready to receive the items
         - Your inventory is EMPTY
         - You're in a safe location
+        - You're redeeming the key on the server: \`${serverInfo?.name}\`
       `
       )
       .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL);
 
     const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId(`confirm_redeem@${redeemKey.key}@${inGameName}`)
+        .setCustomId(
+          `confirm_redeem@${redeemKey.key}@${inGameName}@${serverId}`
+        )
         .setLabel("Confirm")
         .setStyle(ButtonStyle.Success)
     );

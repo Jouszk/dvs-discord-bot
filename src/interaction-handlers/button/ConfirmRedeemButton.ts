@@ -27,12 +27,13 @@ export class ViewModerationButton extends InteractionHandler {
     return this.some({
       key: interaction.customId.split("@")[1],
       ign: interaction.customId.split("@")[2],
+      server: interaction.customId.split("@")[3],
     });
   }
 
   public async run(
     interaction: ButtonInteraction,
-    data: { key: string; ign: string }
+    data: { key: string; ign: string; server: string }
   ) {
     // Get the key data
     const redeemKeys: RedeemKey[] = this.container.settings.get(
@@ -63,7 +64,7 @@ export class ViewModerationButton extends InteractionHandler {
 
     // Execute the commands
     if (redeemKey.commands.length) {
-      this.container.rce.sendCommands(redeemKey.commands);
+      this.container.rce.sendCommandsToServer(data.server, redeemKey.commands);
     }
 
     // Send to code redemption channel

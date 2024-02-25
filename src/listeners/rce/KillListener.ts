@@ -1,6 +1,6 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { KillMessage } from "../../interfaces";
+import { KillEvent } from "../../interfaces";
 import { RCEEventType } from "../../vars";
 import { PermissionFlagsBits, type TextChannel } from "discord.js";
 
@@ -9,8 +9,10 @@ import { PermissionFlagsBits, type TextChannel } from "discord.js";
   emitter: container.rce.emitter,
 })
 export default class KillListener extends Listener {
-  public async run(kill: KillMessage) {
-    if (process.env.NODE_ENV !== "production") return;
+  public async run(kill: KillEvent) {
+    // if (process.env.NODE_ENV !== "production") return;
+
+    const serverId = `${kill.server.ipAddress}:${kill.server.port}`;
 
     const channel = this.container.client.channels.cache.get(
       process.env.DISCORD_KILLFEED_CHANNEL
@@ -22,37 +24,42 @@ export default class KillListener extends Listener {
         .permissionsFor(channel.guild.members.me)
         .has(PermissionFlagsBits.SendMessages)
     ) {
-      await channel.send(`**${kill.attacker}** killed **${kill.victim}**`);
+      await channel.send(
+        `[${kill.server.name}] **${kill.kill.attacker}** killed **${kill.kill.victim}**`
+      );
     }
 
-    this.container.rce.sendCommand(
-      `say <color=red>${kill.attacker}</color> killed <color=red>${kill.victim}</color>`
+    this.container.rce.sendCommandToServer(
+      serverId,
+      `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
     );
 
     // Log the kill to the leaderboard
     await this.container.db.player.upsert({
-      where: { id: kill.attacker },
+      where: { id: kill.kill.attacker, serverId },
       update: {
         kills: {
           increment: 1,
         },
       },
       create: {
-        id: kill.attacker,
+        id: kill.kill.attacker,
+        serverId,
         kills: 1,
       },
     });
 
     // Log the death to the leaderbaord
     await this.container.db.player.upsert({
-      where: { id: kill.victim },
+      where: { id: kill.kill.victim, serverId },
       update: {
         deaths: {
           increment: 1,
         },
       },
       create: {
-        id: kill.victim,
+        id: kill.kill.victim,
+        serverId,
         deaths: 1,
       },
     });

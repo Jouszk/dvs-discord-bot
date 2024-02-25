@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 import { RUST_ADMINS } from "../../vars";
+import { servers } from "../../servers";
 
 @ApplyOptions<Command.Options>({
   name: "say",
@@ -26,6 +27,13 @@ export default class SayCommand extends Command {
               .setDescription("The message to send to the server")
               .setRequired(true)
           )
+          .addStringOption((option) =>
+            option
+              .setName("server")
+              .setDescription("Which server to send the command to")
+              .setRequired(true)
+              .setAutocomplete(true)
+          )
           .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers);
       },
       {
@@ -36,11 +44,13 @@ export default class SayCommand extends Command {
 
   public chatInputRun(interaction: ChatInputCommandInteraction) {
     const message = interaction.options.getString("msg", true);
+    const server = interaction.options.getString("server", true);
     const admin = RUST_ADMINS.find(
       (admin) => admin.discord === interaction.user.id
     );
 
-    this.container.rce.sendCommand(
+    this.container.rce.sendCommandToServer(
+      server,
       `say <color=${admin.chatColor}>[Admin]</color> [${admin.ign}]: <color=${admin.chatColor}>${message}</color>`
     );
 
