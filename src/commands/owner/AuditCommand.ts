@@ -1,5 +1,5 @@
 import { Command, ApplicationCommandRegistry } from "@sapphire/framework";
-import { Role, type ChatInputCommandInteraction } from "discord.js";
+import { type ChatInputCommandInteraction } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 
 @ApplyOptions<Command.Options>({
@@ -26,23 +26,21 @@ export default class AuditCommand extends Command {
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    await interaction.guild.members.fetch();
 
-    const vips = await this.container.db.vIPUser.findMany();
-    const members = interaction.guild.members.cache.filter((m) =>
-      m.roles.cache.has(process.env.VIP_ROLE_ID)
-    );
+    const kills = await this.container.db.player.findMany();
 
-    await Promise.all(
-      members.map((member) => {
-        if (!vips.find((vip) => vip.discordId === member.id)) {
-          member.roles.remove(process.env.VIP_ROLE_ID);
-        }
-      })
-    );
+    // Change serverId to "server1"
+    for (const kill of kills) {
+      await this.container.db.player.update({
+        where: {
+          id: kill.id,
+        },
+        data: {
+          serverId: "server1",
+        },
+      });
+    }
 
-    return interaction.editReply({
-      content: "R.I.P to the VIPs who haven't paid",
-    });
+    await interaction.editReply("Done");
   }
 }

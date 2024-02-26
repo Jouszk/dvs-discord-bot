@@ -39,7 +39,7 @@ export default class RedeemCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const server = interaction.options.getString("server", true);
     const serverInfo = servers.find(
-      (s) => s.ipAddress === server.split(":")[0]
+      (s) => s.id.toLowerCase() === server.toLowerCase()
     );
 
     if (!serverInfo) {

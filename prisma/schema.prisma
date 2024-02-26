@@ -47,7 +47,7 @@ model TicketMessage {
 
 model Player {
   id        String   @id
-  serverId  String   @default("45.137.246.96:28516")
+  serverId  String   
   kills     Int      @default(0)
   deaths    Int      @default(0)
   createdAt DateTime @default(now())

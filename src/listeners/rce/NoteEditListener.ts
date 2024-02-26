@@ -65,7 +65,7 @@ export default class NoteEditListener extends Listener {
     // Send to RCE if in production
     if (process.env.NODE_ENV === "production") {
       this.container.rce.sendCommandToServer(
-        `${note.server.ipAddress}:${note.server.port}`,
+        note.server.id,
         `say ${
           role !== "" ? `<color=${color}>${role}</color> ` : ""
         }[<color=#ffffff>${note.note.username}</color>]: <color=${color}>${

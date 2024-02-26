@@ -12,7 +12,7 @@ export default class GameEventListener extends Listener {
     if (process.env.NODE_ENV !== "production") return;
 
     this.container.rce.sendCommandToServer(
-      `${event.server.ipAddress}:${event.server.port}`,
+      event.server.id,
       `say <color=green>${event.event}</color> is incoming...`
     );
   }

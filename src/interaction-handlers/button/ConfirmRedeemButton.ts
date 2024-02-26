@@ -8,6 +8,7 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
+import { servers } from "../../servers";
 
 interface RedeemKey {
   name: string;
@@ -72,6 +73,10 @@ export class ViewModerationButton extends InteractionHandler {
       process.env.CODE_REDEMPTION_LOG_CHANNEL_ID
     ) as TextChannel;
 
+    const serverInfo = servers.find(
+      (s) => s.id.toLowerCase() === data.server.toLowerCase()
+    );
+
     if (
       channel &&
       channel
@@ -79,7 +84,7 @@ export class ViewModerationButton extends InteractionHandler {
         .has([PermissionFlagsBits.SendMessages])
     ) {
       channel.send({
-        content: `**${interaction.user}** redeemed \`${
+        content: `[${serverInfo.name}] **${interaction.user}** redeemed \`${
           redeemKey.name
         }\`\n\`\`\`\n${redeemKey.commands.join("\n")}\n\`\`\`\n**Key:** \`${
           redeemKey.key

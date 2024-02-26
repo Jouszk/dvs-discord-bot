@@ -37,7 +37,7 @@ export class ServerAutocomplete extends InteractionHandler {
         .filter((server) => server.connected)
         .map((server) => ({
           name: server.name,
-          value: `${server.ipAddress}:${server.rconPort}`,
+          value: server.id,
         }))
         .slice(0, 25)
     );

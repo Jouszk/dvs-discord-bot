@@ -1,4 +1,5 @@
 export interface Server {
+  id: string;
   game: string;
   name: string;
   features: string[];
@@ -11,6 +12,7 @@ export interface Server {
 
 export const servers: Server[] = [
   {
+    id: "server1",
     game: "Rust Console Edition",
     name: "DvS Solo/Duo/Trio",
     logo: `${process.env.MAIN_WEBSITE_URL}/img/rust-console.png`,
@@ -27,6 +29,7 @@ export const servers: Server[] = [
     connected: false,
   },
   // {
+  //   id: "server2",
   //   game: "Rust Console Edition",
   //   name: "DvS 1-6 Player Server",
   //   logo: `${process.env.MAIN_WEBSITE_URL}/img/rust-console.png`,

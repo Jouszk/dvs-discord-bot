@@ -12,8 +12,6 @@ export default class KillListener extends Listener {
   public async run(kill: KillEvent) {
     if (process.env.NODE_ENV !== "production") return;
 
-    const serverId = `${kill.server.ipAddress}:${kill.server.port}`;
-
     const channel = this.container.client.channels.cache.get(
       process.env.DISCORD_KILLFEED_CHANNEL
     ) as TextChannel;
@@ -30,13 +28,13 @@ export default class KillListener extends Listener {
     }
 
     this.container.rce.sendCommandToServer(
-      serverId,
+      kill.server.id,
       `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
     );
 
     // Log the kill to the leaderboard
     await this.container.db.player.upsert({
-      where: { id: kill.kill.attacker, serverId },
+      where: { id: kill.kill.attacker, serverId: kill.server.id },
       update: {
         kills: {
           increment: 1,
@@ -44,14 +42,14 @@ export default class KillListener extends Listener {
       },
       create: {
         id: kill.kill.attacker,
-        serverId,
+        serverId: kill.server.id,
         kills: 1,
       },
     });
 
     // Log the death to the leaderbaord
     await this.container.db.player.upsert({
-      where: { id: kill.kill.victim, serverId },
+      where: { id: kill.kill.victim, serverId: kill.server.id },
       update: {
         deaths: {
           increment: 1,
@@ -59,7 +57,7 @@ export default class KillListener extends Listener {
       },
       create: {
         id: kill.kill.victim,
-        serverId,
+        serverId: kill.server.id,
         deaths: 1,
       },
     });

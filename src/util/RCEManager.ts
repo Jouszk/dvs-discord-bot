@@ -82,15 +82,13 @@ export default class RCEManager {
   }
 
   private setupListeners(server: Server, socket: WebSocket): void {
-    const serverId = `${server.ipAddress}:${server.rconPort}`;
-
     socket.addEventListener("close", () => {
-      if (!this.isReconnecting.get(serverId)) {
+      if (!this.isReconnecting.get(server.id)) {
         container.logger.ws(
-          `WebSocket connection closed with RCE server ${serverId}`
+          `WebSocket connection closed with RCE server ${server.ipAddress}:${server.rconPort}, reconnecting in 5 seconds`
         );
         server.connected = false;
-        this.isReconnecting.set(serverId, true);
+        this.isReconnecting.set(server.id, true);
         this.connectWsForServer(server);
       }
     });
@@ -107,6 +105,7 @@ export default class RCEManager {
   private handleMessage(server: Server, message: MsgEvent): void {
     const data: SocketData = JSON.parse(message.data.toString());
     const serverDetails = {
+      id: server.id,
       name: server.name,
       ipAddress: server.ipAddress,
       port: server.rconPort,
