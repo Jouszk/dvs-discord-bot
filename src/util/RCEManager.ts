@@ -11,7 +11,7 @@ import {
   SocketData,
   NoteEdit,
 } from "../interfaces";
-import { Server, servers } from "../servers";
+import { Server } from "../servers";
 
 class RCEManagerEvents extends EventEmitter {}
 
@@ -31,12 +31,11 @@ export default class RCEManager {
   }
 
   private async connectWsForServer(server: Server): Promise<void> {
-    const serverId = `${server.ipAddress}:${server.rconPort}`;
-    this.isReconnecting.set(serverId, false);
+    this.isReconnecting.set(server.id, false);
 
     while (
-      !this.sockets.has(serverId) ||
-      this.sockets.get(serverId).readyState !== WebSocket.OPEN
+      !this.sockets.has(server.id) ||
+      this.sockets.get(server.id).readyState !== WebSocket.OPEN
     ) {
       try {
         const socket = new WebSocket(
@@ -44,13 +43,13 @@ export default class RCEManager {
         );
 
         socket.addEventListener("error", (error) => {
-          if (!this.isReconnecting.get(serverId)) {
+          if (!this.isReconnecting.get(server.id)) {
             container.logger.ws(
-              `[${error.message}] Failed to connect to RCE server ${serverId}, retrying in 5 seconds`
+              `[${error.message}] Failed to connect to RCE server ${server.ipAddress}:${server.rconPort}, retrying in 5 seconds`
             );
           }
 
-          this.isReconnecting.set(serverId, true);
+          this.isReconnecting.set(server.id, true);
 
           setTimeout(() => {
             this.connectWsForServer(server);
@@ -63,16 +62,16 @@ export default class RCEManager {
 
         await new Promise<void>((resolve) => {
           socket.addEventListener("open", () => {
-            this.isReconnecting.set(serverId, false);
+            this.isReconnecting.set(server.id, false);
             container.logger.ws(
-              `WebSocket connection established with RCE server ${serverId}`
+              `WebSocket connection established with RCE server ${server.ipAddress}:${server.rconPort}`
             );
             server.connected = true;
             resolve();
           });
         });
 
-        this.sockets.set(serverId, socket);
+        this.sockets.set(server.id, socket);
         this.setupListeners(server, socket);
       } catch (error) {
         container.logger.error(error);

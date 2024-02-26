@@ -48,7 +48,7 @@ export class RedeemModal extends InteractionHandler {
     }
 
     const serverInfo = servers.find(
-      (s) => s.ipAddress === serverId.split(":")[0]
+      (s) => s.id.toLowerCase() === serverId.toLowerCase()
     );
 
     const embed = new EmbedBuilder()
