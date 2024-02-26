@@ -3,6 +3,8 @@ import { ApplyOptions } from "@sapphire/decorators";
 
 import { CronTask } from "../../interfaces";
 import WebCacheManager from "../../util/WebCacheManager";
+import { set } from "dot-prop";
+import { Time } from "@sapphire/time-utilities";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -14,6 +16,10 @@ export default class ReadyListener extends Listener {
     this.container.logger.info(
       `${this.container.client.user!.tag} is online and ready`
     );
+
+    // Set the bot's status
+    this.setStatus();
+    setInterval(() => this.setStatus(), Time.Minute * 1);
 
     // Setup cron jobs
     const crons: CronTask[] = this.container.settings.get(
@@ -40,5 +46,14 @@ export default class ReadyListener extends Listener {
     if (process.env.NODE_ENV !== "production") {
       // EmbedSender.sendEmbeds("1179644648411643914", vipUpgradeJson);
     }
+  }
+
+  private async setStatus() {
+    const servers = this.container.servers;
+    this.container.client.user!.setActivity({
+      name: `${servers.filter((server) => server.connected).length}/${
+        servers.length
+      } servers online`,
+    });
   }
 }

@@ -38,12 +38,6 @@ export default class BotClient extends SapphireClient {
         instance: new CustomLogger(LogLevel.Info),
       },
       presence: {
-        activities: [
-          {
-            name: "dvs.gg",
-            type: ActivityType.Watching,
-          },
-        ],
         status: "dnd",
       },
     });
