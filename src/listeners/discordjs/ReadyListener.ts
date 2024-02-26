@@ -5,6 +5,7 @@ import { CronTask } from "../../interfaces";
 import WebCacheManager from "../../util/WebCacheManager";
 import { set } from "dot-prop";
 import { Time } from "@sapphire/time-utilities";
+import { ActivityType } from "discord.js";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -54,6 +55,7 @@ export default class ReadyListener extends Listener {
       name: `${servers.filter((server) => server.connected).length}/${
         servers.length
       } servers online`,
+      type: ActivityType.Watching,
     });
   }
 }
