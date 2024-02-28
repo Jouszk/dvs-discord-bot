@@ -3,9 +3,10 @@ import { ApplyOptions } from "@sapphire/decorators";
 
 import { CronTask } from "../../interfaces";
 import WebCacheManager from "../../util/WebCacheManager";
-import { set } from "dot-prop";
 import { Time } from "@sapphire/time-utilities";
 import { ActivityType } from "discord.js";
+import shopJson from "../../../json/shop.json";
+import EmbedSender from "../../util/EmbedSender";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -45,7 +46,7 @@ export default class ReadyListener extends Listener {
 
     // Send embeds to a channel
     if (process.env.NODE_ENV !== "production") {
-      // EmbedSender.sendEmbeds("1179644648411643914", vipUpgradeJson);
+      // EmbedSender.sendEmbeds("1198925908711583744", shopJson);
     }
   }
 

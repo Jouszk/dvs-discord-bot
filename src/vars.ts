@@ -87,6 +87,70 @@ export const ignoredAttacker = [
   "oilfireballsmall (entity)",
 ];
 
+interface ShopPack {
+  id: number;
+  name: string;
+  price: number;
+  commands: string[];
+}
+
+export const shopPacks: ShopPack[] = [
+  {
+    id: 5,
+    name: "Tier 1 Base Pack",
+    price: 2,
+    commands: ['kit givetoplayer t1base "{username}"'],
+  },
+  {
+    id: 6,
+    name: "Tier 2 Base Pack",
+    price: 5,
+    commands: ['kit givetoplayer t2base "{username}"'],
+  },
+  {
+    id: 7,
+    name: "Tier 3 Base Pack",
+    price: 15,
+    commands: ['kit givetoplayer t3base "{username}"'],
+  },
+  {
+    id: 8,
+    name: "Tier 1 Kit Pack",
+    price: 1,
+    commands: ['kit givetoplayer t1kit "{username}"'],
+  },
+  {
+    id: 10,
+    name: "Tier 2 Kit Pack",
+    price: 3,
+    commands: ['kit givetoplayer t2kit "{username}"'],
+  },
+  {
+    id: 12,
+    name: "Tier 3 Kit Pack",
+    price: 5,
+    commands: ['kit givetoplayer t3kit "{username}"'],
+  },
+  {
+    id: 9,
+    name: "Tier 1 Prototype Kit",
+    price: 1,
+    commands: ['kit givetoplayer t1kit-proto "{username}"'],
+  },
+  {
+    id: 11,
+    name: "Tier 2 M4 Shotgun Kit",
+    price: 3,
+    commands: ['kit givetoplayer t2kit-m4 "{username}"'],
+  },
+  {
+    id: 13,
+    name: "Night OP Kit",
+    price: 7,
+    commands: ['kit givetoplayer nightop "{username}"'],
+  },
+];
+
 // {username} - The username of the user who redeemed the key
 export const keyPresets: KeyPreset[] = [
   {
@@ -110,16 +174,28 @@ export const keyPresets: KeyPreset[] = [
     commands: ['kit givetoplayer t3base "{username}"'],
   },
   {
-    name: "Tier 1 Kit",
+    name: "Tier 1 Kit - Thompson",
     commands: ['kit givetoplayer t1kit "{username}"'],
   },
   {
-    name: "Tier 2 Kit",
+    name: "Tier 1 Kit - Prototype 17",
+    commands: ['kit givetoplayer t1kit-proto "{username}"'],
+  },
+  {
+    name: "Tier 2 Kit - MP5A4",
     commands: ['kit givetoplayer t2kit "{username}"'],
+  },
+  {
+    name: "Tier 2 Kit - M4 Shotgun",
+    commands: ['kit givetoplayer t2kit-m4 "{username}"'],
   },
   {
     name: "Tier 3 Kit",
     commands: ['kit givetoplayer t3kit "{username}"'],
+  },
+  {
+    name: "Night OP Kit",
+    commands: ['kit givetoplayer nightop "{username}"'],
   },
 ];
 
