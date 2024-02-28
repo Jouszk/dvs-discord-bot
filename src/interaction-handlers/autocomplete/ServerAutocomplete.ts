@@ -20,6 +20,7 @@ export class ServerAutocomplete extends InteractionHandler {
         "say",
         "leaderboard",
         "redeem",
+        "stats",
       ].includes(interaction.commandName)
     ) {
       return this.none();
