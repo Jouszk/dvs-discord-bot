@@ -10,7 +10,7 @@ import EconomyUtils, { FRUIT_VALUES } from "../../util/EconomyUtils";
 @ApplyOptions<Command.Options>({
   name: "slots",
   description: "Gamble your DvS Coin away in a game of slots",
-  runIn: "GUILD_ANY",
+  enabled: false,
 })
 export default class SlotsCommand extends Command {
   public override registerApplicationCommands(

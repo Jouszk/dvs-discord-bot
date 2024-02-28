@@ -10,6 +10,7 @@ import EconomyUtils, { ROULETTE_NUMBERS } from "../../util/EconomyUtils";
 @ApplyOptions<Command.Options>({
   name: "roulette",
   description: "Gamble your DvS Coin away in a game of roulette",
+  enabled: false,
 })
 export default class RouletteCommand extends Command {
   public override registerApplicationCommands(
