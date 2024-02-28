@@ -82,9 +82,8 @@ export class RankCommand extends Command {
       .addField("Kills", stats.kills.toString(), true)
       .addField("Deaths", stats.deaths.toString(), true)
       .addField("K/D", (stats.kills / stats.deaths).toFixed(2), true)
-      .setDescription(
-        vip ? "This player is a VIP" : "This player is not a VIP"
-      );
+      .setDescription(vip ? "This player is a VIP" : "This player is not a VIP")
+      .setFooter({ text: "These statistics only reflect this current wipe" });
 
     return interaction.reply({ embeds: [embed] });
   }
