@@ -25,8 +25,11 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
       - dvs_network
+      - pgadmin_network
 networks:
   caddy_network:
     external: true
   dvs_network:
     external: false
+  pgadmin_network:
+    external: true
