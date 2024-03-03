@@ -14,14 +14,16 @@ import {
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
 })
-export class GameAdminApplicationModal extends InteractionHandler {
+export class GraphicsDesignerApplicationModal extends InteractionHandler {
   public async parse(interaction: ModalSubmitInteraction) {
+    console.log(interaction.customId);
     return interaction.customId === "graphics_designer_application"
       ? this.some()
       : this.none();
   }
 
   public async run(interaction: ModalSubmitInteraction) {
+    console.log("test");
     await interaction.deferReply({ ephemeral: true });
 
     // Get values from modal

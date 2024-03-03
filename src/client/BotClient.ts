@@ -5,7 +5,7 @@ import {
   RegisterBehavior,
   container,
 } from "@sapphire/framework";
-import { Partials, ActivityType } from "discord.js";
+import { Partials } from "discord.js";
 import CustomLogger from "../util/CustomLogger";
 import { PrismaClient } from "@prisma/client";
 import RCEManager from "../util/RCEManager";
