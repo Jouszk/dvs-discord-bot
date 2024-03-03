@@ -32,7 +32,7 @@ export default class BalanceCommand extends Command {
         command
           .setName(this.name)
           .setDescription(this.description)
-          .addStringOption((option) =>
+          .addUserOption((option) =>
             option
               .setName("user")
               .setDescription("The user you want to check the balance of")
