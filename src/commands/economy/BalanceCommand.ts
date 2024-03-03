@@ -8,14 +8,16 @@ import { ApplyOptions } from "@sapphire/decorators";
 })
 export default class BalanceCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
+    const user = interaction.options.getUser("user", false) || interaction.user;
+
     const economy = await this.container.db.economyUser.findFirst({
       where: {
-        id: interaction.user.id,
+        id: user.id,
       },
     });
 
     return interaction.reply({
-      content: `You have <:dvscoin:1212381742485340180> ${
+      content: `${user} has <:dvscoin:1212381742485340180> ${
         economy?.balance || 0
       } DvS Coins!`,
       ephemeral: true,
@@ -27,7 +29,15 @@ export default class BalanceCommand extends Command {
   ) {
     registry.registerChatInputCommand(
       (command) => {
-        command.setName(this.name).setDescription(this.description);
+        command
+          .setName(this.name)
+          .setDescription(this.description)
+          .addStringOption((option) =>
+            option
+              .setName("user")
+              .setDescription("The user you want to check the balance of")
+              .setRequired(false)
+          );
       },
       {
         idHints: [],

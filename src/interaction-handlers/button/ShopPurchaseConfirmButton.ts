@@ -3,7 +3,7 @@ import {
   InteractionHandlerTypes,
 } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, TextChannel } from "discord.js";
 import { shopPacks } from "../../vars";
 import crypto from "crypto";
 
@@ -77,9 +77,23 @@ export class ShopPurchaseConfirmButton extends InteractionHandler {
     // Save the keys
     this.container.settings.set("global", "keys", redeemKeys);
 
+    // Send log
+    const channel = (await interaction.guild?.channels.fetch(
+      process.env.COIN_LOGS_CHANNEL_ID!
+    )) as TextChannel;
+    channel.send({
+      content: `${interaction.user} has purchased **${
+        item.name
+      }** for <:dvscoin:1212381742485340180> **${
+        item.price
+      } DvS Coins**. They now have <:dvscoin:1212381742485340180> **${
+        economy.balance - item.price
+      } DvS Coins**.`,
+    });
+
     // Send Response
     return await interaction.reply({
-      content: `You have successfully purchased **${item.name}** for <:dvscoin:1212382310645628958> **${item.price} DvS Coins**. Your redeem key is: \`${key}\``,
+      content: `You have successfully purchased **${item.name}** for <:dvscoin:1212381742485340180> **${item.price} DvS Coins**. Your redeem key is: \`${key}\``,
       ephemeral: true,
     });
   }

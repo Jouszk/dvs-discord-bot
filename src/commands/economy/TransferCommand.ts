@@ -1,5 +1,9 @@
 import { Command, ApplicationCommandRegistry } from "@sapphire/framework";
-import { ChatInputCommandInteraction, PermissionFlagsBits } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+  TextChannel,
+} from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 
 @ApplyOptions<Command.Options>({
@@ -81,6 +85,18 @@ export class TransferCommand extends Command {
           decrement: amount,
         },
       },
+    });
+
+    // Send log
+    const channel = (await interaction.guild?.channels.fetch(
+      process.env.COIN_LOGS_CHANNEL_ID!
+    )) as TextChannel;
+    channel.send({
+      content: `**${
+        interaction.user
+      }** has transferred ${user} <:dvscoin:1212381742485340180> **${amount} DvS Coins**. They now have <:dvscoin:1212381742485340180> **${
+        userEconomy.balance - amount
+      } DvS Coins**.`,
     });
 
     return interaction.reply({
