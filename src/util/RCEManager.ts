@@ -13,21 +13,109 @@ import {
 } from "../interfaces";
 import { Server } from "../servers";
 
+interface AuthToken {
+  access_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
+  refresh_token: string;
+  token_type: "Bearer";
+  id_token: string;
+  session_state: string;
+  scope: string;
+}
+
+const GPORTAL_REFRESH_ROUTE =
+  "https://auth.g-portal.com/auth/realms/master/protocol/openid-connect/token";
+const GPORTAL_COMMAND_ROUTE = "https://www.g-portal.com/ngpapi/";
+
 class RCEManagerEvents extends EventEmitter {}
 
 export default class RCEManager {
   private sockets: Map<string, WebSocket> = new Map();
   private isReconnecting: Map<string, boolean> = new Map();
   public emitter: RCEManagerEvents = new RCEManagerEvents();
+  public limitedAuth: AuthToken | null = null;
 
   public constructor() {
     this.connectAllWs();
+    this.startLimited();
+  }
+
+  public async startLimited() {
+    this.limitedAuth = await this.refreshToken();
+  }
+
+  private async sendLimitedCommand(
+    server: Server,
+    command: string
+  ): Promise<boolean> {
+    if (!this.limitedAuth) return false;
+
+    const data = {
+      operationName: "runCommand",
+      variables: {
+        sid: server.serverId,
+        region: server.region,
+        command: "serverCommand",
+        kwargs: `{"command":"${command.replace(/"/g, '\\"')}"}`,
+      },
+      query:
+        "mutation runCommand($sid: Int!, $region: REGION!, $command: String!, $kwargs: JSONString!) {\n  runCommand(\n    rsid: {id: $sid, region: $region}\n    command: $command\n    kwargs: $kwargs\n  ) {\n    returnVal\n    __typename\n  }\n}",
+    };
+
+    const request = await fetch(GPORTAL_COMMAND_ROUTE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.limitedAuth.access_token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!request.ok || request.status !== 200) return false;
+    return true;
+  }
+
+  private async refreshToken(): Promise<AuthToken | null> {
+    const gportalAuth: AuthToken = container.settings.get(
+      "global",
+      "gportal.auth",
+      null
+    );
+
+    if (!gportalAuth) return null;
+
+    const request = await fetch(GPORTAL_REFRESH_ROUTE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: "website",
+        refresh_token: gportalAuth.refresh_token,
+      }),
+    });
+
+    if (!request.ok || request.status !== 200) return null;
+
+    const auth: AuthToken = await request.json();
+
+    setTimeout(() => {
+      this.refreshToken();
+    }, auth.expires_in * 1_000);
+
+    container.settings.set("global", "gportal.auth", auth);
+
+    return auth;
   }
 
   private async connectAllWs(): Promise<void> {
-    container.servers.forEach((server) => {
-      this.connectWsForServer(server);
-    });
+    container.servers
+      .filter((server) => !server.limited)
+      .forEach((server) => {
+        this.connectWsForServer(server);
+      });
   }
 
   private async connectWsForServer(server: Server): Promise<void> {
@@ -241,6 +329,13 @@ export default class RCEManager {
   }
 
   public sendCommandToServer(serverId: string, command: string): void {
+    const server = container.servers.find((s) => s.id === serverId);
+
+    if (server.limited) {
+      this.sendLimitedCommand(server, command);
+      return;
+    }
+
     const socket = this.sockets.get(serverId);
 
     if (socket && socket.readyState === WebSocket.OPEN) {

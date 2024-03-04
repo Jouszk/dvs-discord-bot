@@ -27,6 +27,14 @@ export default class LeaderboardCommand extends Command {
       });
     }
 
+    if (serverInfo.limited) {
+      return interaction.reply({
+        content:
+          "This is a **limited** automation server and doesn't have a killfeed / leaderboard.",
+        ephemeral: true,
+      });
+    }
+
     const leaderboard = await this.getLeaderboard(server, 25);
 
     const embed = new EmbedBuilder()

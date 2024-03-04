@@ -54,7 +54,7 @@ export default class ReadyListener extends Listener {
     const servers = this.container.servers;
     this.container.client.user!.setActivity({
       name: `${servers.filter((server) => server.connected).length}/${
-        servers.length
+        servers.filter((server) => !server.limited).length
       } servers online`,
       type: ActivityType.Watching,
     });

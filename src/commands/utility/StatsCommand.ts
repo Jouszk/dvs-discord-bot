@@ -54,6 +54,14 @@ export class RankCommand extends Command {
       });
     }
 
+    if (serverInfo.limited) {
+      return interaction.reply({
+        content:
+          "This is a **limited** automation server and doesn't have a killfeed / leaderboard.",
+        ephemeral: true,
+      });
+    }
+
     const stats = await this.container.db.player.findFirst({
       where: {
         id: {

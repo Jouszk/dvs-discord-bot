@@ -35,9 +35,13 @@ export class ServerAutocomplete extends InteractionHandler {
     // Return the servers
     return this.some(
       this.container.servers
-        .filter((server) => server.connected)
+        .filter(
+          (server) =>
+            server.connected ||
+            (server.limited && this.container.rce.limitedAuth)
+        )
         .map((server) => ({
-          name: server.name,
+          name: `${server.name} ${server.limited ? "(Limited)" : ""}`,
           value: server.id,
         }))
         .slice(0, 25)
