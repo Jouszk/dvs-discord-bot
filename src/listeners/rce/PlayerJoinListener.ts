@@ -15,12 +15,12 @@ export default class PlayerJoinListener extends Listener {
 
     if (!vipData) {
       return this.container.rce.sendCommandToServer(
-        `${player.server.ipAddress}:${player.server.port}`,
+        player.server.id,
         `RemoveVIP "${player.username}"`
       );
     } else {
       return this.container.rce.sendCommandToServer(
-        `${player.server.ipAddress}:${player.server.port}`,
+        player.server.id,
         `VIPID "${player.username}"`
       );
     }
