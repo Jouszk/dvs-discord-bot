@@ -29,6 +29,13 @@ export const modalQuestions = {
       placeholder: "i.e. Saucey Hub",
     },
     {
+      label: "Which server are you playing?",
+      id: "server",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. DvS Solo/Duo/Trio",
+    },
+    {
       label: "What was your old base grid?",
       id: "old_base_grid",
       style: "SHORT",
@@ -52,6 +59,13 @@ export const modalQuestions = {
       placeholder: "i.e. Saucey Hub",
     },
     {
+      label: "Which server are you playing?",
+      id: "server",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. DvS Solo/Duo/Trio",
+    },
+    {
       label: "What grid would you like demolished?",
       id: "base_grid",
       style: "SHORT",
@@ -73,6 +87,13 @@ export const modalQuestions = {
       style: "SHORT",
       required: true,
       placeholder: "i.e. Saucey Hub",
+    },
+    {
+      label: "Which server are you playing?",
+      id: "server",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. DvS Solo/Duo/Trio",
     },
     {
       label: "What is the player's Xbox / PSN Username?",
@@ -142,6 +163,13 @@ export const modalQuestions = {
       style: "SHORT",
       required: true,
       placeholder: "i.e. Saucey Hub",
+    },
+    {
+      label: "Which server are you playing?",
+      id: "server",
+      style: "SHORT",
+      required: true,
+      placeholder: "i.e. DvS Solo/Duo/Trio",
     },
     {
       label: "Message",
