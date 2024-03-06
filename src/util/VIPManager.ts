@@ -88,7 +88,7 @@ export default class VIPManager {
 
     // Remove VIP in-game
     servers.forEach((server) => {
-      container.rce.sendCommandToServer(server.id, `RemoveVIP "${vip.id}"`);
+      container.rce.sendCommand(server, `RemoveVIP "${vip.id}"`);
     });
 
     // Remove VIP in Discord (if possible)
@@ -149,7 +149,7 @@ export default class VIPManager {
 
     // Add VIP in-game
     servers.forEach((server) => {
-      container.rce.sendCommandToServer(server.id, `VIPID "${inGameName}"`);
+      container.rce.sendCommand(server, `VIPID "${inGameName}"`);
     });
 
     // Add VIP in Discord (if possible)

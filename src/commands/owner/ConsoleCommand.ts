@@ -1,6 +1,7 @@
 import { Command, ApplicationCommandRegistry } from "@sapphire/framework";
 import { type ChatInputCommandInteraction } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
+import { servers } from "../../servers";
 
 @ApplyOptions<Command.Options>({
   name: "console",
@@ -41,18 +42,18 @@ export default class ConsoleCommand extends Command {
     const command = interaction.options.getString("command", true);
     const server = interaction.options.getString("server", true);
 
-    const success = await this.container.rce.sendCommandToServer(
-      server,
+    await interaction.deferReply({ ephemeral: true });
+
+    const success = await this.container.rce.sendCommand(
+      servers.find((s) => s.id === server),
       command
     );
     if (success) {
-      await interaction.reply({
-        ephemeral: true,
+      await interaction.editReply({
         content: `Sent command \`${command}\` to RCE server`,
       });
     } else {
-      await interaction.reply({
-        ephemeral: true,
+      await interaction.editReply({
         content: "Failed to send command to RCE server",
       });
     }

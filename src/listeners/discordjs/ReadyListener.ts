@@ -7,6 +7,7 @@ import { Time } from "@sapphire/time-utilities";
 import { ActivityType } from "discord.js";
 import shopJson from "../../../json/staffApplication.json";
 import EmbedSender from "../../util/EmbedSender";
+import { servers } from "../../servers";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
@@ -34,7 +35,7 @@ export default class ReadyListener extends Listener {
       this.container.logger.info(`Setting up cron job: ${cron.name}`);
 
       this.container.rce.setCron(
-        cron.serverId,
+        servers.find((server) => server.id === cron.serverId),
         cron.name,
         cron.time,
         cron.commands.split("\n")

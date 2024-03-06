@@ -4,6 +4,7 @@ import { NoteEditEvent } from "../../interfaces";
 import { RCEEventType, RUST_ADMINS } from "../../vars";
 import { Time } from "@sapphire/time-utilities";
 import { PermissionFlagsBits, TextChannel } from "discord.js";
+import { servers } from "../../servers";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.NoteEdit,
@@ -64,8 +65,8 @@ export default class NoteEditListener extends Listener {
 
     // Send to RCE if in production
     if (process.env.NODE_ENV === "production") {
-      this.container.rce.sendCommandToServer(
-        note.server.id,
+      this.container.rce.sendCommand(
+        servers.find((server) => server.id === note.server.id),
         `say ${
           role !== "" ? `<color=${color}>${role}</color> ` : ""
         }[<color=#ffffff>${note.note.username}</color>]: <color=${color}>${

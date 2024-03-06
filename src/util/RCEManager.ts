@@ -1,198 +1,193 @@
 import { container } from "@sapphire/framework";
 import { WebSocket, MessageEvent as MsgEvent } from "ws";
 import { EventEmitter } from "events";
-import nodeCron from "node-cron";
 import { Time } from "@sapphire/time-utilities";
-import { ignoredAttacker, RCEEventType } from "../vars";
-import {
-  ItemSpawn,
-  RCERole,
-  KillMessage,
-  SocketData,
-  NoteEdit,
-} from "../interfaces";
-import { Server } from "../servers";
+import { Server, servers } from "../servers";
+import { ItemSpawn, KillMessage, NoteEdit, RCERole } from "../interfaces";
+import { RCEEventType, ignoredAttacker } from "../vars";
+import nodeCron from "node-cron";
 
-interface AuthToken {
-  access_token: string;
-  expires_in: number;
-  refresh_expires_in: number;
-  refresh_token: string;
-  token_type: "Bearer";
-  id_token: string;
-  session_state: string;
-  scope: string;
+enum GPORTAL_WS_TYPE {
+  MaintenanceLockState = 1,
+  ServiceState = 2,
+  ServiceSensors = 3,
+  ConsoleMessages = 4,
+  GameServerQuery = 5,
+  ServiceEvents = 6,
 }
 
+interface GPORTALConsoleMessagePayload {
+  steam: string;
+  message: string;
+  __typename: string;
+}
+
+interface GPORTALConsoleMessage {
+  type: string;
+  id: number;
+  payload: { data: { consoleMessages: GPORTALConsoleMessagePayload } };
+}
+
+const GPORTAL_COMMAND_ROUTE = "https://www.g-portal.com/ngpapi/";
 const GPORTAL_REFRESH_ROUTE =
   "https://auth.g-portal.com/auth/realms/master/protocol/openid-connect/token";
-const GPORTAL_COMMAND_ROUTE = "https://www.g-portal.com/ngpapi/";
+const GPORTAL_WEBSOCKET = "wss://www.g-portal.com/ngpapi/";
+
+interface GPORTALAuth {
+  access_token: string;
+  refresh_token: string;
+  token_type: "Bearer";
+  expires_in: number;
+}
 
 class RCEManagerEvents extends EventEmitter {}
 
 export default class RCEManager {
   private sockets: Map<string, WebSocket> = new Map();
-  private isReconnecting: Map<string, boolean> = new Map();
+  private reconnecting: Map<string, boolean> = new Map();
+  public auth: GPORTALAuth;
   public emitter: RCEManagerEvents = new RCEManagerEvents();
-  public limitedAuth: AuthToken | null = null;
 
   public constructor() {
-    this.connectAllWs();
-    this.startLimited();
+    this._init();
   }
 
-  public async startLimited() {
-    this.limitedAuth = await this.refreshToken();
-  }
+  public async _init() {
+    await this.refreshAuth();
 
-  private async sendLimitedCommand(
-    server: Server,
-    command: string
-  ): Promise<boolean> {
-    if (!this.limitedAuth) return false;
-
-    const data = {
-      operationName: "runCommand",
-      variables: {
-        sid: server.serverId,
-        region: server.region,
-        command: "serverCommand",
-        kwargs: `{"command":"${command.replace(/"/g, '\\"')}"}`,
-      },
-      query:
-        "mutation runCommand($sid: Int!, $region: REGION!, $command: String!, $kwargs: JSONString!) {\n  runCommand(\n    rsid: {id: $sid, region: $region}\n    command: $command\n    kwargs: $kwargs\n  ) {\n    returnVal\n    __typename\n  }\n}",
-    };
-
-    const request = await fetch(GPORTAL_COMMAND_ROUTE, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.limitedAuth.access_token}`,
-      },
-      body: JSON.stringify(data),
+    servers.forEach(async (server) => {
+      await this.connect(server);
     });
-
-    container.logger.debug(request.status);
-
-    if (!request.ok || request.status !== 200) return false;
-    return true;
   }
 
-  private async refreshToken(): Promise<AuthToken | null> {
-    const gportalAuth: AuthToken = container.settings.get(
-      "global",
-      "gportal.auth",
-      null
+  private async connect(server: Server) {
+    if (!this.auth) return;
+
+    container.logger.ws(
+      `Connecting to GPORTAL WebSocket for ${server.serverId}`
     );
-
-    if (!gportalAuth) return null;
-
-    const request = await fetch(GPORTAL_REFRESH_ROUTE, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        grant_type: "refresh_token",
-        client_id: "website",
-        refresh_token: gportalAuth.refresh_token,
-      }),
-    });
-
-    if (!request.ok || request.status !== 200) return null;
-
-    const auth: AuthToken = await request.json();
-
-    setTimeout(() => {
-      this.refreshToken();
-    }, auth.expires_in * 1_000);
-
-    container.settings.set("global", "gportal.auth", auth);
-
-    return auth;
-  }
-
-  private async connectAllWs(): Promise<void> {
-    container.servers
-      .filter((server) => !server.limited)
-      .forEach((server) => {
-        this.connectWsForServer(server);
-      });
-  }
-
-  private async connectWsForServer(server: Server): Promise<void> {
-    this.isReconnecting.set(server.id, false);
+    this.reconnecting.set(server.id, false);
 
     while (
       !this.sockets.has(server.id) ||
       this.sockets.get(server.id).readyState !== WebSocket.OPEN
     ) {
       try {
-        const socket = new WebSocket(
-          `ws://${server.ipAddress}:${server.rconPort}/${server.ftpPassword}`
-        );
+        const socket = new WebSocket(GPORTAL_WEBSOCKET, ["graphql-ws"], {
+          headers: {
+            origin: "https://www.g-portal.com",
+            host: "www.g-portal.com",
+          },
+          timeout: 60_000,
+        });
 
+        // Error handling
         socket.addEventListener("error", (error) => {
-          if (!this.isReconnecting.get(server.id)) {
+          if (!this.reconnecting.get(server.id)) {
             container.logger.ws(
-              `[${error.message}] Failed to connect to RCE server ${server.ipAddress}:${server.rconPort}, retrying in 5 seconds`
+              `[${error.message}] Failed to connect to GPORTAL WebSocket for ${server.serverId}. Retrying in 5 seconds...`
             );
           }
 
-          this.isReconnecting.set(server.id, true);
+          this.reconnecting.set(server.id, true);
 
           setTimeout(() => {
-            this.connectWsForServer(server);
+            this.connect(server);
           }, Time.Second * 5);
 
           socket.close();
-
           return;
         });
 
         await new Promise<void>((resolve) => {
-          socket.addEventListener("open", () => {
-            this.isReconnecting.set(server.id, false);
+          socket.addEventListener("open", async () => {
+            this.reconnecting.set(server.id, false);
             container.logger.ws(
-              `WebSocket connection established with RCE server ${server.ipAddress}:${server.rconPort}`
+              `Connected to GPORTAL WebSocket for ${server.serverId}`
             );
+
             server.connected = true;
+
+            // Authenticate with the websocket
+            socket.send(
+              JSON.stringify({
+                type: "connection_init",
+                payload: {
+                  authorization: `${this.auth.token_type} ${this.auth.access_token}`,
+                },
+              })
+            );
+
+            // Open the console messages
+            socket.send(
+              JSON.stringify({
+                id: GPORTAL_WS_TYPE.ConsoleMessages,
+                type: "start",
+                payload: {
+                  variables: {
+                    sid: server.serverId,
+                    region: server.region,
+                  },
+                  extensions: {},
+                  operationName: "consoleMessages",
+                  query:
+                    "subscription consoleMessages($sid: Int!, $region: REGION!) {\n  consoleMessages(rsid: {id: $sid, region: $region}) {\n    stream\n    message\n    __typename\n  }\n}",
+                },
+              })
+            );
+
+            // Send a ping every 60 seconds
+            setInterval(() => {
+              if (socket.readyState !== WebSocket.OPEN) return;
+              socket.send(JSON.stringify({ type: "ka" }));
+            }, 30_000);
+
+            // Sleep for 10 seconds to ensure logs dont get spammed
+            await this.sleep(10_000);
+
             resolve();
           });
         });
 
         this.sockets.set(server.id, socket);
         this.setupListeners(server, socket);
-      } catch (error) {
-        container.logger.error(error);
-        await new Promise((resolve) => setTimeout(resolve, Time.Second * 5));
-      }
+      } catch (err) {}
     }
   }
 
-  private setupListeners(server: Server, socket: WebSocket): void {
+  private async setupListeners(server: Server, socket: WebSocket) {
+    // Check if websocket closes / disconnects
     socket.addEventListener("close", () => {
-      if (!this.isReconnecting.get(server.id)) {
+      if (!this.reconnecting) {
         container.logger.ws(
-          `WebSocket connection closed with RCE server ${server.ipAddress}:${server.rconPort}, reconnecting in 5 seconds`
+          "Disconnected from GPORTAL WebSocket. Retrying in 5 seconds..."
         );
+
         server.connected = false;
-        this.isReconnecting.set(server.id, true);
-        this.connectWsForServer(server);
       }
+
+      server.connected = false;
+      this.reconnecting.set(server.id, true);
+      this.connect(server);
     });
 
+    // Error listener
     socket.addEventListener("error", (error) => {
-      container.logger.error(error);
+      container.logger.ws(
+        `An error occurred in the GPORTAL WebSocket [${server.serverId}]: ${error.message}`
+      );
     });
 
+    // Receive messages
     socket.addEventListener("message", (message) => {
-      this.handleMessage(server, message);
+      const data: GPORTALConsoleMessage = JSON.parse(message.data.toString());
+
+      // Handle message
+      this.handleMessage(server, data);
     });
   }
 
-  private handleMessage(server: Server, message: MsgEvent): void {
-    const data: SocketData = JSON.parse(message.data.toString());
+  private handleMessage(server: Server, data: GPORTALConsoleMessage): void {
     const serverDetails = {
       id: server.id,
       name: server.name,
@@ -200,11 +195,22 @@ export default class RCEManager {
       port: server.rconPort,
     };
 
+    const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;
+    const message = data.payload?.data.consoleMessages.message
+      .replace(pattern, "")
+      .replace("\n", "");
+
+    if (!message) return;
+
+    this.emitter.emit(RCEEventType.WebSocketMessage, {
+      message,
+    });
+
     // Kill Feed
-    if (data.Message.includes("was killed by")) {
+    if (message.includes("was killed by")) {
       const killObject: KillMessage = {
-        victim: data.Message.split(" was killed by ")[0],
-        attacker: data.Message.split(" was killed by ")[1].split("\x00")[0],
+        victim: message.split(" was killed by ")[0],
+        attacker: message.split(" was killed by ")[1].split("\x00")[0],
       };
 
       // Ignore if attacker or victim is in ignoredAttacker array
@@ -225,10 +231,10 @@ export default class RCEManager {
 
     // Player Joining
     if (
-      data.Message.includes("joined [xboxone]") ||
-      data.Message.includes("joined [ps4]")
+      message.includes("joined [xboxone]") ||
+      message.includes("joined [ps4]")
     ) {
-      const username = data.Message.split(" joined ")[0];
+      const username = message.split(" joined ")[0];
       this.emitter.emit(RCEEventType.PlayerJoin, {
         username,
         server: serverDetails,
@@ -236,8 +242,8 @@ export default class RCEManager {
     }
 
     // Add to Role
-    const roleMatch = data.Message.match(/\[(.*?)\]/g);
-    if (roleMatch && data.Message.includes("Added")) {
+    const roleMatch = message.match(/\[(.*?)\]/g);
+    if (roleMatch && message.includes("Added")) {
       const rceRole: RCERole = {
         inGameName: roleMatch[1],
         role: roleMatch[2],
@@ -250,7 +256,7 @@ export default class RCEManager {
     }
 
     // Item Spawning
-    const itemSpawnMatch = data.Message.match(
+    const itemSpawnMatch = message.match(
       /\[ServerVar\] giving\s+(\w+)\s+(\d+)\s*x\s+(.+)\x00/
     );
     if (itemSpawnMatch) {
@@ -267,7 +273,7 @@ export default class RCEManager {
     }
 
     // Note Editing
-    const noteEditMatch = data.Message.match(
+    const noteEditMatch = message.match(
       /\[NOTE PANEL\] Player \[ ([^\]]+) \] changed name from \[\s*([\s\S]*?)\s*\] to \[\s*([\s\S]*?)\s*\]/
     );
     if (noteEditMatch) {
@@ -277,8 +283,8 @@ export default class RCEManager {
 
       const noteEdit: NoteEdit = {
         username,
-        oldContent: oldContent.split("\n")[0],
-        newContent: newContent.split("\n")[0],
+        oldContent: oldContent.split("\\n")[0],
+        newContent: newContent.split("\\n")[0],
       };
 
       if (
@@ -293,29 +299,29 @@ export default class RCEManager {
     }
 
     // Events
-    if (data.Message.includes("[event]")) {
-      if (data.Message.includes("event_airdrop")) {
+    if (message.includes("[event]")) {
+      if (message.includes("event_airdrop")) {
         this.emitter.emit(RCEEventType.EventMessage, {
           event: "Airdrop",
           server: serverDetails,
         });
       }
 
-      if (data.Message.includes("event_cargoship")) {
+      if (message.includes("event_cargoship")) {
         this.emitter.emit(RCEEventType.EventMessage, {
           event: "Cargo Ship",
           server: serverDetails,
         });
       }
 
-      if (data.Message.includes("event_cargoheli")) {
+      if (message.includes("event_cargoheli")) {
         this.emitter.emit(RCEEventType.EventMessage, {
           event: "Chinook",
           server: serverDetails,
         });
       }
 
-      if (data.Message.includes("event_helicopter")) {
+      if (message.includes("event_helicopter")) {
         this.emitter.emit(RCEEventType.EventMessage, {
           event: "Patrol Helicopter",
           server: serverDetails,
@@ -324,56 +330,110 @@ export default class RCEManager {
     }
   }
 
-  public async sendCommandsToServer(
-    serverId: string,
-    commands: string[]
-  ): Promise<boolean> {
-    const success = false;
+  public async refreshAuth(): Promise<GPORTALAuth | null> {
+    container.logger.debug("Refreshing GPORTAL Auth");
+    const auth: GPORTALAuth = container.settings.get(
+      "global",
+      "gportal.auth",
+      null
+    );
 
-    commands.forEach(async (command) => {
-      const s = this.sendCommandToServer(serverId, command);
-      if (!s) return false;
-    });
-
-    return success;
-  }
-
-  public async sendCommandToServer(
-    serverId: string,
-    command: string
-  ): Promise<boolean> {
-    const server = container.servers.find((s) => s.id === serverId);
-
-    if (server.limited) {
-      const success = await this.sendLimitedCommand(server, command);
-      return success;
+    if (!auth) {
+      this.auth = null;
+      return null;
     }
 
-    // const socket = this.sockets.get(serverId);
+    const request = await fetch(GPORTAL_REFRESH_ROUTE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: "website",
+        refresh_token: auth.refresh_token,
+      }),
+    });
 
-    // if (socket && socket.readyState === WebSocket.OPEN) {
-    //   socket.send(
-    //     JSON.stringify({
-    //       identifier: -1,
-    //       message: command,
-    //     })
-    //   );
-    // } else {
-    //   container.logger.error(
-    //     `WebSocket connection for server ${serverId} is not open`
-    //   );
-    // }
+    if (!request.ok || request.status !== 200) {
+      container.logger.debug("Failed to refresh GPORTAL Auth");
+      this.auth = null;
+      return null;
+    }
+
+    const json: GPORTALAuth = await request.json();
+    container.settings.set("global", "gportal.auth", json);
+    this.auth = json;
+
+    container.logger.debug("Successfully refreshed GPORTAL Auth");
+
+    setTimeout(() => this.refreshAuth(), json.expires_in * 1e3);
+    return json;
+  }
+
+  public async sendCommands(
+    server: Server,
+    commands: string[]
+  ): Promise<boolean> {
+    let sentAll = true;
+
+    for (const command of commands) {
+      const success = await this.sendCommand(server, command);
+      if (!success) sentAll = false;
+      await this.sleep(1_000);
+    }
+
+    return sentAll;
+  }
+
+  public async sendCommand(server: Server, command: string): Promise<boolean> {
+    console.log("Received command");
+    if (!this.sockets.has(server.id) || !this.auth) return false;
+    console.log(server.id, command);
+
+    const data = {
+      operationName: "runCommand",
+      variables: {
+        sid: server.serverId,
+        region: server.region,
+        command: "serverCommand",
+        kwargs: `{"command":"${command.replace(/"/g, '\\"')}"}`,
+      },
+      query:
+        "mutation runCommand($sid: Int!, $region: REGION!, $command: String!, $kwargs: JSONString!) {\n  runCommand(\n    rsid: {id: $sid, region: $region}\n    command: $command\n    kwargs: $kwargs\n  ) {\n    returnVal\n    __typename\n  }\n}",
+    };
+
+    const request = await fetch(GPORTAL_COMMAND_ROUTE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${this.auth.token_type} ${this.auth.access_token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    console.log(request.status);
+
+    if (!request.ok || request.status !== 200) return false;
+    return true;
   }
 
   public setCron(
-    serverId: string,
+    server: Server,
     name: string,
     time: string,
     commands: string[]
   ) {
-    nodeCron.schedule(time, () => {
-      container.logger.info(`Executing cron job: ${name}`);
-      this.sendCommandsToServer(serverId, commands);
+    nodeCron.schedule(time, async () => {
+      container.logger.info(
+        `Running cron job for ${name} on server ${server.serverId}`
+      );
+
+      await this.sendCommands(server, commands);
     });
+  }
+
+  private sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

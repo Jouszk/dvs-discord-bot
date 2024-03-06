@@ -45,24 +45,25 @@ export default class SayCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const message = interaction.options.getString("msg", true);
     const server = interaction.options.getString("server", true);
+
+    await interaction.deferReply({ ephemeral: true });
+
     const admin = RUST_ADMINS.find(
       (admin) => admin.discord === interaction.user.id
     );
 
-    const success = await this.container.rce.sendCommandToServer(
-      server,
+    const success = await this.container.rce.sendCommand(
+      servers.find((s) => s.id === server),
       `say <color=${admin.chatColor}>[Admin]</color> [${admin.ign}]: <color=${admin.chatColor}>${message}</color>`
     );
 
     if (success) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `Successfully sent message to the server chat!`,
-        ephemeral: true,
       });
     } else {
-      await interaction.reply({
+      await interaction.editReply({
         content: "Failed to send message to the server chat",
-        ephemeral: true,
       });
     }
   }

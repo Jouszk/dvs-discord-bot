@@ -22,8 +22,8 @@ export class TokenModal extends InteractionHandler {
       refresh_token: refreshToken,
     });
 
-    await this.container.rce.startLimited();
-    if (!this.container.rce.limitedAuth) {
+    await this.container.rce._init();
+    if (!this.container.rce.auth) {
       return interaction.reply({
         content: "Failed to authenticate with the provided refresh token.",
         ephemeral: true,

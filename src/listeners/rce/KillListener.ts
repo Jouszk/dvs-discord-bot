@@ -3,6 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { KillEvent } from "../../interfaces";
 import { RCEEventType } from "../../vars";
 import { PermissionFlagsBits, type TextChannel } from "discord.js";
+import { servers } from "../../servers";
 
 @ApplyOptions<Listener.Options>({
   name: RCEEventType.KillMessage,
@@ -29,8 +30,8 @@ export default class KillListener extends Listener {
 
     const feedsEnabled = this.container.settings.get("global", "feeds", true);
     if (feedsEnabled) {
-      this.container.rce.sendCommandToServer(
-        kill.server.id,
+      this.container.rce.sendCommand(
+        servers.find((server) => server.id === kill.server.id),
         `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
       );
     }

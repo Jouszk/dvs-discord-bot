@@ -32,7 +32,7 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1245755,
     region: "US",
-    limited: true,
+    limited: false,
   },
   {
     id: "server2",
@@ -52,7 +52,7 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1395602,
     region: "US",
-    limited: true,
+    limited: false,
   },
   {
     id: "server3",
@@ -72,6 +72,6 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1403404,
     region: "US",
-    limited: true,
+    limited: false,
   },
 ];

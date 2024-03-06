@@ -36,6 +36,8 @@ export class ViewModerationButton extends InteractionHandler {
     interaction: ButtonInteraction,
     data: { key: string; ign: string; server: string }
   ) {
+    await interaction.deferReply({ ephemeral: true });
+
     // Get the key data
     const redeemKeys: RedeemKey[] = this.container.settings.get(
       "global",
@@ -55,9 +57,6 @@ export class ViewModerationButton extends InteractionHandler {
     // Delete the key
     redeemKeys.splice(redeemKeys.indexOf(redeemKey), 1);
 
-    // Save the keys
-    this.container.settings.set("global", "keys", redeemKeys);
-
     // Replace {username} with the in game name in the commands array
     redeemKey.commands = redeemKey.commands.map((command) =>
       command.replace(/{username}/g, data.ign)
@@ -65,18 +64,20 @@ export class ViewModerationButton extends InteractionHandler {
 
     // Execute the commands
     if (redeemKey.commands.length) {
-      const success = await this.container.rce.sendCommandsToServer(
-        data.server,
+      const success = await this.container.rce.sendCommands(
+        servers.find((server) => server.id === data.server),
         redeemKey.commands
       );
 
       if (!success) {
-        return interaction.reply({
+        return interaction.editReply({
           content:
             "Something went wrong while redeeming the key. Please try again later.",
-          ephemeral: true,
         });
       }
+
+      // Save the keys
+      this.container.settings.set("global", "keys", redeemKeys);
     }
 
     // Send to code redemption channel
@@ -104,9 +105,8 @@ export class ViewModerationButton extends InteractionHandler {
     }
 
     // Send a response
-    return interaction.reply({
+    return interaction.editReply({
       content: `You have redeemed \`${redeemKey.name}\` for the in-game username: \`${data.ign}\``,
-      ephemeral: true,
     });
   }
 }

@@ -1,6 +1,5 @@
 import { Listener, container } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { SocketData } from "../../interfaces";
 import { RCEEventType } from "../../vars";
 
 @ApplyOptions<Listener.Options>({
@@ -8,9 +7,9 @@ import { RCEEventType } from "../../vars";
   emitter: container.rce.emitter,
 })
 export default class WebsocketListener extends Listener {
-  public async run(data: SocketData) {
-    if (process.env.NODE_ENV !== "production") return;
+  public async run(data: { message: string }) {
+    // if (process.env.NODE_ENV !== "production") return;
 
-    this.container.logger.gportal(data.Message);
+    this.container.logger.gportal(data.message);
   }
 }

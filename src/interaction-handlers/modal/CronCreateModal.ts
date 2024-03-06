@@ -5,6 +5,7 @@ import {
 import { ApplyOptions } from "@sapphire/decorators";
 import { ModalSubmitInteraction } from "discord.js";
 import { CronTask } from "../../interfaces";
+import { servers } from "../../servers";
 
 @ApplyOptions<InteractionHandler.Options>({
   interactionHandlerType: InteractionHandlerTypes.ModalSubmit,
@@ -43,7 +44,12 @@ export class CronCreateModal extends InteractionHandler {
     this.container.settings.set("global", "crons", crons);
 
     // Set the cron task
-    this.container.rce.setCron(serverId, name, time, commands.split("\n"));
+    this.container.rce.setCron(
+      servers.find((s) => s.id === serverId),
+      name,
+      time,
+      commands.split("\n")
+    );
 
     // Send Response
     return interaction.reply({
