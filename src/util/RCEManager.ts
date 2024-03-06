@@ -324,34 +324,45 @@ export default class RCEManager {
     }
   }
 
-  public sendCommandsToServer(serverId: string, commands: string[]): void {
-    commands.forEach((command) => {
-      this.sendCommandToServer(serverId, command);
+  public async sendCommandsToServer(
+    serverId: string,
+    commands: string[]
+  ): Promise<boolean> {
+    const success = false;
+
+    commands.forEach(async (command) => {
+      const s = this.sendCommandToServer(serverId, command);
+      if (!s) return false;
     });
+
+    return success;
   }
 
-  public sendCommandToServer(serverId: string, command: string): void {
+  public async sendCommandToServer(
+    serverId: string,
+    command: string
+  ): Promise<boolean> {
     const server = container.servers.find((s) => s.id === serverId);
 
     if (server.limited) {
-      this.sendLimitedCommand(server, command);
-      return;
+      const success = await this.sendLimitedCommand(server, command);
+      return success;
     }
 
-    const socket = this.sockets.get(serverId);
+    // const socket = this.sockets.get(serverId);
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          identifier: -1,
-          message: command,
-        })
-      );
-    } else {
-      container.logger.error(
-        `WebSocket connection for server ${serverId} is not open`
-      );
-    }
+    // if (socket && socket.readyState === WebSocket.OPEN) {
+    //   socket.send(
+    //     JSON.stringify({
+    //       identifier: -1,
+    //       message: command,
+    //     })
+    //   );
+    // } else {
+    //   container.logger.error(
+    //     `WebSocket connection for server ${serverId} is not open`
+    //   );
+    // }
   }
 
   public setCron(

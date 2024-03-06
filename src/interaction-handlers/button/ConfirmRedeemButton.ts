@@ -65,7 +65,18 @@ export class ViewModerationButton extends InteractionHandler {
 
     // Execute the commands
     if (redeemKey.commands.length) {
-      this.container.rce.sendCommandsToServer(data.server, redeemKey.commands);
+      const success = await this.container.rce.sendCommandsToServer(
+        data.server,
+        redeemKey.commands
+      );
+
+      if (!success) {
+        return interaction.reply({
+          content:
+            "Something went wrong while redeeming the key. Please try again later.",
+          ephemeral: true,
+        });
+      }
     }
 
     // Send to code redemption channel

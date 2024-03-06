@@ -41,10 +41,20 @@ export default class ConsoleCommand extends Command {
     const command = interaction.options.getString("command", true);
     const server = interaction.options.getString("server", true);
 
-    await this.container.rce.sendCommandToServer(server, command);
-    await interaction.reply({
-      ephemeral: true,
-      content: `Sent command \`${command}\` to RCE server`,
-    });
+    const success = await this.container.rce.sendCommandToServer(
+      server,
+      command
+    );
+    if (success) {
+      await interaction.reply({
+        ephemeral: true,
+        content: `Sent command \`${command}\` to RCE server`,
+      });
+    } else {
+      await interaction.reply({
+        ephemeral: true,
+        content: "Failed to send command to RCE server",
+      });
+    }
   }
 }

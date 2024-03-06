@@ -42,21 +42,28 @@ export default class SayCommand extends Command {
     );
   }
 
-  public chatInputRun(interaction: ChatInputCommandInteraction) {
+  public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const message = interaction.options.getString("msg", true);
     const server = interaction.options.getString("server", true);
     const admin = RUST_ADMINS.find(
       (admin) => admin.discord === interaction.user.id
     );
 
-    this.container.rce.sendCommandToServer(
+    const success = await this.container.rce.sendCommandToServer(
       server,
       `say <color=${admin.chatColor}>[Admin]</color> [${admin.ign}]: <color=${admin.chatColor}>${message}</color>`
     );
 
-    interaction.reply({
-      content: `Successfully sent message to the server chat!`,
-      ephemeral: true,
-    });
+    if (success) {
+      await interaction.reply({
+        content: `Successfully sent message to the server chat!`,
+        ephemeral: true,
+      });
+    } else {
+      await interaction.reply({
+        content: "Failed to send message to the server chat",
+        ephemeral: true,
+      });
+    }
   }
 }
