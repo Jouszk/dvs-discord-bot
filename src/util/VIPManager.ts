@@ -88,10 +88,7 @@ export default class VIPManager {
 
     // Remove VIP in-game
     servers.forEach((server) => {
-      container.rce.sendCommandToServer(
-        `${server.ipAddress}:${server.rconPort}`,
-        `RemoveVIP "${vip.id}"`
-      );
+      container.rce.sendCommandToServer(server.id, `RemoveVIP "${vip.id}"`);
     });
 
     // Remove VIP in Discord (if possible)
