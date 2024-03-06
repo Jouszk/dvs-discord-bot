@@ -27,10 +27,13 @@ export default class KillListener extends Listener {
       );
     }
 
-    this.container.rce.sendCommandToServer(
-      kill.server.id,
-      `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
-    );
+    const feedsEnabled = this.container.settings.get("global", "feeds", true);
+    if (feedsEnabled) {
+      this.container.rce.sendCommandToServer(
+        kill.server.id,
+        `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
+      );
+    }
 
     // Log the kill to the leaderboard
     await this.container.db.player.upsert({

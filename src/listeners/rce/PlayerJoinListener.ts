@@ -14,10 +14,13 @@ export default class PlayerJoinListener extends Listener {
     const vipData = this.container.vipManager.getVIP(player.username);
 
     if (!vipData) {
-      return this.container.rce.sendCommandToServer(
-        player.server.id,
-        `RemoveVIP "${player.username}"`
-      );
+      const feedsEnabled = this.container.settings.get("global", "feeds", true);
+      if (feedsEnabled) {
+        return this.container.rce.sendCommandToServer(
+          player.server.id,
+          `RemoveVIP "${player.username}"`
+        );
+      }
     } else {
       return this.container.rce.sendCommandToServer(
         player.server.id,
