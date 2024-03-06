@@ -18,7 +18,7 @@ export const servers: Server[] = [
     id: "server1",
     game: "Rust Console Edition",
     name: "DvS Solo/Duo/Trio",
-    logo: `${process.env.MAIN_WEBSITE_URL}/img/rust-console.png`,
+    logo: `https://dvs.gg/img/rust-console.png`,
     features: [
       "BiWeekly Wipe Schedule",
       "3x Gather & Loot",
@@ -38,7 +38,7 @@ export const servers: Server[] = [
     id: "server2",
     game: "Rust Console Edition",
     name: "DvS Solo-Quad",
-    logo: `${process.env.MAIN_WEBSITE_URL}/img/rust-console.png`,
+    logo: `https://dvs.gg/img/rust-console.png`,
     features: [
       "BiWeekly Wipe Schedule",
       "3x Gather & Loot",
@@ -58,7 +58,7 @@ export const servers: Server[] = [
     id: "server3",
     game: "Rust Console Edition",
     name: "DvS Solo-Only",
-    logo: `${process.env.MAIN_WEBSITE_URL}/img/rust-console.png`,
+    logo: `https://dvs.gg/img/rust-console.png`,
     features: [
       "BiWeekly Wipe Schedule",
       "3x Gather & Loot",

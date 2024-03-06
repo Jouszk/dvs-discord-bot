@@ -47,6 +47,7 @@ export default class RCEManager {
   private reconnecting: Map<string, boolean> = new Map();
   public auth: GPORTALAuth;
   public emitter: RCEManagerEvents = new RCEManagerEvents();
+  public population: Map<string, string[]> = new Map();
 
   public constructor() {
     this._init();
@@ -136,7 +137,7 @@ export default class RCEManager {
               })
             );
 
-            // Send a ping every 60 seconds
+            // Send a ping every 30 seconds
             setInterval(() => {
               if (socket.readyState !== WebSocket.OPEN) return;
               socket.send(JSON.stringify({ type: "ka" }));
@@ -144,6 +145,12 @@ export default class RCEManager {
 
             // Sleep for 10 seconds to ensure logs dont get spammed
             await this.sleep(10_000);
+
+            // Fetch population every 5 minutes
+            setInterval(async () => {
+              await this.fetchPopulation(server);
+            }, 5 * 60_000);
+            await this.fetchPopulation(server);
 
             resolve();
           });
@@ -153,6 +160,10 @@ export default class RCEManager {
         this.setupListeners(server, socket);
       } catch (err) {}
     }
+  }
+
+  private async fetchPopulation(server: Server) {
+    await this.sendCommand(server, "Users");
   }
 
   private async setupListeners(server: Server, socket: WebSocket) {
@@ -201,6 +212,17 @@ export default class RCEManager {
       .replace("\n", "");
 
     if (!message) return;
+
+    // Population Handler
+    if (message.startsWith("<slot:")) {
+      const users = message
+        .match(/"(.*?)"/g)
+        .map((username) => username.replace(/"/g, ""));
+
+      users.shift();
+      this.population.set(server.id, users);
+      return;
+    }
 
     this.emitter.emit(RCEEventType.WebSocketMessage, {
       message,
@@ -387,7 +409,6 @@ export default class RCEManager {
   }
 
   public async sendCommand(server: Server, command: string): Promise<boolean> {
-    console.log("Received command");
     if (!this.sockets.has(server.id) || !this.auth) return false;
     console.log(server.id, command);
 
