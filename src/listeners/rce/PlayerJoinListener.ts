@@ -17,10 +17,10 @@ export default class PlayerJoinListener extends Listener {
     if (!vipData) {
       const feedsEnabled = this.container.settings.get("global", "feeds", true);
       if (feedsEnabled) {
-        return this.container.rce.sendCommand(
-          servers.find((server) => server.id === player.server.id),
-          `RemoveVIP "${player.username}"`
-        );
+        // return this.container.rce.sendCommand(
+        //   servers.find((server) => server.id === player.server.id),
+        //   `RemoveVIP "${player.username}"`
+        // );
       }
     } else {
       return this.container.rce.sendCommand(
