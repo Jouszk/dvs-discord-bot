@@ -152,10 +152,7 @@ export default class VIPManager {
 
     // Add VIP in-game
     servers.forEach((server) => {
-      container.rce.sendCommandToServer(
-        `${server.ipAddress}:${server.rconPort}`,
-        `VIPID "${inGameName}"`
-      );
+      container.rce.sendCommandToServer(server.id, `VIPID "${inGameName}"`);
     });
 
     // Add VIP in Discord (if possible)
