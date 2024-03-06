@@ -72,6 +72,8 @@ export default class RCEManager {
       body: JSON.stringify(data),
     });
 
+    container.logger.debug(request.status);
+
     if (!request.ok || request.status !== 200) return false;
     return true;
   }
