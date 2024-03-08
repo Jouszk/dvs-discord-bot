@@ -37,7 +37,7 @@ export const servers: Server[] = [
   {
     id: "server2",
     game: "Rust Console Edition",
-    name: "DvS Solo-Quad",
+    name: "DvS NO TEAM-LIMIT",
     logo: `https://dvs.gg/img/rust-console.png`,
     features: [
       "BiWeekly Wipe Schedule",
