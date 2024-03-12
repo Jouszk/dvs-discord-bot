@@ -16,6 +16,18 @@ export default class NoteEditListener extends Listener {
   public async run(note: NoteEditEvent) {
     if (process.env.NODE_ENV !== "production") return;
 
+    // If it's the PvP server and is a command
+    if (note.note.newContent.startsWith("/") && note.server.pvp) {
+      const cmd = note.note.newContent.split(" ")[0].slice(1).toLowerCase();
+
+      if (cmd === "pvp") {
+        return this.container.rce.sendCommand(
+          servers.find((server) => server.id === note.server.id),
+          `teleport "${note.note.username}" "537.0, 0.1, 36.6"`
+        );
+      }
+    }
+
     // Anti-Code Leak
     // If the note contains a 4 digit number, it's probably a code leak
     note.note.newContent = note.note.newContent.replace(/\d{4}/g, "[REDACTED]");

@@ -204,6 +204,7 @@ export default class RCEManager {
       name: server.name,
       ipAddress: server.ipAddress,
       port: server.rconPort,
+      pvp: server.pvp,
     };
 
     const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;

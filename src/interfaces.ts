@@ -17,6 +17,7 @@ export interface ServerInfo {
   name: string;
   ipAddress: string;
   port: number;
+  pvp: boolean;
 }
 
 export interface GameEvent {
