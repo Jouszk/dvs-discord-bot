@@ -10,7 +10,7 @@ export interface Server {
   connected: boolean;
   serverId: number;
   region: "US" | "EU";
-  limited: boolean;
+  pvp: boolean;
 }
 
 export const servers: Server[] = [
@@ -32,7 +32,7 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1245755,
     region: "US",
-    limited: false,
+    pvp: false,
   },
   {
     id: "server2",
@@ -52,7 +52,7 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1395602,
     region: "US",
-    limited: false,
+    pvp: false,
   },
   {
     id: "server3",
@@ -72,6 +72,20 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1403404,
     region: "US",
-    limited: false,
+    pvp: false,
+  },
+  {
+    id: "server4",
+    game: "Rust Console Edition",
+    name: "DvS PvP",
+    logo: `https://dvs.gg/img/rust-console.png`,
+    features: ["All PvP Blueprints", "Underground Assault Weapons", "Arenas"],
+    ipAddress: "161.97.168.22",
+    rconPort: 30716,
+    ftpPassword: "rNhpecCn",
+    connected: false,
+    serverId: 6317894,
+    region: "EU",
+    pvp: true,
   },
 ];

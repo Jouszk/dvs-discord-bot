@@ -49,6 +49,13 @@ export default class RedeemCommand extends Command {
       });
     }
 
+    if (serverInfo.pvp) {
+      return interaction.reply({
+        content: "You cannot redeem keys on a PvP-only server",
+        ephemeral: true,
+      });
+    }
+
     const modal = new ModalBuilder()
       .setCustomId(`redeem_key_${server}`)
       .setTitle("Redeem a Key")
