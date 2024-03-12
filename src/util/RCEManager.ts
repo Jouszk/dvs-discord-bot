@@ -208,9 +208,9 @@ export default class RCEManager {
     };
 
     const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;
-    const message = data.payload?.data.consoleMessages.message
-      .replace(pattern, "")
-      .replace("\n", "");
+    const message = data?.payload?.data?.consoleMessages?.message
+      ?.replace(pattern, "")
+      ?.replace("\n", "");
 
     if (!message) return;
 
