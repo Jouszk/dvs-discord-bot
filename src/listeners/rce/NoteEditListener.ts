@@ -16,13 +16,9 @@ export default class NoteEditListener extends Listener {
   public async run(note: NoteEditEvent) {
     if (process.env.NODE_ENV !== "production") return;
 
-    console.log(note.note.newContent);
-
     // If it's the PvP server and is a command
     if (note.note.newContent.startsWith("/") && note.server.pvp) {
-      console.log("PvP command");
       const cmd = note.note.newContent.split(" ")[0].slice(1).toLowerCase();
-      console.log(cmd);
 
       if (cmd === "pvp") {
         return this.container.rce.sendCommand(

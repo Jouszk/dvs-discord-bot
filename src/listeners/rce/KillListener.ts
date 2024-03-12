@@ -37,33 +37,41 @@ export default class KillListener extends Listener {
     }
 
     // Log the kill to the leaderboard
-    await this.container.db.player.upsert({
-      where: { id: kill.kill.attacker, serverId: kill.server.id },
-      update: {
-        kills: {
-          increment: 1,
+    await this.container.db.player
+      .upsert({
+        where: { id: kill.kill.attacker, serverId: kill.server.id },
+        update: {
+          kills: {
+            increment: 1,
+          },
         },
-      },
-      create: {
-        id: kill.kill.attacker,
-        serverId: kill.server.id,
-        kills: 1,
-      },
-    });
+        create: {
+          id: kill.kill.attacker,
+          serverId: kill.server.id,
+          kills: 1,
+        },
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
     // Log the death to the leaderbaord
-    await this.container.db.player.upsert({
-      where: { id: kill.kill.victim, serverId: kill.server.id },
-      update: {
-        deaths: {
-          increment: 1,
+    await this.container.db.player
+      .upsert({
+        where: { id: kill.kill.victim, serverId: kill.server.id },
+        update: {
+          deaths: {
+            increment: 1,
+          },
         },
-      },
-      create: {
-        id: kill.kill.victim,
-        serverId: kill.server.id,
-        deaths: 1,
-      },
-    });
+        create: {
+          id: kill.kill.victim,
+          serverId: kill.server.id,
+          deaths: 1,
+        },
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 }
