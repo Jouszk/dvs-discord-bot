@@ -23,7 +23,7 @@ export default class NoteEditListener extends Listener {
       if (cmd === "pvp") {
         return this.container.rce.sendCommand(
           servers.find((server) => server.id === note.server.id),
-          `teleport "${note.note.username}" "537.0, 0.1, 36.6"`
+          `teleportpos "537.0, 0.1, 36.6" "${note.note.username}"`
         );
       }
     }
