@@ -65,6 +65,7 @@ model VIPUser {
   id        String   @id
   discordId String?
   chatColor String   @default("#f1c40f")
+  plan      String   @default("VIP_BASIC")
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

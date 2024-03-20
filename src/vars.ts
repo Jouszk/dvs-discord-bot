@@ -1,5 +1,21 @@
 import { KeyPreset, RustAdmin } from "./interfaces";
 
+interface VIPPlan {
+  display: string;
+  value: string;
+}
+
+export const VIP_PLANS: VIPPlan[] = [
+  {
+    display: "VIP Basic",
+    value: "VIP_BASIC",
+  },
+  {
+    display: "VIP Plus",
+    value: "VIP_PLUS",
+  },
+];
+
 export const RUST_ADMINS: RustAdmin[] = [
   {
     ign: "b1nzeee",

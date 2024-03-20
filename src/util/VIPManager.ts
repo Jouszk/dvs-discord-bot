@@ -123,7 +123,8 @@ export default class VIPManager {
     inGameName: string,
     duration: number,
     discordId?: string,
-    chatColor?: string
+    chatColor?: string,
+    plan?: string
   ) {
     if (!duration || duration <= 0) duration = 30;
 
@@ -144,6 +145,7 @@ export default class VIPManager {
         expiresAt,
         discordId,
         chatColor: chatColor ?? "#f1c40f",
+        plan: plan ?? "VIP_BASIC",
       },
     });
 
@@ -182,7 +184,8 @@ export default class VIPManager {
     inGameName: string,
     duration?: number,
     discordId?: string,
-    chatColor?: string
+    chatColor?: string,
+    plan?: string
   ) {
     const vipIndex = this.vips.findIndex((v) => v.id === inGameName);
     if (vipIndex === -1) {
@@ -198,6 +201,7 @@ export default class VIPManager {
     }
     vip.discordId = discordId ?? vip.discordId;
     vip.chatColor = chatColor ?? vip.chatColor;
+    vip.plan = plan ?? vip.plan;
 
     // Update VIP in database
     await container.db.vIPUser.update({
@@ -208,6 +212,7 @@ export default class VIPManager {
         expiresAt: vip.expiresAt,
         discordId: vip.discordId,
         chatColor: vip.chatColor,
+        plan: vip.plan,
       },
     });
 

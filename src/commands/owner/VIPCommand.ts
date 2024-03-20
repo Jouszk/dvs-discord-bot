@@ -68,6 +68,15 @@ export default class VIPCommand extends Subcommand {
                   .setDescription("The chat color of the VIP")
                   .setRequired(false)
               )
+              .addStringOption((option) =>
+                option
+                  .setName("plan")
+                  .setDescription(
+                    "The VIP plan of the VIP (Default: VIP_BASIC)"
+                  )
+                  .setRequired(false)
+                  .setAutocomplete(true)
+              )
           )
           .addSubcommand((subCommand) =>
             subCommand
@@ -115,6 +124,7 @@ export default class VIPCommand extends Subcommand {
     const duration = interaction.options.getNumber("days", false);
     const discordId = interaction.options.getUser("discord", false)?.id;
     const chatColor = interaction.options.getString("chat-color", false);
+    const plan = interaction.options.getString("plan", false);
 
     // Check if chatColor is a valid hex color including the hashtag in a six digit format
     if (chatColor && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(chatColor)) {
@@ -131,7 +141,8 @@ export default class VIPCommand extends Subcommand {
         inGameName,
         duration,
         discordId,
-        chatColor
+        chatColor,
+        plan
       );
 
       return interaction.reply({
@@ -143,7 +154,8 @@ export default class VIPCommand extends Subcommand {
         inGameName,
         duration,
         discordId,
-        chatColor
+        chatColor,
+        plan
       );
 
       return interaction.reply({
@@ -189,7 +201,7 @@ export default class VIPCommand extends Subcommand {
         vip.discordId ? `<@${vip.discordId}>` : "None"
       }\nExpires at: ${new Date(vip.expiresAt).toLocaleString()}\nChat Color: ${
         vip.chatColor
-      }`,
+      }\nPlan: ${vip.plan}`,
     });
   }
 
