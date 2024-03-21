@@ -5,7 +5,13 @@ import {
   PermissionFlagsBits,
   EmbedBuilder,
   ColorResolvable,
+  User,
 } from "discord.js";
+
+const plans = {
+  VIP_BASIC: "VIP Basic",
+  VIP_PLUS: "VIP Plus",
+};
 
 @ApplyOptions<Subcommand.Options>({
   name: "vip",
@@ -195,13 +201,25 @@ export default class VIPCommand extends Subcommand {
       });
     }
 
+    const user: User = await this.container.client.users
+      .fetch(vip.discordId)
+      .catch(() => null);
+    const embed = new EmbedBuilder()
+      .setAuthor({
+        name: `VIP | ${vip.id}`,
+        iconURL: interaction.guild.iconURL(),
+      })
+      .setColor(vip.chatColor as ColorResolvable)
+      .addField(
+        "Discord",
+        user ? `${user.toString()} (\`${user.id}\`)` : "None",
+        true
+      )
+      .addField("Expires at", new Date(vip.expiresAt).toLocaleString(), true)
+      .addField("Plan", plans[vip.plan], true);
+
     return interaction.reply({
-      ephemeral: true,
-      content: `**${vip.id}**\nDiscord: ${
-        vip.discordId ? `<@${vip.discordId}>` : "None"
-      }\nExpires at: ${new Date(vip.expiresAt).toLocaleString()}\nChat Color: ${
-        vip.chatColor
-      }\nPlan: ${vip.plan}`,
+      embeds: [embed],
     });
   }
 
