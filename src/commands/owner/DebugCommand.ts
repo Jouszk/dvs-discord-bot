@@ -57,6 +57,9 @@ export default class DebugCommand extends Command {
     if (item2) output.push(`inventory.giveto "{username}" "${item2}" "1"`);
     if (item3) output.push(`inventory.giveto "{username}" "${item3}" "1"`);
 
-    await interaction.reply(output.join("\n"));
+    await interaction.reply({
+      content: output.join("\n"),
+      ephemeral: true,
+    });
   }
 }
