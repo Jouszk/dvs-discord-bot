@@ -50,8 +50,8 @@ export default class DebugCommand extends Command {
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
     const item1 = interaction.options.getString("item1", true);
-    const item2 = interaction.options.getString("item2", true) ?? null;
-    const item3 = interaction.options.getString("item3", true) ?? null;
+    const item2 = interaction.options.getString("item2", false) ?? null;
+    const item3 = interaction.options.getString("item3", false) ?? null;
 
     const output = [`inventory.giveto "{username}" "${item1}" "1"`];
     if (item2) output.push(`inventory.giveto "{username}" "${item2}" "1"`);
