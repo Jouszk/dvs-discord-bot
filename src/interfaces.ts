@@ -114,7 +114,7 @@ export interface SellixTransaction {
   shop_id: number;
   type: "PRODUCT" | "SUBSCRIPTION";
   customer_email: string;
-  product_id: number;
+  product_id: string;
   product_title: string;
   quantity: number;
   status: "PENDING" | "COMPLETED" | "REFUNDED";

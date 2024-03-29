@@ -123,7 +123,7 @@ interface SellixProductMinimal {
   price: string;
   visible: boolean;
   position: number;
-  id: number;
+  id: string;
 }
 
 interface ServerMinimal {
@@ -213,7 +213,7 @@ export default class WebCacheManager {
           price: product.price.toFixed(2),
           visible: !product.unlisted,
           position: product.sort_priority,
-          id: product.id,
+          id: product.uniqid,
         };
       }
     );

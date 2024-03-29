@@ -88,9 +88,13 @@ export default class SellixCommand extends Command {
     return new EmbedBuilder()
       .setColor(embedColor[transaction.status] as ColorResolvable)
       .setTitle(`Sellix Transaction: ${transaction.uniqid}`)
-      .setThumbnail(product.image_url)
-      .addField("Product", product.title, true)
-      .addField("Price", `${transaction.total} ${transaction.currency}`, true)
+      .setThumbnail(product?.image_url || undefined)
+      .addField("Product", product?.title || "Unknown", true)
+      .addField(
+        "Price",
+        `${transaction.total.toFixed(2)} ${transaction.currency}`,
+        true
+      )
       .addField("Status", status[transaction.status], true)
       .addField("Email", this.maskEmail(transaction.customer_email), true)
       .setTimestamp(transaction.created_at)
@@ -110,7 +114,7 @@ export default class SellixCommand extends Command {
     transactionId: string
   ): Promise<SellixTransaction | null> {
     const res = await fetch(
-      `https://api.sellix.io/v1/orders/${transactionId}`,
+      `https://dev.sellix.io/v1/orders/${transactionId}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.SELLIX_API_KEY}`,
@@ -122,11 +126,11 @@ export default class SellixCommand extends Command {
 
     const data = await res.json();
 
-    return (data?.order as SellixTransaction) || null;
+    return (data?.data?.order as SellixTransaction) || null;
   }
 
   private async fetchMostRecentTransaction(): Promise<SellixTransaction | null> {
-    const res = await fetch(`https://api.sellix.io/v1/orders`, {
+    const res = await fetch(`https://dev.sellix.io/v1/orders`, {
       headers: {
         Authorization: `Bearer ${process.env.SELLIX_API_KEY}`,
       },
@@ -135,7 +139,8 @@ export default class SellixCommand extends Command {
     if (!res.ok) return null;
 
     const data = await res.json();
+    this.container.logger.debug(data);
 
-    return (data?.orders[0] as SellixTransaction) || null;
+    return (data?.data?.orders[0] as SellixTransaction) || null;
   }
 }
