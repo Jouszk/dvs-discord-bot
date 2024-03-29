@@ -97,7 +97,7 @@ export default class SellixCommand extends Command {
       )
       .addField("Status", status[transaction.status], true)
       .addField("Email", this.maskEmail(transaction.customer_email), true)
-      .setTimestamp(transaction.created_at)
+      .setTimestamp(transaction.created_at * 1000)
       .setFooter({ text: "Purchased" });
   }
 
