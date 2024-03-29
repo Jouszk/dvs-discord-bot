@@ -10,6 +10,7 @@ import { servers } from "../../servers";
 @ApplyOptions<Command.Options>({
   name: "stats",
   description: "Check the stats of a player",
+  preconditions: ["CommandChannelOnly"],
 })
 export class RankCommand extends Command {
   public override registerApplicationCommands(
@@ -50,14 +51,6 @@ export class RankCommand extends Command {
     if (!serverInfo) {
       return interaction.reply({
         content: "Invalid server",
-        ephemeral: true,
-      });
-    }
-
-    if (serverInfo.limited) {
-      return interaction.reply({
-        content:
-          "This is a **limited** automation server and doesn't have a killfeed / leaderboard.",
         ephemeral: true,
       });
     }

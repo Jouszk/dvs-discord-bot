@@ -5,6 +5,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 @ApplyOptions<Command.Options>({
   name: "ping",
   description: "Check the bot's latency to the Discord API",
+  preconditions: ["CommandChannelOnly"],
 })
 export default class PingCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {

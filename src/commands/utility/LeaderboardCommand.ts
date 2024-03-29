@@ -12,6 +12,7 @@ import { servers } from "../../servers";
 @ApplyOptions<Command.Options>({
   name: "leaderboard",
   description: "Check the leaderboard for this wipe kills",
+  preconditions: ["CommandChannelOnly"],
 })
 export default class LeaderboardCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
@@ -23,14 +24,6 @@ export default class LeaderboardCommand extends Command {
     if (!serverInfo) {
       return interaction.reply({
         content: "Invalid server",
-        ephemeral: true,
-      });
-    }
-
-    if (serverInfo.limited) {
-      return interaction.reply({
-        content:
-          "This is a **limited** automation server and doesn't have a killfeed / leaderboard.",
         ephemeral: true,
       });
     }

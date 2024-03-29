@@ -5,7 +5,7 @@ import { CronTask } from "../../interfaces";
 import WebCacheManager from "../../util/WebCacheManager";
 import { Time } from "@sapphire/time-utilities";
 import { ActivityType } from "discord.js";
-import shopJson from "../../../json/staffApplication.json";
+import shopJson from "../../../json/shop.json";
 import EmbedSender from "../../util/EmbedSender";
 import { servers } from "../../servers";
 
@@ -47,7 +47,7 @@ export default class ReadyListener extends Listener {
 
     // Send embeds to a channel
     if (process.env.NODE_ENV !== "production") {
-      // EmbedSender.sendEmbeds("1197584466508517437", shopJson);
+      // EmbedSender.sendEmbeds("1198925908711583744", shopJson);
     }
   }
 
@@ -55,7 +55,7 @@ export default class ReadyListener extends Listener {
     const servers = this.container.servers;
     this.container.client.user!.setActivity({
       name: `${servers.filter((server) => server.connected).length}/${
-        servers.filter((server) => !server.limited).length
+        servers.length
       } servers online`,
       type: ActivityType.Watching,
     });

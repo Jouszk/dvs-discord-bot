@@ -103,3 +103,24 @@ export interface KeyPreset {
   name: string;
   commands: string[];
 }
+
+export interface SellixTransaction {
+  id: number;
+  uniqid: string;
+  total: number;
+  total_display: number;
+  exchange_rate: number;
+  currency: string;
+  shop_id: number;
+  type: "PRODUCT" | "SUBSCRIPTION";
+  customer_email: string;
+  product_id: number;
+  product_title: string;
+  quantity: number;
+  status: "PENDING" | "COMPLETED" | "REFUNDED";
+  created_at: number;
+  day_value: number;
+  day: string;
+  month: string;
+  year: number;
+}
