@@ -11,6 +11,7 @@ export interface Server {
   serverId: number;
   region: "US" | "EU";
   pvp: boolean;
+  maxPop: number;
 }
 
 export const servers: Server[] = [
@@ -33,6 +34,7 @@ export const servers: Server[] = [
     serverId: 1245755,
     region: "US",
     pvp: false,
+    maxPop: 100,
   },
   {
     id: "server2",
@@ -53,5 +55,6 @@ export const servers: Server[] = [
     serverId: 1395602,
     region: "US",
     pvp: false,
+    maxPop: 80,
   },
 ];

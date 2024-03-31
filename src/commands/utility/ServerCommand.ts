@@ -60,7 +60,7 @@ export class ServerCommand extends Command {
       .addField("Uptime", serverInfo.connected ? "Online" : "Offline", true)
       .addField(
         "Population",
-        population ? `${population.length}/100` : "N/A",
+        population ? `${population.length}/${serverInfo.maxPop}` : "N/A",
         true
       )
       .addField("Features", serverInfo.features.join("\n"))

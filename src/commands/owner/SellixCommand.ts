@@ -139,7 +139,6 @@ export default class SellixCommand extends Command {
     if (!res.ok) return null;
 
     const data = await res.json();
-    this.container.logger.debug(data);
 
     return (data?.data?.orders[0] as SellixTransaction) || null;
   }
