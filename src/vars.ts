@@ -177,6 +177,12 @@ export const shopPacks: ShopPack[] = [
     price: 7,
     commands: ['kit givetoplayer nightop "{username}"'],
   },
+  {
+    id: 16,
+    name: "Test-Gen Turret Bundle",
+    price: 32,
+    commands: ['kit givetoplayer turretgen "{username}"'],
+  },
 ];
 
 // {username} - The username of the user who redeemed the key
@@ -224,6 +230,10 @@ export const keyPresets: KeyPreset[] = [
   {
     name: "Night OP Kit",
     commands: ['kit givetoplayer nightop "{username}"'],
+  },
+  {
+    name: "Test-Gen Turret Bundle",
+    commands: ['kit givetoplayer turretgen "{username}"'],
   },
 ];
 
