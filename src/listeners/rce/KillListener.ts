@@ -73,11 +73,13 @@ export default class KillListener extends Listener {
       victim?.deaths === 0 ? victim?.kills : victim?.kills / victim?.deaths
     ).toFixed(2);
 
+    const blackOne = "<color=black>{</color> <color=green>";
+    const blackTwo = "<color=black> }</color>";
     const feedsEnabled = this.container.settings.get("global", "feeds", true);
     if (feedsEnabled) {
       this.container.rce.sendCommand(
         servers.find((server) => server.id === kill.server.id),
-        `say <color=red>${kill.kill.attacker} (${attackerKd})</color> killed <color=red>${kill.kill.victim} (${victimKd})</color>`
+        `say <color=red>${kill.kill.attacker} ${blackOne}${attackerKd}${blackTwo} killed <color=red>${kill.kill.victim} ${blackOne}${victimKd}${blackTwo}`
       );
     }
   }
