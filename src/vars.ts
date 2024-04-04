@@ -262,5 +262,9 @@ export const XP_SYSTEM_CONFIG: XPSystemConfig = {
       level: 40,
       roleId: "1199798227931770950",
     },
+    {
+      level: 55,
+      roleId: "1225444084458586163",
+    },
   ],
 };
