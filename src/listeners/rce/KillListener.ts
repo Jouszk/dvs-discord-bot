@@ -74,7 +74,7 @@ export default class KillListener extends Listener {
     ).toFixed(2);
 
     const blackOne = "<color=black>{</color> <color=green>";
-    const blackTwo = "<color=black> }</color>";
+    const blackTwo = "</color><color=black> }</color>";
     const feedsEnabled = this.container.settings.get("global", "feeds", true);
     if (feedsEnabled) {
       this.container.rce.sendCommand(
