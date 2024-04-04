@@ -28,16 +28,8 @@ export default class KillListener extends Listener {
       );
     }
 
-    const feedsEnabled = this.container.settings.get("global", "feeds", true);
-    if (feedsEnabled) {
-      this.container.rce.sendCommand(
-        servers.find((server) => server.id === kill.server.id),
-        `say <color=red>${kill.kill.attacker}</color> killed <color=red>${kill.kill.victim}</color>`
-      );
-    }
-
     // Log the kill to the leaderboard
-    await this.container.db.player
+    const attacker = await this.container.db.player
       .upsert({
         where: { id: kill.kill.attacker, serverId: kill.server.id },
         update: {
@@ -51,12 +43,10 @@ export default class KillListener extends Listener {
           kills: 1,
         },
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch(() => null);
 
     // Log the death to the leaderbaord
-    await this.container.db.player
+    const victim = await this.container.db.player
       .upsert({
         where: { id: kill.kill.victim, serverId: kill.server.id },
         update: {
@@ -70,8 +60,25 @@ export default class KillListener extends Listener {
           deaths: 1,
         },
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch(() => null);
+
+    // K/D ratio
+    const attackerKd: number = (
+      attacker?.deaths === 0
+        ? attacker?.kills
+        : attacker?.kills / attacker?.deaths
+    ).toFixed(2);
+
+    const victimKd: number = (
+      victim?.deaths === 0 ? victim?.kills : victim?.kills / victim?.deaths
+    ).toFixed(2);
+
+    const feedsEnabled = this.container.settings.get("global", "feeds", true);
+    if (feedsEnabled) {
+      this.container.rce.sendCommand(
+        servers.find((server) => server.id === kill.server.id),
+        `say <color=red>${kill.kill.attacker} (${attackerKd})</color> killed <color=red>${kill.kill.victim} (${victimKd})</color>`
+      );
+    }
   }
 }
