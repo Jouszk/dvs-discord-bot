@@ -73,7 +73,7 @@ export default class KillListener extends Listener {
       victim?.deaths === 0 ? victim?.kills : victim?.kills / victim?.deaths
     ).toFixed(2);
 
-    const blackOne = "<color=black>{</color> <color=green>";
+    const blackOne = "<color=black>{</color> <color=#8b0000>";
     const blackTwo = "</color><color=black> }</color>";
     const feedsEnabled = this.container.settings.get("global", "feeds", true);
     if (feedsEnabled) {
