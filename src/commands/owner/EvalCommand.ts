@@ -3,6 +3,7 @@ import { type ChatInputCommandInteraction } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 import { inspect } from "util";
 import StringUtils from "../../util/StringUtils";
+import EmbedSender from "../../util/EmbedSender";
 
 @ApplyOptions<Command.Options>({
   name: "eval",
@@ -60,6 +61,11 @@ export default class EvalCommand extends Command {
         idHints: [],
       }
     );
+  }
+
+  private async sendEmbed(channelId: string, name: string) {
+    const json = require(`../../../json/${name}.json`);
+    EmbedSender.sendEmbeds(channelId, json);
   }
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {

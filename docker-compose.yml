@@ -6,6 +6,8 @@ services:
     build:
       context: "./"
       dockerfile: "Dockerfile"
+    volumes:
+      - ./json:/usr/bot/json
     networks:
       - caddy_network
       - dvs_network
