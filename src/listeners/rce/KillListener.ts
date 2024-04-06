@@ -79,7 +79,7 @@ export default class KillListener extends Listener {
     if (feedsEnabled) {
       this.container.rce.sendCommand(
         servers.find((server) => server.id === kill.server.id),
-        `say <color=red>${kill.kill.attacker} ${blackOne}${attackerKd}${blackTwo} killed <color=red>${kill.kill.victim} ${blackOne}${victimKd}${blackTwo}`
+        `say <color=red>${kill.kill.attacker} ${blackOne}${attackerKd}${blackTwo}</color> killed <color=red>${kill.kill.victim} ${blackOne}${victimKd}${blackTwo}`
       );
     }
   }

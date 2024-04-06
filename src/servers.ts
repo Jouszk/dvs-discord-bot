@@ -55,6 +55,6 @@ export const servers: Server[] = [
     serverId: 1395602,
     region: "US",
     pvp: false,
-    maxPop: 80,
+    maxPop: 100,
   },
 ];
