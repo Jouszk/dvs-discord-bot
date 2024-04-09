@@ -235,6 +235,26 @@ export const keyPresets: KeyPreset[] = [
     name: "Test-Gen Turret Bundle",
     commands: ['kit givetoplayer turretgen "{username}"'],
   },
+  {
+    name: "Box of Charcoal",
+    commands: ['inventory.giveto "{username}" "charcoal" 144000'],
+  },
+  {
+    name: "Box of Metal Fragments",
+    commands: ['inventory.giveto "{username}" "metal.fragments" 144000'],
+  },
+  {
+    name: "Box of Wood",
+    commands: ['inventory.giveto "{username}" "wood" 144000'],
+  },
+  {
+    name: "Auto Turret",
+    commands: [
+      'inventory.giveto "{username}" "autoturret" 1',
+      'inventory.giveto "{username}" "ammo.pistol" 128',
+      'inventory.giveto "{username}" "pistol.python" 1',
+    ],
+  },
 ];
 
 interface RankRoles {
