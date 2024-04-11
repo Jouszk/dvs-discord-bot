@@ -5,13 +5,10 @@ import { CronTask } from "../../interfaces";
 import WebCacheManager from "../../util/WebCacheManager";
 import { Time } from "@sapphire/time-utilities";
 import { ActivityType } from "discord.js";
-import shopJson from "../../../json/shop.json";
-import EmbedSender from "../../util/EmbedSender";
 import { servers } from "../../servers";
 
 @ApplyOptions<Listener.Options>({
   name: "ready",
-  once: true,
 })
 export default class ReadyListener extends Listener {
   public run() {
