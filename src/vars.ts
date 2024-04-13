@@ -53,6 +53,12 @@ export const RUST_ADMINS: RustAdmin[] = [
     owner: false,
     chatColor: "#ff0000",
   },
+  {
+    ign: "chemosha",
+    discord: "569467126981722112",
+    owner: false,
+    chatColor: "#81007F",
+  },
 ];
 
 export enum RCEEventType {
