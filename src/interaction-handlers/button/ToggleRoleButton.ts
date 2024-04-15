@@ -21,9 +21,9 @@ export class ToggleRoleButton extends InteractionHandler {
     const member = await interaction.guild!.members.fetch(interaction.user.id);
     const role = interaction.guild!.roles.cache.get(roleId);
 
-    (await member.roles.cache.has(roleId))
-      ? member.roles.remove(role!)
-      : member.roles.add(role!);
+    member.roles.cache.has(roleId)
+      ? await member.roles.remove(roleId)
+      : await member.roles.add(roleId);
 
     return interaction.reply({
       content: `Role **${role!.name}** ${
