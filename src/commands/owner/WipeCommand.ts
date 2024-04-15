@@ -2,6 +2,13 @@ import { Command, ApplicationCommandRegistry } from "@sapphire/framework";
 import { type ChatInputCommandInteraction } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 
+interface CronTask {
+  name: string;
+  time: string;
+  commands: string;
+  serverId: string;
+}
+
 @ApplyOptions<Command.Options>({
   name: "wipe",
   description: "Run this command to wipe anything related to the wipe.",
@@ -16,6 +23,13 @@ export default class WipeCommand extends Command {
         command
           .setName(this.name)
           .setDescription(this.description)
+          .addStringOption((option) =>
+            option
+              .setName("server")
+              .setDescription("The server to wipe data from.")
+              .setRequired(true)
+              .setAutocomplete(true)
+          )
           .setDefaultMemberPermissions(8);
       },
       {
@@ -25,10 +39,24 @@ export default class WipeCommand extends Command {
   }
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
+    const server = interaction.options.getString("server", true);
     await interaction.deferReply({ ephemeral: true });
 
-    await this.container.db.player.deleteMany({});
-    this.container.settings.delete("global", "crons");
+    // Wipe leaderboard / kills data
+    await this.container.db.player.deleteMany({ where: { serverId: server } });
+
+    // Wipe cron jobs
+    const crons: CronTask[] = this.container.settings.get(
+      "global",
+      "crons",
+      []
+    );
+    crons.forEach((cron) => {
+      if (cron.serverId === server) {
+        crons.splice(crons.indexOf(cron), 1);
+      }
+    });
+    this.container.settings.set("global", "crons", crons);
 
     return interaction.editReply({
       content:
