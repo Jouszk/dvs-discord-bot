@@ -83,6 +83,7 @@ export const ignoredAttacker = [
   "wall.external.high.stone",
   "wall.external.high",
   "gates.external.high.wood",
+  "gates.external.high.wood (entity)",
   "gates.external.high.stone",
   "gates.external.high.stone (entity)",
   "bear",
@@ -119,6 +120,19 @@ export const ignoredAttacker = [
   "patrolhelicopter (entity)",
   "flameturret.deployed (entity)",
   "oilfireballsmall (entity)",
+  "napalm (entity)",
+  "cargoshipdynamic2 (entity)",
+  "barricade.wood (entity)",
+  "beartrap (entity)",
+  "landmine (entity)",
+  "cargoshipdynamic1 (entity)",
+  "campfire (entity)",
+  "barricade.woodwire (entity)",
+  "rocket_crane_lift_trigger (entity)",
+  "lock.code (entity)",
+  "rowboat (entity)",
+  "fireball (entity)",
+  "teslacoil.deployed (entity)",
 ];
 
 interface ShopPack {
