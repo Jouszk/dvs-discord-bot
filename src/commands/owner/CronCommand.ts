@@ -45,6 +45,12 @@ export default class CronCommand extends Subcommand {
                   .setDescription("The name of the cron task")
                   .setRequired(true)
               )
+              .addBooleanOption((option) =>
+                option
+                  .setName("permanent")
+                  .setDescription("Whether the cron task should be permanent")
+                  .setRequired(true)
+              )
               .addStringOption((option) =>
                 option
                   .setName("server")
@@ -101,6 +107,7 @@ export default class CronCommand extends Subcommand {
       .getString("name", true)
       .toLowerCase()
       .replace(/ /g, "-");
+    const permanent = interaction.options.getBoolean("permanent", true);
     const serverId = interaction.options.getString("server", true);
 
     // Check if the cron task already exists
@@ -122,7 +129,7 @@ export default class CronCommand extends Subcommand {
 
     // Create Modal
     const modal = new ModalBuilder()
-      .setCustomId(`cron_create_${name}_${serverId}`)
+      .setCustomId(`cron_create_${name}_${serverId}_${permanent}`)
       .setTitle("Create Cron Task")
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(

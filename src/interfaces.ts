@@ -3,6 +3,7 @@ export interface CronTask {
   name: string;
   time: string;
   commands: string;
+  permanent: boolean;
 }
 
 export interface SocketData {

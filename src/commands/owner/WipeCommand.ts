@@ -7,6 +7,7 @@ interface CronTask {
   time: string;
   commands: string;
   serverId: string;
+  permanent: boolean;
 }
 
 @ApplyOptions<Command.Options>({
@@ -51,11 +52,11 @@ export default class WipeCommand extends Command {
       "crons",
       []
     );
-    crons.forEach((cron) => {
-      if (cron.serverId === server) {
+    crons
+      .filter((cron) => cron.serverId === server && !cron.permanent)
+      .forEach((cron) => {
         crons.splice(crons.indexOf(cron), 1);
-      }
-    });
+      });
     this.container.settings.set("global", "crons", crons);
 
     return interaction.editReply({
