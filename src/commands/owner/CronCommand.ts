@@ -204,11 +204,9 @@ export default class CronCommand extends Subcommand {
       ?.replace(/ /g, "-");
     const serverId = interaction.options.getString("server", true);
 
-    const crons: CronTask[] = this.container.settings.get(
-      "global",
-      "crons",
-      []
-    );
+    const crons: CronTask[] = this.container.settings
+      .get("global", "crons", [])
+      .filter((cron) => cron.serverId === serverId);
 
     // Send all cron tasks if no name is provided
     if (!name) {
@@ -226,9 +224,7 @@ export default class CronCommand extends Subcommand {
     }
 
     // Fetch the cron task if a name is provided
-    const cron = crons.find(
-      (cron) => cron.name === name && cron.serverId === serverId
-    );
+    const cron = crons.find((cron) => cron.name === name);
 
     // Check if the tag already exists
     if (!cron) {
