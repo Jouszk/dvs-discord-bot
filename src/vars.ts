@@ -284,11 +284,13 @@ interface RankRoles {
 
 interface XPSystemConfig {
   xpRequiredByLevel: number;
+  xpMultiplier: number;
   rankRoles: RankRoles[];
 }
 
 export const XP_SYSTEM_CONFIG: XPSystemConfig = {
   xpRequiredByLevel: 35,
+  xpMultiplier: 2,
   rankRoles: [
     {
       level: 10,

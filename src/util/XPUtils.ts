@@ -44,7 +44,8 @@ export default class XPUtils {
   }
 
   public static async updateXp(user: User): Promise<XPSystem> {
-    const randomXp = Math.floor(Math.random() * 16) + 1;
+    const randomXp =
+      (Math.floor(Math.random() * 16) + 1) * XP_SYSTEM_CONFIG.xpMultiplier;
 
     // Get current data or default data
     const data = (await container.db.xPSystem.findFirst({
