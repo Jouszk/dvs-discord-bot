@@ -223,7 +223,7 @@ export default class RCEManager {
       container.logger.debug(`[${server.serverId}] ${message}`);
 
       // Population Handler
-      if (message.startsWith("<slot:") || message.startsWith("")) {
+      if (message.startsWith("<slot:")) {
         const users = message
           .match(/"(.*?)"/g)
           .map((username) => username.replace(/"/g, ""));
