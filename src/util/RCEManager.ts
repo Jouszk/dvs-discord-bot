@@ -17,9 +17,10 @@ enum GPORTAL_WS_TYPE {
 }
 
 interface GPORTALConsoleMessagePayload {
-  steam: string;
+  stream: string;
   message: string;
   __typename: string;
+  channel: string;
 }
 
 interface GPORTALConsoleMessage {
@@ -38,6 +39,11 @@ interface GPORTALAuth {
   refresh_token: string;
   token_type: "Bearer";
   expires_in: number;
+}
+
+interface GPORTALConsoleResponse {
+  ok: boolean;
+  __typename: string;
 }
 
 class RCEManagerEvents extends EventEmitter {}
@@ -144,7 +150,7 @@ export default class RCEManager {
             }, 30_000);
 
             // Sleep for 10 seconds to ensure logs dont get spammed
-            await this.sleep(10_000);
+            // await this.sleep(10_000);
 
             // Fetch population every 5 minutes
             setInterval(async () => {
@@ -411,18 +417,16 @@ export default class RCEManager {
 
   public async sendCommand(server: Server, command: string): Promise<boolean> {
     if (!this.sockets.has(server.id) || !this.auth) return false;
-    console.log(server.id, command);
 
     const data = {
-      operationName: "runCommand",
+      operationName: "sendConsoleMessage",
       variables: {
         sid: server.serverId,
         region: server.region,
-        command: "serverCommand",
-        kwargs: `{"command":"${command.replace(/"/g, '\\"')}"}`,
+        message: command,
       },
       query:
-        "mutation runCommand($sid: Int!, $region: REGION!, $command: String!, $kwargs: JSONString!) {\n  runCommand(\n    rsid: {id: $sid, region: $region}\n    command: $command\n    kwargs: $kwargs\n  ) {\n    returnVal\n    __typename\n  }\n}",
+        "mutation sendConsoleMessage($sid: Int!, $region: REGION!, $message: String!) {\n  sendConsoleMessage(rsid: {id: $sid, region: $region}, message: $message) {\n    ok\n    __typename\n  }\n}",
     };
 
     const request = await fetch(GPORTAL_COMMAND_ROUTE, {
@@ -434,10 +438,11 @@ export default class RCEManager {
       body: JSON.stringify(data),
     });
 
-    console.log(request.status);
-
     if (!request.ok || request.status !== 200) return false;
-    return true;
+
+    const json: { data: { sendConsoleMessage: GPORTALConsoleResponse } } =
+      await request.json();
+    return json?.data?.sendConsoleMessage?.ok ?? false;
   }
 
   public setCron(
