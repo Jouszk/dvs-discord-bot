@@ -16,8 +16,6 @@ export interface SocketData {
 export interface ServerInfo {
   id: string;
   name: string;
-  ipAddress: string;
-  port: number;
   pvp: boolean;
 }
 

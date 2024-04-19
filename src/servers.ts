@@ -4,14 +4,11 @@ export interface Server {
   name: string;
   features: string[];
   logo: string;
-  ipAddress: string;
-  rconPort: number;
-  ftpPassword: string;
   connected: boolean;
   serverId: number;
   region: "US" | "EU";
-  pvp: boolean;
   maxPop: number;
+  pvp?: boolean;
 }
 
 export const servers: Server[] = [
@@ -27,14 +24,11 @@ export const servers: Server[] = [
       "Active Admins & Events",
       "And More!",
     ],
-    ipAddress: "144.126.145.160",
-    rconPort: 28716,
-    ftpPassword: "7k35QR6W",
     connected: false,
     serverId: 1245755,
     region: "US",
+    maxPop: 60,
     pvp: false,
-    maxPop: 100,
   },
   {
     id: "server2",
@@ -48,13 +42,10 @@ export const servers: Server[] = [
       "Active Admins & Events",
       "And More!",
     ],
-    ipAddress: "144.126.128.8",
-    rconPort: 34616,
-    ftpPassword: "FAcnQxSq",
     connected: false,
     serverId: 1395602,
     region: "US",
-    pvp: false,
     maxPop: 100,
+    pvp: false,
   },
 ];

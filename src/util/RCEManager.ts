@@ -152,17 +152,17 @@ export default class RCEManager {
             // Sleep for 10 seconds to ensure logs dont get spammed
             // await this.sleep(10_000);
 
-            // Fetch population every 5 minutes
-            setInterval(async () => {
-              await this.fetchPopulation(server);
-            }, 5 * 60_000);
-            await this.fetchPopulation(server);
-
             resolve();
           });
         });
 
         this.sockets.set(server.id, socket);
+
+        await this.fetchPopulation(server);
+        setInterval(async () => {
+          await this.fetchPopulation(server);
+        }, 5 * 60_000);
+
         this.setupListeners(server, socket);
       } catch (err) {}
     }
@@ -208,155 +208,161 @@ export default class RCEManager {
     const serverDetails = {
       id: server.id,
       name: server.name,
-      ipAddress: server.ipAddress,
-      port: server.rconPort,
       pvp: server.pvp,
     };
 
-    const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;
-    const message = data?.payload?.data?.consoleMessages?.message
-      ?.replace(pattern, "")
-      ?.replace("\n", "");
+    const logMessages = data?.payload?.data?.consoleMessages?.message?.split(
+      /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /gm
+    );
 
-    if (!message) return;
+    logMessages.forEach((logMessage) => {
+      const message = logMessage.trim();
 
-    // Population Handler
-    if (message.startsWith("<slot:")) {
-      const users = message
-        .match(/"(.*?)"/g)
-        .map((username) => username.replace(/"/g, ""));
+      if (!message) return;
 
-      users.shift();
-      this.population.set(server.id, users);
-      return;
-    }
+      // Population Handler
+      if (message.startsWith("<slot:") || message.startsWith("")) {
+        const users = message
+          .match(/"(.*?)"/g)
+          .map((username) => username.replace(/"/g, ""));
 
-    this.emitter.emit(RCEEventType.WebSocketMessage, {
-      message,
-    });
-
-    // Kill Feed
-    if (message.includes("was killed by")) {
-      const killObject: KillMessage = {
-        victim: message.split(" was killed by ")[0],
-        attacker: message.split(" was killed by ")[1].split("\x00")[0],
-      };
-
-      // Ignore if attacker or victim is in ignoredAttacker array
-      if (
-        ignoredAttacker.includes(killObject.attacker.toLowerCase()) ||
-        ignoredAttacker.includes(killObject.victim.toLowerCase()) ||
-        Number(killObject.attacker) ||
-        Number(killObject.victim)
-      ) {
+        users.shift();
+        this.population.set(server.id, users);
         return;
       }
 
-      this.emitter.emit(RCEEventType.KillMessage, {
-        kill: killObject,
-        server: serverDetails,
+      this.emitter.emit(RCEEventType.WebSocketMessage, {
+        message,
       });
-    }
 
-    // Player Joining
-    if (
-      message.includes("joined [xboxone]") ||
-      message.includes("joined [ps4]")
-    ) {
-      const username = message.split(" joined ")[0];
-      this.emitter.emit(RCEEventType.PlayerJoin, {
-        username,
-        server: serverDetails,
-      });
-    }
+      // Kill Feed
+      if (message.includes("was killed by")) {
+        const killObject: KillMessage = {
+          victim: message.split(" was killed by ")[0],
+          attacker: message.split(" was killed by ")[1].split("\x00")[0],
+        };
 
-    // Add to Role
-    const roleMatch = message.match(/\[(.*?)\]/g);
-    if (roleMatch && message.includes("Added")) {
-      const rceRole: RCERole = {
-        inGameName: roleMatch[1],
-        role: roleMatch[2],
-      };
+        // Ignore if attacker or victim is in ignoredAttacker array
+        if (
+          ignoredAttacker.includes(killObject.attacker.toLowerCase()) ||
+          ignoredAttacker.includes(killObject.victim.toLowerCase()) ||
+          Number(killObject.attacker) ||
+          Number(killObject.victim)
+        ) {
+          return;
+        }
 
-      this.emitter.emit(RCEEventType.AddRole, {
-        role: rceRole,
-        server: serverDetails,
-      });
-    }
+        this.emitter.emit(RCEEventType.KillMessage, {
+          kill: killObject,
+          server: serverDetails,
+        });
+      }
 
-    // Item Spawning
-    const itemSpawnMatch = message.match(
-      /\[ServerVar\] giving\s+(\w+)\s+(\d+)\s*x\s+(.+)\x00/
-    );
-    if (itemSpawnMatch) {
-      const itemSpawn: ItemSpawn = {
-        receiver: itemSpawnMatch[1],
-        amount: parseInt(itemSpawnMatch[2], 10),
-        item: itemSpawnMatch[3],
-      };
-
-      this.emitter.emit(RCEEventType.ItemSpawnMessage, {
-        spawn: itemSpawn,
-        server: serverDetails,
-      });
-    }
-
-    // Note Editing
-    const noteEditMatch = message.match(
-      /\[NOTE PANEL\] Player \[ ([^\]]+) \] changed name from \[\s*([\s\S]*?)\s*\] to \[\s*([\s\S]*?)\s*\]/
-    );
-    if (noteEditMatch) {
-      const username = noteEditMatch[1].trim();
-      const oldContent = noteEditMatch[2].trim();
-      const newContent = noteEditMatch[3].trim();
-
-      const noteEdit: NoteEdit = {
-        username,
-        oldContent: oldContent.split("\\n")[0],
-        newContent: newContent.split("\\n")[0],
-      };
-
+      // Player Joining
       if (
-        noteEdit.newContent.length > 0 &&
-        noteEdit.oldContent !== noteEdit.newContent
+        message.includes("joined [xboxone]") ||
+        message.includes("joined [ps4]")
       ) {
-        this.emitter.emit(RCEEventType.NoteEdit, {
-          note: noteEdit,
-          server: serverDetails,
-        });
-      }
-    }
-
-    // Events
-    if (message.includes("[event]")) {
-      if (message.includes("event_airdrop")) {
-        this.emitter.emit(RCEEventType.EventMessage, {
-          event: "Airdrop",
+        const username = message.split(" joined ")[0];
+        this.emitter.emit(RCEEventType.PlayerJoin, {
+          username,
           server: serverDetails,
         });
       }
 
-      if (message.includes("event_cargoship")) {
-        this.emitter.emit(RCEEventType.EventMessage, {
-          event: "Cargo Ship",
+      // Add to Role
+      const roleMatch = message.match(/\[(.*?)\]/g);
+      if (roleMatch && message.includes("Added")) {
+        const rceRole: RCERole = {
+          inGameName: roleMatch[1],
+          role: roleMatch[2],
+        };
+
+        this.emitter.emit(RCEEventType.AddRole, {
+          role: rceRole,
           server: serverDetails,
         });
       }
 
-      if (message.includes("event_cargoheli")) {
-        this.emitter.emit(RCEEventType.EventMessage, {
-          event: "Chinook",
+      // Item Spawning
+      const itemSpawnMatch = message.match(
+        /\[ServerVar\] giving\s+(\w+)\s+(\d+)\s*x\s+(.+)\x00/
+      );
+      if (itemSpawnMatch) {
+        const itemSpawn: ItemSpawn = {
+          receiver: itemSpawnMatch[1],
+          amount: parseInt(itemSpawnMatch[2], 10),
+          item: itemSpawnMatch[3],
+        };
+
+        this.emitter.emit(RCEEventType.ItemSpawnMessage, {
+          spawn: itemSpawn,
           server: serverDetails,
         });
       }
 
-      if (message.includes("event_helicopter")) {
-        this.emitter.emit(RCEEventType.EventMessage, {
-          event: "Patrol Helicopter",
-          server: serverDetails,
-        });
+      // Note Editing
+      const noteEditMatch = message.match(
+        /\[NOTE PANEL\] Player \[ ([^\]]+) \] changed name from \[\s*([\s\S]*?)\s*\] to \[\s*([\s\S]*?)\s*\]/
+      );
+      if (noteEditMatch) {
+        const username = noteEditMatch[1].trim();
+        const oldContent = noteEditMatch[2].trim();
+        const newContent = noteEditMatch[3].trim();
+
+        const noteEdit: NoteEdit = {
+          username,
+          oldContent: oldContent.split("\\n")[0],
+          newContent: newContent.split("\\n")[0],
+        };
+
+        if (
+          noteEdit.newContent.length > 0 &&
+          noteEdit.oldContent !== noteEdit.newContent
+        ) {
+          this.emitter.emit(RCEEventType.NoteEdit, {
+            note: noteEdit,
+            server: serverDetails,
+          });
+        }
       }
-    }
+
+      // Events
+      if (message.includes("[event]")) {
+        if (message.includes("event_airdrop")) {
+          this.emitter.emit(RCEEventType.EventMessage, {
+            event: "Airdrop",
+            server: serverDetails,
+          });
+        }
+
+        if (message.includes("event_cargoship")) {
+          this.emitter.emit(RCEEventType.EventMessage, {
+            event: "Cargo Ship",
+            server: serverDetails,
+          });
+        }
+
+        if (message.includes("event_cargoheli")) {
+          this.emitter.emit(RCEEventType.EventMessage, {
+            event: "Chinook",
+            server: serverDetails,
+          });
+        }
+
+        if (message.includes("event_helicopter")) {
+          this.emitter.emit(RCEEventType.EventMessage, {
+            event: "Patrol Helicopter",
+            server: serverDetails,
+          });
+        }
+      }
+    });
+
+    // const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;
+    // const message = data?.payload?.data?.consoleMessages?.message
+    //   ?.replace(pattern, "")
+    //   ?.replace("\n", "");
   }
 
   public async refreshAuth(): Promise<GPORTALAuth | null> {
