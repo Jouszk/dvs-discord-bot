@@ -220,6 +220,8 @@ export default class RCEManager {
 
       if (!message) return;
 
+      container.logger.debug(`[${server.serverId}] ${message}`);
+
       // Population Handler
       if (message.startsWith("<slot:") || message.startsWith("")) {
         const users = message
