@@ -218,7 +218,8 @@ export default class RCEManager {
     logMessages.forEach((logMessage) => {
       const message = logMessage.trim();
 
-      if (!message) return;
+      if (!message || message.startsWith("Executing console system command"))
+        return;
 
       // Population Handler
       if (message.startsWith("<slot:")) {

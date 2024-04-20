@@ -161,7 +161,7 @@ export default class CustomLogger implements ILogger {
     return console.log(
       `${this.getTimestamp()} ${ConsoleColor.BgYellow}GPORTAL${
         ConsoleColor.Reset
-      } ${ConsoleColor.BgWhite}${server}${ConsoleColor.Reset} ${
+      } ${ConsoleColor.BgBlue}${server}${ConsoleColor.Reset} ${
         ConsoleColor.FgYellow
       }${message}${ConsoleColor.Reset}`
     );
