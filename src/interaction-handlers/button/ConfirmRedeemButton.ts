@@ -48,9 +48,8 @@ export class ViewModerationButton extends InteractionHandler {
 
     // If the key doesn't exist, send a response
     if (!redeemKey) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "You provided an invalid redeem key.",
-        ephemeral: true,
       });
     }
 

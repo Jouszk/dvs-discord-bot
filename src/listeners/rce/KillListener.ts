@@ -43,7 +43,10 @@ export default class KillListener extends Listener {
           kills: 1,
         },
       })
-      .catch(() => null);
+      .catch((err) => {
+        this.container.logger.error(err);
+        return null;
+      });
 
     // Log the death to the leaderbaord
     const victim = await this.container.db.player
@@ -60,7 +63,10 @@ export default class KillListener extends Listener {
           deaths: 1,
         },
       })
-      .catch(() => null);
+      .catch((err) => {
+        this.container.logger.error(err);
+        return null;
+      });
 
     // K/D ratio
     const attackerKd: number = (
