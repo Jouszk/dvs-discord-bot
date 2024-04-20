@@ -98,6 +98,11 @@ export interface KillEvent {
   server: ServerInfo;
 }
 
+export interface WSEvent {
+  message: string;
+  server: ServerInfo;
+}
+
 export interface KeyPreset {
   name: string;
   commands: string[];

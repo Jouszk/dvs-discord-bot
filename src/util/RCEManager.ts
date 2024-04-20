@@ -71,7 +71,7 @@ export default class RCEManager {
     if (!this.auth) return;
 
     container.logger.ws(
-      `Connecting to GPORTAL WebSocket for ${server.serverId}`
+      `Connecting to GPORTAL WebSocket for ${server.name} [${server.serverId}]`
     );
     this.reconnecting.set(server.id, false);
 
@@ -92,7 +92,7 @@ export default class RCEManager {
         socket.addEventListener("error", (error) => {
           if (!this.reconnecting.get(server.id)) {
             container.logger.ws(
-              `[${error.message}] Failed to connect to GPORTAL WebSocket for ${server.serverId}. Retrying in 5 seconds...`
+              `[${error.message}] Failed to connect to GPORTAL WebSocket for ${server.name} [${server.serverId}]. Retrying in 5 seconds...`
             );
           }
 
@@ -110,7 +110,7 @@ export default class RCEManager {
           socket.addEventListener("open", async () => {
             this.reconnecting.set(server.id, false);
             container.logger.ws(
-              `Connected to GPORTAL WebSocket for ${server.serverId}`
+              `Connected to GPORTAL WebSocket for ${server.name} [${server.serverId}]`
             );
 
             server.connected = true;
@@ -191,7 +191,7 @@ export default class RCEManager {
     // Error listener
     socket.addEventListener("error", (error) => {
       container.logger.ws(
-        `An error occurred in the GPORTAL WebSocket [${server.serverId}]: ${error.message}`
+        `An error occurred in the GPORTAL WebSocket - ${server.name} [${server.serverId}]: ${error.message}`
       );
     });
 
@@ -220,8 +220,6 @@ export default class RCEManager {
 
       if (!message) return;
 
-      container.logger.debug(`[${server.serverId}] ${message}`);
-
       // Population Handler
       if (message.startsWith("<slot:")) {
         const users = message
@@ -235,6 +233,7 @@ export default class RCEManager {
 
       this.emitter.emit(RCEEventType.WebSocketMessage, {
         message,
+        server: serverDetails,
       });
 
       // Kill Feed
@@ -360,11 +359,6 @@ export default class RCEManager {
         }
       }
     });
-
-    // const pattern = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}:LOG:DEFAULT: /;
-    // const message = data?.payload?.data?.consoleMessages?.message
-    //   ?.replace(pattern, "")
-    //   ?.replace("\n", "");
   }
 
   public async refreshAuth(): Promise<GPORTALAuth | null> {

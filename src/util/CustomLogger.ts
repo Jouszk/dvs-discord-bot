@@ -157,11 +157,13 @@ export default class CustomLogger implements ILogger {
     );
   }
 
-  public gportal(message: string) {
+  public gportal(server: string, message: string) {
     return console.log(
       `${this.getTimestamp()} ${ConsoleColor.BgYellow}GPORTAL${
         ConsoleColor.Reset
-      } ${ConsoleColor.FgYellow}${message}${ConsoleColor.Reset}`
+      } ${ConsoleColor.BgWhite}${server}${ConsoleColor.Reset} ${
+        ConsoleColor.FgYellow
+      }${message}${ConsoleColor.Reset}`
     );
   }
 }
@@ -175,6 +177,6 @@ declare module "@sapphire/framework" {
       address: string
     ): void;
     ws(message: string): void;
-    gportal(message: string): void;
+    gportal(server: string, message: string): void;
   }
 }
