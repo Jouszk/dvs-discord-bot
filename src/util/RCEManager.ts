@@ -75,133 +75,112 @@ export default class RCEManager {
     );
     this.reconnecting.set(server.id, false);
 
-    while (
-      !this.sockets.has(server.id) ||
-      this.sockets.get(server.id).readyState !== WebSocket.OPEN
-    ) {
-      try {
-        const socket = new WebSocket(GPORTAL_WEBSOCKET, ["graphql-ws"], {
-          headers: {
-            origin: "https://www.g-portal.com",
-            host: "www.g-portal.com",
-          },
-          timeout: 60_000,
-        });
+    const socket = await this.createWebSocket(server);
+    if (!socket) return;
 
-        // Error handling
-        socket.addEventListener("error", (error) => {
-          if (!this.reconnecting.get(server.id)) {
-            container.logger.ws(
-              `[${error.message}] Failed to connect to GPORTAL WebSocket for ${server.name} [${server.serverId}]. Retrying in 5 seconds...`
-            );
-          }
+    this.sockets.set(server.id, socket);
+    server.connected = true;
 
-          this.reconnecting.set(server.id, true);
+    await this.authenticateWebSocket(socket);
+    this.startConsoleMessageSubscription(server, socket);
+    this.setupWebSocketPing(socket);
+    this.fetchAndSchedulePopulationUpdates(server);
 
-          setTimeout(() => {
-            this.connect(server);
-          }, Time.Second * 5);
+    this.setupWebSocketListeners(server, socket);
+  }
 
-          socket.close();
-          return;
-        });
+  private async createWebSocket(server: Server): Promise<WebSocket | null> {
+    try {
+      const socket = new WebSocket(GPORTAL_WEBSOCKET, ["graphql-ws"], {
+        headers: {
+          origin: "https://www.g-portal.com",
+          host: "www.g-portal.com",
+        },
+        timeout: 60_000,
+      });
 
-        await new Promise<void>((resolve) => {
-          socket.addEventListener("open", async () => {
-            this.reconnecting.set(server.id, false);
-            container.logger.ws(
-              `Connected to GPORTAL WebSocket for ${server.name} [${server.serverId}]`
-            );
+      await new Promise<void>((resolve, reject) => {
+        socket.addEventListener("open", () => resolve());
+        socket.addEventListener("error", (error) => reject(error));
+      });
 
-            server.connected = true;
-
-            // Authenticate with the websocket
-            socket.send(
-              JSON.stringify({
-                type: "connection_init",
-                payload: {
-                  authorization: `${this.auth.token_type} ${this.auth.access_token}`,
-                },
-              })
-            );
-
-            // Open the console messages
-            socket.send(
-              JSON.stringify({
-                id: GPORTAL_WS_TYPE.ConsoleMessages,
-                type: "start",
-                payload: {
-                  variables: {
-                    sid: server.serverId,
-                    region: server.region,
-                  },
-                  extensions: {},
-                  operationName: "consoleMessages",
-                  query:
-                    "subscription consoleMessages($sid: Int!, $region: REGION!) {\n  consoleMessages(rsid: {id: $sid, region: $region}) {\n    stream\n    message\n    __typename\n  }\n}",
-                },
-              })
-            );
-
-            // Send a ping every 30 seconds
-            setInterval(() => {
-              if (socket.readyState !== WebSocket.OPEN) return;
-              socket.send(JSON.stringify({ type: "ka" }));
-            }, 30_000);
-
-            // Sleep for 10 seconds to ensure logs dont get spammed
-            // await this.sleep(10_000);
-
-            resolve();
-          });
-        });
-
-        this.sockets.set(server.id, socket);
-
-        await this.fetchPopulation(server);
-        setInterval(async () => {
-          await this.fetchPopulation(server);
-        }, 5 * 60_000);
-
-        this.setupListeners(server, socket);
-      } catch (err) {}
+      return socket;
+    } catch (error) {
+      container.logger.ws(
+        `[${error.message}] Failed to connect to GPORTAL WebSocket for ${server.name} [${server.serverId}]. Retrying in 5 seconds...`
+      );
+      return null;
     }
   }
 
-  private async fetchPopulation(server: Server) {
-    await this.sendCommand(server, "Users");
+  private async authenticateWebSocket(socket: WebSocket) {
+    socket.send(
+      JSON.stringify({
+        type: "connection_init",
+        payload: {
+          authorization: `${this.auth.token_type} ${this.auth.access_token}`,
+        },
+      })
+    );
   }
 
-  private async setupListeners(server: Server, socket: WebSocket) {
-    // Check if websocket closes / disconnects
+  private startConsoleMessageSubscription(server: Server, socket: WebSocket) {
+    socket.send(
+      JSON.stringify({
+        id: GPORTAL_WS_TYPE.ConsoleMessages,
+        type: "start",
+        payload: {
+          variables: {
+            sid: server.serverId,
+            region: server.region,
+          },
+          extensions: {},
+          operationName: "consoleMessages",
+          query:
+            "subscription consoleMessages($sid: Int!, $region: REGION!) {\n  consoleMessages(rsid: {id: $sid, region: $region}) {\n    stream\n    message\n    __typename\n  }\n}",
+        },
+      })
+    );
+  }
+
+  private setupWebSocketPing(socket: WebSocket) {
+    setInterval(() => {
+      if (socket.readyState !== WebSocket.OPEN) return;
+      socket.send(JSON.stringify({ type: "ka" }));
+    }, 30_000);
+  }
+
+  private async fetchAndSchedulePopulationUpdates(server: Server) {
+    await this.fetchPopulation(server);
+    setInterval(async () => {
+      await this.fetchPopulation(server);
+    }, 5 * 60_000);
+  }
+
+  private setupWebSocketListeners(server: Server, socket: WebSocket) {
     socket.addEventListener("close", () => {
-      if (!this.reconnecting) {
-        container.logger.ws(
-          "Disconnected from GPORTAL WebSocket. Retrying in 5 seconds..."
-        );
-
-        server.connected = false;
-      }
-
+      container.logger.ws(
+        "Disconnected from GPORTAL WebSocket. Retrying in 5 seconds..."
+      );
       server.connected = false;
       this.reconnecting.set(server.id, true);
       this.connect(server);
     });
 
-    // Error listener
     socket.addEventListener("error", (error) => {
       container.logger.ws(
         `An error occurred in the GPORTAL WebSocket - ${server.name} [${server.serverId}]: ${error.message}`
       );
     });
 
-    // Receive messages
     socket.addEventListener("message", (message) => {
       const data: GPORTALConsoleMessage = JSON.parse(message.data.toString());
-
-      // Handle message
       this.handleMessage(server, data);
     });
+  }
+
+  private async fetchPopulation(server: Server) {
+    await this.sendCommand(server, "Users");
   }
 
   private handleMessage(server: Server, data: GPORTALConsoleMessage): void {
