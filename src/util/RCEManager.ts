@@ -455,8 +455,8 @@ export default class RCEManager {
     commands: string[]
   ) {
     nodeCron.schedule(time, async () => {
-      container.logger.info(
-        `Running cron job for ${name} on server ${server.serverId}`
+      container.logger.debug(
+        `Running cron job for ${name} on server: ${server.name} [${server.serverId}]`
       );
 
       await this.sendCommands(server, commands);
