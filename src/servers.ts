@@ -27,7 +27,7 @@ export const servers: Server[] = [
     connected: false,
     serverId: 1245755,
     region: "US",
-    maxPop: 60,
+    maxPop: 80,
     pvp: false,
   },
   {
@@ -51,7 +51,7 @@ export const servers: Server[] = [
   {
     id: "server3",
     game: "Rust Console Edition",
-    name: "DvS Solo-Quad 5x",
+    name: "DvS Solo-Quad 3x RAID-WEEKEND",
     logo: `https://dvs.gg/img/rust-console.png`,
     features: [
       "BiWeekly Wipe Schedule",
