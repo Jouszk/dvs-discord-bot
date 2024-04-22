@@ -5,6 +5,41 @@ interface VIPPlan {
   value: string;
 }
 
+interface Rules {
+  serverId: string;
+  rules: string[];
+}
+
+export const RULES: Rules[] = [
+  {
+    serverId: "server1",
+    rules: [
+      "REMINDER: This is a solo/duo server, you may NOT team with more than two players, alliance or hire farmbots.",
+      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
+      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
+      "REMINDER: Offline raiding is allowed, however, you risk your base being demolished if it becomes a habit of your team.",
+    ],
+  },
+  {
+    serverId: "server2",
+    rules: [
+      "REMINDER: This is a solo/duo/trio server, you may NOT team with more than three players, alliance or hire farmbots.",
+      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
+      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
+      "REMINDER: Offline raiding is allowed, however, you risk your base being demolished if it becomes a habit of your team.",
+    ],
+  },
+  {
+    serverId: "server3",
+    rules: [
+      "REMINDER: This is a solo-quad server, you may NOT team with more than four players, alliance or hire farmbots.",
+      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
+      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
+      "REMINDER: Door camping or attempting to raid a base on a weekday is NOT allowed.",
+    ],
+  },
+];
+
 export const VIP_PLANS: VIPPlan[] = [
   {
     display: "VIP Basic",

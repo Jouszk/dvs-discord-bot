@@ -4,7 +4,7 @@ import { EventEmitter } from "events";
 import { Time } from "@sapphire/time-utilities";
 import { Server, servers } from "../servers";
 import { ItemSpawn, KillMessage, NoteEdit, RCERole } from "../interfaces";
-import { RCEEventType, ignoredAttacker } from "../vars";
+import { RCEEventType, RULES, ignoredAttacker } from "../vars";
 import nodeCron from "node-cron";
 
 enum GPORTAL_WS_TYPE {
@@ -458,6 +458,20 @@ export default class RCEManager {
       container.logger.debug(
         `Running cron job for ${name} on server: ${server.name} [${server.serverId}]`
       );
+
+      // Random rule sending
+      commands.forEach((command) => {
+        command.replace(
+          "{random_rule}",
+          RULES.find((s) => s.serverId === server.id).rules[
+            Math.floor(
+              Math.random() *
+                RULES.find((s) => s.serverId === server.id).rules.length -
+                1
+            )
+          ]
+        );
+      });
 
       await this.sendCommands(server, commands);
     });
