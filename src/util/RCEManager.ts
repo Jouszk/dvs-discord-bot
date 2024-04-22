@@ -459,20 +459,6 @@ export default class RCEManager {
         `Running cron job for ${name} on server: ${server.name} [${server.serverId}]`
       );
 
-      // Random rule sending
-      commands.forEach((command) => {
-        command = command.replace(
-          "{random_rule}",
-          RULES.find((s) => s.serverId === server.id).rules[
-            Math.floor(
-              Math.random() *
-                RULES.find((s) => s.serverId === server.id).rules.length -
-                1
-            )
-          ]
-        );
-      });
-
       await this.sendCommands(server, commands);
     });
   }
