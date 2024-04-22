@@ -461,7 +461,7 @@ export default class RCEManager {
 
       // Random rule sending
       commands.forEach((command) => {
-        command.replace(
+        command = command.replace(
           "{random_rule}",
           RULES.find((s) => s.serverId === server.id).rules[
             Math.floor(
