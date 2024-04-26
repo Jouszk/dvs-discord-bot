@@ -143,6 +143,8 @@ export default class RCEManager {
               })
             );
 
+            await this.sleep(10_1000);
+
             // Send a ping every 30 seconds
             setInterval(() => {
               if (socket.readyState !== WebSocket.OPEN) return;
