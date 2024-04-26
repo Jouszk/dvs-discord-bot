@@ -46,13 +46,14 @@ model TicketMessage {
 }
 
 model Player {
-  uuid      String   @id @default(uuid())
   id        String   
   serverId  String   
   kills     Int      @default(0)
   deaths    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@id([id, serverId])
 }
 
 model XPSystem {
