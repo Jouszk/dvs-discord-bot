@@ -24,7 +24,10 @@ export class WipeKillsModal extends InteractionHandler {
     // Get the player from the database
     const player = await this.container.db.player.findUnique({
       where: {
-        id: inGameName,
+        id_serverId: {
+          id: inGameName,
+          serverId,
+        },
       },
     });
 
@@ -34,8 +37,10 @@ export class WipeKillsModal extends InteractionHandler {
     // Update the player's kills to 0
     await this.container.db.player.update({
       where: {
-        id: inGameName,
-        serverId,
+        id_serverId: {
+          id: inGameName,
+          serverId,
+        },
       },
       data: {
         kills: 0,

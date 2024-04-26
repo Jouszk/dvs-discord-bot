@@ -31,7 +31,12 @@ export default class KillListener extends Listener {
     // Log the kill to the leaderboard
     const attacker = await this.container.db.player
       .upsert({
-        where: { id: kill.kill.attacker, serverId: kill.server.id },
+        where: {
+          id_serverId: {
+            id: kill.kill.attacker,
+            serverId: kill.server.id,
+          },
+        },
         update: {
           kills: {
             increment: 1,
@@ -51,7 +56,12 @@ export default class KillListener extends Listener {
     // Log the death to the leaderbaord
     const victim = await this.container.db.player
       .upsert({
-        where: { id: kill.kill.victim, serverId: kill.server.id },
+        where: {
+          id_serverId: {
+            id: kill.kill.victim,
+            serverId: kill.server.id,
+          },
+        },
         update: {
           deaths: {
             increment: 1,
