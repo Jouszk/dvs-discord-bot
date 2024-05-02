@@ -71,18 +71,6 @@ export const RUST_ADMINS: RustAdmin[] = [
     chatColor: "#f1c40f",
   },
   {
-    ign: "HANDMEYOURGUN",
-    discord: "731466813854187520",
-    owner: false,
-    chatColor: "#ee5253",
-  },
-  {
-    ign: "Drippen Pain",
-    discord: "544652628328710144",
-    owner: false,
-    chatColor: "#ff0000",
-  },
-  {
     ign: "sirenqxy",
     discord: "270305277297950730",
     owner: false,
