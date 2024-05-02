@@ -314,7 +314,7 @@ export const keyPresets: KeyPreset[] = [
     name: "VIP Plus Bundle",
     commands: [
       'kit givetoplayer "{username}" t3base',
-      '"inventory.giveto "{username}" "electric.generator.small" "1"',
+      'inventory.giveto "{username}" "electric.generator.small" "1"',
     ],
   },
 ];
