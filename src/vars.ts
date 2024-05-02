@@ -310,6 +310,13 @@ export const keyPresets: KeyPreset[] = [
       'inventory.giveto "{username}" "pistol.python" 1',
     ],
   },
+  {
+    name: "VIP Plus Bundle",
+    commands: [
+      'kit givetoplayer "{username}" t3base',
+      'inventory.giveto "{username}" "inventory.giveto "{username}" "electric.generator.small" "1"" "1"',
+    ],
+  },
 ];
 
 interface RankRoles {
