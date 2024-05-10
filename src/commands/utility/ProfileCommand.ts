@@ -63,7 +63,7 @@ export default class ProfileCommand extends Command {
         .setCustomId("claim_vip_plus")
         .setLabel("Claim VIP Plus Benefits")
         .setStyle(ButtonStyle.Primary)
-        .setDisabled(claimEligible)
+        .setDisabled(!claimEligible)
     );
 
     interaction.reply({
