@@ -13,6 +13,7 @@ import { SettingsProvider } from "../util/SettingsProvider";
 import VIPManager from "../util/VIPManager";
 import WebCacheManager from "../util/WebCacheManager";
 import { Server, servers } from "../servers";
+import { VerifySession } from "../interfaces";
 
 export default class BotClient extends SapphireClient {
   public constructor() {
@@ -63,6 +64,9 @@ export default class BotClient extends SapphireClient {
     // Initialize VIP manager
     container.vipManager = new VIPManager();
 
+    // Initialize verification sessions
+    container.verifications = new Map();
+
     // Login to discord
     return super.login(token);
   }
@@ -76,5 +80,6 @@ declare module "@sapphire/pieces" {
     vipManager: VIPManager;
     webCache: WebCacheManager;
     servers: Server[];
+    verifications: Map<string, VerifySession>;
   }
 }

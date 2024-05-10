@@ -3,7 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { NoteEditEvent } from "../../interfaces";
 import { RCEEventType, RUST_ADMINS } from "../../vars";
 import { Time } from "@sapphire/time-utilities";
-import { PermissionFlagsBits, TextChannel } from "discord.js";
+import { EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
 import { servers } from "../../servers";
 
 @ApplyOptions<Listener.Options>({
@@ -16,16 +16,40 @@ export default class NoteEditListener extends Listener {
   public async run(note: NoteEditEvent) {
     if (process.env.NODE_ENV !== "production") return;
 
-    // If it's the PvP server and is a command
-    if (note.note.newContent.startsWith("/") && note.server.pvp) {
-      const cmd = note.note.newContent.split(" ")[0].slice(1).toLowerCase();
+    // If the note is a 6 digit code, it's probably a verification code
+    if (note.note.newContent.match(/^\d{6}$/)) {
+      const verifySession = container.verifications.get(
+        note.note.username.toLowerCase()
+      );
 
-      if (cmd === "pvp") {
-        return this.container.rce.sendCommand(
-          servers.find((server) => server.id === note.server.id),
-          `teleportpos "537.0, 0.1, 36.6" "${note.note.username}"`
-        );
+      if (verifySession) {
+        const code = parseInt(note.note.newContent);
+        if (code === verifySession.code) {
+          await container.db.linkedAccount.create({
+            data: {
+              id: note.note.username,
+              discordId: verifySession.discord,
+            },
+          });
+
+          container.verifications.delete(note.note.username.toLowerCase());
+
+          const user = container.client.users.cache.get(verifySession.discord);
+          if (user) {
+            const embed = new EmbedBuilder()
+              .setColor("#4caf50")
+              .setTitle("Verification Successful")
+              .setDescription(
+                `Your in-game account has been successfully linked to your Discord account!`
+              )
+              .setFooter({ text: `IGN: ${note.note.username}` });
+
+            user.send({ embeds: [embed] }).catch(() => null);
+          }
+        }
       }
+
+      return;
     }
 
     // Anti-Code Leak

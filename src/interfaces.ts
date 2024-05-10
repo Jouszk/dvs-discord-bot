@@ -128,3 +128,9 @@ export interface SellixTransaction {
   month: string;
   year: number;
 }
+
+export interface VerifySession {
+  ign: string;
+  discord: string;
+  code: number;
+}
