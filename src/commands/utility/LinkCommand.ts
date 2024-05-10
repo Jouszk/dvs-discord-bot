@@ -72,7 +72,6 @@ export default class LinkCommand extends Command {
               .setName("ign")
               .setDescription("Your in-game name")
               .setRequired(true)
-              .setAutocomplete(true)
           );
       },
       {

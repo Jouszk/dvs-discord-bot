@@ -58,7 +58,7 @@ export default class ProfileCommand extends Command {
       .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL)
       .addField(
         "VIP Status",
-        vipData ? `Active (\`${vipDaysLeft} days left)\`` : "Inactive",
+        vipData ? `Active (\`${vipDaysLeft} days left\`)` : "Inactive",
         true
       );
 
