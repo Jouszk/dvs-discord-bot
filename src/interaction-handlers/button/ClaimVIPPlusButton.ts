@@ -37,7 +37,11 @@ export class GameAdminApplicationButton extends InteractionHandler {
       });
     }
 
-    const vipData = this.container.vipManager.getVIP(data.id);
+    const vipData = await this.container.db.vIPUser.findFirst({
+      where: {
+        id: data.id,
+      },
+    });
 
     if (!vipData) {
       return interaction.reply({

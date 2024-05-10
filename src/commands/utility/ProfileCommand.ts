@@ -34,23 +34,21 @@ export default class ProfileCommand extends Command {
       });
     }
 
-    const vipData = this.container.vipManager.getVIP(data.id);
-    console.log(vipData);
-    console.log(vipData?.claimed);
+    const vipData = await this.container.db.vIPUser.findFirst({
+      where: {
+        id: data.id,
+      },
+    });
+
     let claimEligible = false;
 
     if (vipData && vipData.plan === "VIP_PLUS") {
-      console.log("VIP_PLUS");
       if (vipData.claimed) {
-        console.log("Claimed");
         claimEligible = false;
       } else {
-        console.log("Not claimed");
         claimEligible = true;
       }
     }
-
-    console.log(claimEligible);
 
     const vipDaysLeft = vipData
       ? Math.floor((vipData.expiresAt.getTime() - Date.now()) / 86400000)
