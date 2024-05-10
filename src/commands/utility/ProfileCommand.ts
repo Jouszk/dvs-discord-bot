@@ -38,7 +38,7 @@ export default class ProfileCommand extends Command {
     let claimEligible = false;
 
     if (vipData && vipData.plan === "VIP_PLUS") {
-      if (!vipData.claimed) {
+      if (vipData.claimed) {
         claimEligible = false;
       } else {
         claimEligible = true;
