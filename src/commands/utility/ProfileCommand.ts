@@ -45,6 +45,10 @@ export default class ProfileCommand extends Command {
       }
     }
 
+    const vipDaysLeft = vipData
+      ? Math.floor((vipData.expiresAt.getTime() - Date.now()) / 86400000)
+      : 0;
+
     const embed = new EmbedBuilder()
       .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
       .setAuthor({
@@ -54,7 +58,7 @@ export default class ProfileCommand extends Command {
       .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL)
       .addField(
         "VIP Status",
-        vipData ? `Active (${vipData.expiresAt.toLocaleString()})` : "Inactive",
+        vipData ? `Active (\`${vipDaysLeft} days left)\`` : "Inactive",
         true
       );
 
