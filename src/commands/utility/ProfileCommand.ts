@@ -35,8 +35,11 @@ export default class ProfileCommand extends Command {
     }
 
     const vipData = this.container.vipManager.getVIP(data.id);
-    const claimEligible =
-      vipData?.plan === "VIP_BASIC" ? false : vipData?.claimed ? false : true;
+    let claimEligible = false;
+
+    if (vipData && vipData.plan === "VIP_PLUS") {
+      claimEligible = !vipData.claimed;
+    }
 
     const embed = new EmbedBuilder()
       .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
@@ -66,6 +69,7 @@ export default class ProfileCommand extends Command {
     interaction.reply({
       embeds: [embed],
       components: [row],
+      ephemeral: true,
     });
   }
 

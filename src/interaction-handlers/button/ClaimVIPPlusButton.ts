@@ -46,8 +46,11 @@ export class GameAdminApplicationButton extends InteractionHandler {
       });
     }
 
-    const claimEligible =
-      vipData?.plan === "VIP_BASIC" ? false : vipData?.claimed ? false : true;
+    let claimEligible = false;
+
+    if (vipData && vipData.plan === "VIP_PLUS") {
+      claimEligible = !vipData.claimed;
+    }
 
     if (!claimEligible) {
       return interaction.reply({
