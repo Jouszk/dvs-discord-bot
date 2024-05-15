@@ -2,11 +2,13 @@ import { container } from "@sapphire/framework";
 import { Time } from "@sapphire/time-utilities";
 import { TextChannel, type GuildMember, EmbedBuilder } from "discord.js";
 import { servers } from "../servers";
+import { LinkedAccount } from "@prisma/client";
 
 interface VIP {
   id: string;
   plan: string;
   expiresAt: Date;
+  linked?: LinkedAccount;
   chatColor?: string;
   timeoutRef?: NodeJS.Timeout;
 }
@@ -21,7 +23,9 @@ export default class VIPManager {
 
   private async init() {
     // Load VIPs from database
-    this.vips = await container.db.vIPUser.findMany();
+    this.vips = await container.db.vIPUser.findMany({
+      include: { linked: true },
+    });
 
     // Add scheduled expiration for each VIP
     this.vips.forEach((vip) => {
@@ -37,7 +41,9 @@ export default class VIPManager {
   }
 
   private async checkDatabaseForVIPUpdates() {
-    const vips = await container.db.vIPUser.findMany();
+    const vips = await container.db.vIPUser.findMany({
+      include: { linked: true },
+    });
 
     vips.forEach((vip) => {
       const existingVIP = this.vips.find((v) => v.id === vip.id);
@@ -78,8 +84,6 @@ export default class VIPManager {
   }
 
   public async expireVIP(vip: VIP) {
-    const info = await this.getInfo(vip.id);
-
     // Remove VIP status
     this.vips = this.vips.filter((v) => v.id !== vip.id);
     await container.db.vIPUser.delete({
@@ -96,7 +100,7 @@ export default class VIPManager {
     // Remove VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache
       .first()
-      .members.cache.get(info.discordId);
+      .members.cache.get(vip.linked?.discordId);
 
     await member?.roles.remove(process.env.VIP_ROLE_ID);
 
@@ -108,11 +112,7 @@ export default class VIPManager {
       .setColor("#f44336")
       .setTitle("VIP Expired")
       .addField("In-Game Name", vip.id, true)
-      .addField(
-        "Discord",
-        info.discordId ? `<@${info.discordId}>` : "None",
-        true
-      )
+      .addField("Discord", member ? `<@${member.id}>` : "None", true)
       .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
@@ -146,8 +146,6 @@ export default class VIPManager {
       throw new Error("VIP already exists");
     }
 
-    const info = await this.getInfo(inGameName);
-
     // Calculate expiration date
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + duration);
@@ -160,6 +158,7 @@ export default class VIPManager {
         chatColor: chatColor ?? "#f1c40f",
         plan: plan ?? "VIP_BASIC",
       },
+      include: { linked: true },
     });
 
     // Add VIP in-game
@@ -170,7 +169,7 @@ export default class VIPManager {
     // Add VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache
       .first()
-      .members.cache.get(info.discordId);
+      .members.cache.get(vip.linked?.discordId);
 
     await member?.roles.add(process.env.VIP_ROLE_ID);
 
@@ -184,11 +183,7 @@ export default class VIPManager {
       .setTitle("VIP Added")
       .addField("In-Game Name", vip.id, true)
       .addField("Expires At", vip.expiresAt.toLocaleString(), true)
-      .addField(
-        "Discord",
-        info.discordId ? `<@${info.discordId}>` : "None",
-        true
-      )
+      .addField("Discord", member ? `<@${member.id}>` : "None", true)
       .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
@@ -222,8 +217,6 @@ export default class VIPManager {
       throw new Error("VIP not found");
     }
 
-    const info = await this.getInfo(inGameName);
-
     // Update VIP details
     const vip = this.vips[vipIndex];
     if (duration !== undefined) {
@@ -252,7 +245,7 @@ export default class VIPManager {
 
     const member = container.client.guilds.cache
       .first()
-      .members.cache.get(info.discordId);
+      .members.cache.get(vip.linked?.discordId);
 
     // Log VIP update
     const embed = new EmbedBuilder()
@@ -260,11 +253,7 @@ export default class VIPManager {
       .setTitle("VIP Updated")
       .addField("In-Game Name", vip.id, true)
       .addField("Expires At", vip.expiresAt.toLocaleString(), true)
-      .addField(
-        "Discord",
-        info.discordId ? `<@${info.discordId}>` : "None",
-        true
-      )
+      .addField("Discord", member ? `<@${member.id}>` : "None", true)
       .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
@@ -297,18 +286,5 @@ export default class VIPManager {
     return this.vips.sort(
       (a, b) => a.expiresAt.getTime() - b.expiresAt.getTime()
     );
-  }
-
-  private async getInfo(ign: string) {
-    const data = await container.db.linkedAccount.findFirst({
-      where: {
-        id: {
-          equals: ign,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    return data || null;
   }
 }

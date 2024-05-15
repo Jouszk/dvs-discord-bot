@@ -69,6 +69,7 @@ model VIPUser {
   plan      String   @default("VIP_BASIC")
   claimed   Boolean  @default(false)
   expiresAt DateTime
+  linked    LinkedAccount? @relation(fields: [id], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -94,6 +95,7 @@ model EconomyUser {
 model LinkedAccount {
   id        String   @id
   discordId String   @unique
+  vip       VIPUser?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -24,6 +24,9 @@ export default class ProfileCommand extends Command {
       where: {
         discordId: interaction.user.id,
       },
+      include: {
+        vip: true,
+      },
     });
 
     if (!data) {
@@ -34,30 +37,24 @@ export default class ProfileCommand extends Command {
       });
     }
 
-    const vipData = await this.container.db.vIPUser.findFirst({
-      where: {
-        id: data.id,
-      },
-    });
-
     let claimEligible = false;
 
-    if (vipData && vipData.plan === "VIP_PLUS") {
-      if (vipData.claimed) {
+    if (data.vip && data.vip.plan === "VIP_PLUS") {
+      if (data.vip.claimed) {
         claimEligible = false;
       } else {
         claimEligible = true;
       }
     }
 
-    const vipDaysLeft = vipData
-      ? Math.floor((vipData.expiresAt.getTime() - Date.now()) / 86400000)
+    const vipDaysLeft = data.vip
+      ? Math.floor((data.vip.expiresAt.getTime() - Date.now()) / 86400000)
       : 0;
 
     const embed = new EmbedBuilder()
       .setColor(
-        vipData
-          ? (vipData.chatColor as ColorResolvable)
+        data.vip
+          ? (data.vip.chatColor as ColorResolvable)
           : (process.env.DISCORD_BOT_THEME as ColorResolvable)
       )
       .setAuthor({
@@ -67,7 +64,9 @@ export default class ProfileCommand extends Command {
       .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL)
       .addField(
         "VIP Status",
-        vipData ? `Active (\`${vipDaysLeft} days left\`)` : "Inactive",
+        data.vip
+          ? `Active (\`${vipDaysLeft} days left\`)\n${plans[data.vip.plan]}`
+          : "Inactive",
         true
       );
 
@@ -85,7 +84,7 @@ export default class ProfileCommand extends Command {
         .setCustomId("change_chat_color")
         .setLabel("Change Global Chat Color")
         .setStyle(ButtonStyle.Primary)
-        .setDisabled(vipData ? false : true)
+        .setDisabled(data.vip ? false : true)
     );
 
     interaction.reply({
