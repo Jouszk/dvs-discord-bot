@@ -28,7 +28,7 @@ export class ChangeChatColorButton extends InteractionHandler {
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>().addComponents(
           new TextInputBuilder()
-            .setCustomId("color_hex")
+            .setCustomId("color")
             .setLabel("Which color would you like to use? (HEX)")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
