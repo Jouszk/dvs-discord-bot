@@ -8,7 +8,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 })
 export default class BalanceCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const user = interaction.options.getString("ign", false);
+    const user = interaction.options.getString("ign", true);
 
     const economy = await this.container.db.economyUser.findFirst({
       where: {
@@ -39,7 +39,7 @@ export default class BalanceCommand extends Command {
             option
               .setName("ign")
               .setDescription("The IGN you want to check the balance of")
-              .setRequired(false)
+              .setRequired(true)
           );
       },
       {

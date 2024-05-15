@@ -41,18 +41,25 @@ export class GiveCommand extends Command {
     const user = interaction.options.getString("ign", true);
     const amount = interaction.options.getNumber("amount", true);
 
-    const economy = await this.container.db.economyUser.upsert({
-      where: {
-        id: user,
-      },
-      create: {
-        id: user,
-        balance: amount,
-      },
-      update: {
-        balance: {
-          increment: amount,
-        },
+    const linkedAccount = await this.container.db.linkedAccount.findFirst({
+      where: { id: { equals: user, mode: "insensitive" } },
+      include: { economy: true },
+    });
+
+    if (!linkedAccount) {
+      return interaction.reply({
+        ephemeral: true,
+        content: "This IGN is not linked to a Discord account",
+      });
+    }
+
+    const economy = linkedAccount.economy!;
+    economy.balance += amount;
+
+    await this.container.db.economyUser.update({
+      where: { id: user },
+      data: {
+        balance: economy.balance,
       },
     });
 
