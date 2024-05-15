@@ -58,12 +58,6 @@ export default class VIPCommand extends Subcommand {
                   .setMinValue(-365)
                   .setMaxValue(365)
               )
-              .addUserOption((option) =>
-                option
-                  .setName("discord")
-                  .setDescription("The Discord user of the VIP")
-                  .setRequired(false)
-              )
               .addStringOption((option) =>
                 option
                   .setName("chat-color")
