@@ -26,11 +26,16 @@ export class ShopPurchaseConfirmButton extends InteractionHandler {
   }
 
   public async run(interaction: ButtonInteraction, itemId: number) {
-    const economy = await this.container.db.economyUser.findFirst({
+    const data = await this.container.db.linkedAccount.findFirst({
       where: {
-        id: interaction.user.id,
+        discordId: interaction.user.id,
+      },
+      include: {
+        economy: true,
       },
     });
+
+    const economy = data?.economy;
 
     const item = shopPacks.find((pack) => pack.id === Number(itemId));
 

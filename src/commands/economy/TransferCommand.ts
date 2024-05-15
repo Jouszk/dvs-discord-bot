@@ -1,9 +1,5 @@
 import { Command, ApplicationCommandRegistry } from "@sapphire/framework";
-import {
-  ChatInputCommandInteraction,
-  PermissionFlagsBits,
-  TextChannel,
-} from "discord.js";
+import { ChatInputCommandInteraction, TextChannel } from "discord.js";
 import { ApplyOptions } from "@sapphire/decorators";
 
 @ApplyOptions<Command.Options>({
@@ -19,10 +15,10 @@ export class TransferCommand extends Command {
         x
           .setName(this.name)
           .setDescription(this.description)
-          .addUserOption((c) =>
+          .addStringOption((c) =>
             c
-              .setName("user")
-              .setDescription("The discord user you want to give DvS Coins to")
+              .setName("ign")
+              .setDescription("The IGN you want to give DvS Coins to")
               .setRequired(true)
           )
           .addNumberOption((c) =>
@@ -37,41 +33,60 @@ export class TransferCommand extends Command {
   }
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const user = interaction.options.getUser("user", true);
+    const user = interaction.options.getString("ign", true);
     const amount = interaction.options.getNumber("amount", true);
 
-    if (user.id === interaction.user.id) {
+    const linkedAccount = await this.container.db.linkedAccount.findFirst({
+      where: { discordId: interaction.user.id },
+      include: { economy: true },
+    });
+
+    if (!linkedAccount) {
+      return interaction.reply({
+        ephemeral: true,
+        content:
+          "Your Discord account is not linked to an in-game account, use the `/link` command to link your account",
+      });
+    }
+
+    if (user.toLowerCase() === linkedAccount.id.toLowerCase()) {
       return interaction.reply({
         ephemeral: true,
         content: "You cannot give DvS Coins to yourself",
       });
     }
 
-    const userEconomy = await this.container.db.economyUser.findFirst({
-      where: { id: interaction.user.id },
-    });
-
-    if (!userEconomy) {
+    if (!linkedAccount.economy) {
       return interaction.reply({
         ephemeral: true,
         content: "You do not have an active economy account",
       });
     }
 
-    if (userEconomy.balance < amount) {
+    if (linkedAccount.economy.balance < amount) {
       return interaction.reply({
         ephemeral: true,
         content: "You do not have enough DvS Coins to give",
       });
     }
 
-    await this.container.db.economyUser.upsert({
-      where: { id: user.id },
-      create: {
-        id: user.id,
-        balance: amount,
-      },
-      update: {
+    const targetLinkedAccount = await this.container.db.linkedAccount.findFirst(
+      {
+        where: { id: { equals: user, mode: "insensitive" } },
+        include: { economy: true },
+      }
+    );
+
+    if (!targetLinkedAccount) {
+      return interaction.reply({
+        ephemeral: true,
+        content: "The user you are trying to give DvS Coins to is not linked",
+      });
+    }
+
+    await this.container.db.economyUser.update({
+      where: { id: targetLinkedAccount.id },
+      data: {
         balance: {
           increment: amount,
         },
@@ -79,7 +94,7 @@ export class TransferCommand extends Command {
     });
 
     await this.container.db.economyUser.update({
-      where: { id: interaction.user.id },
+      where: { id: linkedAccount.id },
       data: {
         balance: {
           decrement: amount,
@@ -92,15 +107,15 @@ export class TransferCommand extends Command {
       process.env.COIN_LOGS_CHANNEL_ID!
     )) as TextChannel;
     channel.send({
-      content: `**${
-        interaction.user
-      }** has transferred ${user} <:dvscoin:1212381742485340180> **${amount} DvS Coins**. They now have <:dvscoin:1212381742485340180> **${
-        userEconomy.balance - amount
+      content: `**${interaction.user}** has transferred <@${
+        targetLinkedAccount.discordId
+      }> <:dvscoin:1212381742485340180> **${amount} DvS Coins**. They now have <:dvscoin:1212381742485340180> **${
+        linkedAccount.economy.balance - amount
       } DvS Coins**.`,
     });
 
     return interaction.reply({
-      content: `You have given <:dvscoin:1212381742485340180> **${amount} DvS Coins** to ${user}`,
+      content: `You have given <:dvscoin:1212381742485340180> **${amount} DvS Coins** to \`${user}\``,
       ephemeral: true,
     });
   }

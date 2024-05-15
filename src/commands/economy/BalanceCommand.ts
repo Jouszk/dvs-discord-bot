@@ -8,11 +8,14 @@ import { ApplyOptions } from "@sapphire/decorators";
 })
 export default class BalanceCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const user = interaction.options.getUser("user", false) || interaction.user;
+    const user = interaction.options.getString("ign", false);
 
     const economy = await this.container.db.economyUser.findFirst({
       where: {
-        id: user.id,
+        id: {
+          equals: user,
+          mode: "insensitive",
+        },
       },
     });
 
@@ -32,10 +35,10 @@ export default class BalanceCommand extends Command {
         command
           .setName(this.name)
           .setDescription(this.description)
-          .addUserOption((option) =>
+          .addStringOption((option) =>
             option
-              .setName("user")
-              .setDescription("The user you want to check the balance of")
+              .setName("ign")
+              .setDescription("The IGN you want to check the balance of")
               .setRequired(false)
           );
       },

@@ -8,7 +8,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 
 @ApplyOptions<Command.Options>({
   name: "give",
-  description: "Give DvS Coins to another user",
+  description: "Give DvS Coins to another IGN",
   preconditions: ["OwnerOnly"],
 })
 export class GiveCommand extends Command {
@@ -20,10 +20,10 @@ export class GiveCommand extends Command {
         x
           .setName(this.name)
           .setDescription(this.description)
-          .addUserOption((c) =>
+          .addStringOption((c) =>
             c
-              .setName("user")
-              .setDescription("The discord user you want to give DvS Coins to")
+              .setName("ign")
+              .setDescription("The IGN you want to give DvS Coins to")
               .setRequired(true)
           )
           .addNumberOption((c) =>
@@ -38,15 +38,15 @@ export class GiveCommand extends Command {
   }
 
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const user = interaction.options.getUser("user", true);
+    const user = interaction.options.getString("ign", true);
     const amount = interaction.options.getNumber("amount", true);
 
     const economy = await this.container.db.economyUser.upsert({
       where: {
-        id: user.id,
+        id: user,
       },
       create: {
-        id: user.id,
+        id: user,
         balance: amount,
       },
       update: {

@@ -16,11 +16,24 @@ import { shopPacks } from "../../vars";
 })
 export default class ShopCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
-    const economy = await this.container.db.economyUser.findFirst({
+    const data = await this.container.db.linkedAccount.findFirst({
       where: {
-        id: interaction.user.id,
+        discordId: interaction.user.id,
+      },
+      include: {
+        economy: true,
       },
     });
+
+    if (!data) {
+      return interaction.reply({
+        content:
+          "Your Discord account is not linked to an in-game account, use the `/link` command to link your account",
+        ephemeral: true,
+      });
+    }
+
+    const economy = data.economy;
 
     const embed = new EmbedBuilder()
       .setTitle("DvS Coin Shop")
