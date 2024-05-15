@@ -50,6 +50,7 @@ export class WipeKillsModal extends InteractionHandler {
     // Reply to the interaction
     return interaction.reply({
       content: `Successfully wiped ${inGameName}'s kills`,
+      ephemeral: true,
     });
   }
 }

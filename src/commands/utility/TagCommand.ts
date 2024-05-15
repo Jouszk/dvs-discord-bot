@@ -286,8 +286,11 @@ export default class TagCommand extends Subcommand {
       .setImage(tag.image);
 
     // Send Response
+    interaction.channel.send({ embeds: [embed] });
+
     return interaction.reply({
-      embeds: [embed],
+      content: `The tag \`${name}\` has been sent to the channel.`,
+      ephemeral: true,
     });
   }
 }

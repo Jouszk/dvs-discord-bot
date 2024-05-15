@@ -76,7 +76,7 @@ export class InfractionsCommand extends Command {
       .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL);
 
     // Send Embed
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 
   public override registerApplicationCommands(

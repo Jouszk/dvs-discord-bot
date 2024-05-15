@@ -12,7 +12,6 @@ import { servers } from "../../servers";
 @ApplyOptions<Command.Options>({
   name: "leaderboard",
   description: "Check the leaderboard for this wipe kills",
-  preconditions: ["CommandChannelOnly"],
 })
 export default class LeaderboardCommand extends Command {
   public async chatInputRun(interaction: ChatInputCommandInteraction) {
@@ -58,7 +57,11 @@ export default class LeaderboardCommand extends Command {
         .setStyle(ButtonStyle.Danger)
     );
 
-    await interaction.reply({ embeds: [embed], components: [actionRow] });
+    await interaction.reply({
+      embeds: [embed],
+      components: [actionRow],
+      ephemeral: true,
+    });
   }
 
   private async getLeaderboard(serverId: string, limit: number) {

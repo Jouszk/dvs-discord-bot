@@ -10,7 +10,6 @@ import { servers } from "../../servers";
 @ApplyOptions<Command.Options>({
   name: "server",
   description: "Check the stats of a server",
-  preconditions: ["CommandChannelOnly"],
 })
 export class ServerCommand extends Command {
   public override registerApplicationCommands(
@@ -68,6 +67,6 @@ export class ServerCommand extends Command {
         text: serverInfo.game,
       });
 
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 }

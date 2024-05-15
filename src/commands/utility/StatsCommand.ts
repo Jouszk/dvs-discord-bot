@@ -10,7 +10,6 @@ import { servers } from "../../servers";
 @ApplyOptions<Command.Options>({
   name: "stats",
   description: "Check the stats of a player",
-  preconditions: ["CommandChannelOnly"],
 })
 export class RankCommand extends Command {
   public override registerApplicationCommands(
@@ -86,6 +85,6 @@ export class RankCommand extends Command {
       .setDescription(vip ? "This player is a VIP" : "This player is not a VIP")
       .setFooter({ text: "These statistics only reflect this current wipe" });
 
-    return interaction.reply({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 }

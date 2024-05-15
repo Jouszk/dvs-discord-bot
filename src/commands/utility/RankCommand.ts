@@ -16,7 +16,6 @@ import XPUtils from "../../util/XPUtils";
 @ApplyOptions<Command.Options>({
   name: "rank",
   description: "View a users rank in the server",
-  preconditions: ["CommandChannelOnly"],
 })
 export class RankCommand extends Command {
   public override registerApplicationCommands(
@@ -48,7 +47,7 @@ export class RankCommand extends Command {
       });
     }
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const assetsDirectory = join(__dirname, "..", "..", "..", "assets");
 

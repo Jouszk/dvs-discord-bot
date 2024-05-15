@@ -77,6 +77,7 @@ export default class SellixCommand extends Command {
 
     return interaction.reply({
       embeds: [this.getEmbed(transaction)],
+      ephemeral: true,
     });
   }
 
