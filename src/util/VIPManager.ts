@@ -5,7 +5,7 @@ import { servers } from "../servers";
 
 interface VIP {
   id: string;
-  discordId: string;
+  plan: string;
   expiresAt: Date;
   chatColor?: string;
   timeoutRef?: NodeJS.Timeout;
@@ -78,6 +78,8 @@ export default class VIPManager {
   }
 
   public async expireVIP(vip: VIP) {
+    const info = await this.getInfo(vip.id);
+
     // Remove VIP status
     this.vips = this.vips.filter((v) => v.id !== vip.id);
     await container.db.vIPUser.delete({
@@ -94,7 +96,7 @@ export default class VIPManager {
     // Remove VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache
       .first()
-      .members.cache.get(vip.discordId);
+      .members.cache.get(info.discordId);
 
     await member?.roles.remove(process.env.VIP_ROLE_ID);
 
@@ -108,21 +110,31 @@ export default class VIPManager {
       .addField("In-Game Name", vip.id, true)
       .addField(
         "Discord",
-        vip.discordId ? `<@${vip.discordId}>` : "None",
+        info.discordId ? `<@${info.discordId}>` : "None",
         true
-      );
+      )
+      .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
       process.env.VIP_LOGS_CHANNEL_ID
     ) as TextChannel;
 
     vipLogs?.send({ embeds: [embed] });
+    member?.send({
+      embeds: [
+        new EmbedBuilder()
+          .setColor("#f44336")
+          .setTitle("VIP Expired")
+          .setDescription(
+            "Your VIP status has expired, you can renew by opening a support ticket."
+          ),
+      ],
+    });
   }
 
   public async addVIP(
     inGameName: string,
     duration: number,
-    discordId?: string,
     chatColor?: string,
     plan?: string
   ) {
@@ -134,6 +146,8 @@ export default class VIPManager {
       throw new Error("VIP already exists");
     }
 
+    const info = await this.getInfo(inGameName);
+
     // Calculate expiration date
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + duration);
@@ -143,7 +157,6 @@ export default class VIPManager {
       data: {
         id: inGameName,
         expiresAt,
-        discordId,
         chatColor: chatColor ?? "#f1c40f",
         plan: plan ?? "VIP_BASIC",
       },
@@ -157,7 +170,7 @@ export default class VIPManager {
     // Add VIP in Discord (if possible)
     const member: GuildMember = container.client.guilds.cache
       .first()
-      .members.cache.get(discordId);
+      .members.cache.get(info.discordId);
 
     await member?.roles.add(process.env.VIP_ROLE_ID);
 
@@ -170,14 +183,31 @@ export default class VIPManager {
       .setColor("#4caf50")
       .setTitle("VIP Added")
       .addField("In-Game Name", vip.id, true)
-      .addField("Discord", vip.discordId ? `<@${vip.discordId}>` : "None", true)
-      .addField("Expires At", vip.expiresAt.toLocaleString(), true);
+      .addField("Expires At", vip.expiresAt.toLocaleString(), true)
+      .addField(
+        "Discord",
+        info.discordId ? `<@${info.discordId}>` : "None",
+        true
+      )
+      .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
       process.env.VIP_LOGS_CHANNEL_ID
     ) as TextChannel;
 
     vipLogs?.send({ embeds: [embed] });
+    member?.send({
+      embeds: [
+        new EmbedBuilder()
+          .setColor("#4caf50")
+          .setTitle("VIP Added")
+          .setDescription(
+            "Your VIP status has been added, you can view your VIP details below."
+          )
+          .addField("Expires At", vip.expiresAt.toLocaleString(), true)
+          .addField("Plan", plan ?? "VIP_BASIC", true),
+      ],
+    });
   }
 
   public async updateVIP(
@@ -192,6 +222,8 @@ export default class VIPManager {
       throw new Error("VIP not found");
     }
 
+    const info = await this.getInfo(inGameName);
+
     // Update VIP details
     const vip = this.vips[vipIndex];
     if (duration !== undefined) {
@@ -199,7 +231,6 @@ export default class VIPManager {
       newExpiryAt.setDate(newExpiryAt.getDate() + duration);
       vip.expiresAt = newExpiryAt;
     }
-    vip.discordId = discordId ?? vip.discordId;
     vip.chatColor = chatColor ?? vip.chatColor;
     vip.plan = plan ?? vip.plan;
 
@@ -210,7 +241,6 @@ export default class VIPManager {
       },
       data: {
         expiresAt: vip.expiresAt,
-        discordId: vip.discordId,
         chatColor: vip.chatColor,
         plan: vip.plan,
       },
@@ -220,19 +250,40 @@ export default class VIPManager {
     if (vip.timeoutRef) clearTimeout(vip.timeoutRef);
     this.setExpiration(vip);
 
+    const member = container.client.guilds.cache
+      .first()
+      .members.cache.get(info.discordId);
+
     // Log VIP update
     const embed = new EmbedBuilder()
       .setColor("#3498db")
       .setTitle("VIP Updated")
       .addField("In-Game Name", vip.id, true)
-      .addField("Discord", vip.discordId ? `<@${vip.discordId}>` : "None", true)
-      .addField("Expires At", vip.expiresAt.toLocaleString(), true);
+      .addField("Expires At", vip.expiresAt.toLocaleString(), true)
+      .addField(
+        "Discord",
+        info.discordId ? `<@${info.discordId}>` : "None",
+        true
+      )
+      .setFooter({ text: `Plan: ${vip.plan}` });
 
     const vipLogs = container.client.channels.cache.get(
       process.env.VIP_LOGS_CHANNEL_ID
     ) as TextChannel;
 
     vipLogs?.send({ embeds: [embed] });
+    member?.send({
+      embeds: [
+        new EmbedBuilder()
+          .setColor("#3498db")
+          .setTitle("VIP Updated")
+          .setDescription(
+            "Your VIP status has been updated, you can view your VIP details below."
+          )
+          .addField("Expires At", vip.expiresAt.toLocaleString(), true)
+          .addField("Plan", vip.plan, true),
+      ],
+    });
   }
 
   public getVIP(inGameName: string) {
@@ -246,5 +297,18 @@ export default class VIPManager {
     return this.vips.sort(
       (a, b) => a.expiresAt.getTime() - b.expiresAt.getTime()
     );
+  }
+
+  private async getInfo(ign: string) {
+    const data = await container.db.linkedAccount.findFirst({
+      where: {
+        id: {
+          equals: ign,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    return data || null;
   }
 }

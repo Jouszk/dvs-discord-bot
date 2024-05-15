@@ -45,6 +45,27 @@ export default class NoteEditListener extends Listener {
               .setFooter({ text: `IGN: ${note.note.username}` });
 
             user.send({ embeds: [embed] }).catch(() => null);
+
+            const member = container.client.guilds.cache
+              .first()
+              .members.cache.get(user.id);
+
+            if (member) {
+              const vipData = await container.db.vIPUser.findFirst({
+                where: {
+                  id: {
+                    equals: note.note.username.toLowerCase(),
+                    mode: "insensitive",
+                  },
+                },
+              });
+
+              if (vipData) {
+                if (!member.roles.cache.has(process.env.VIP_ROLE_ID)) {
+                  member.roles.add(process.env.VIP_ROLE_ID);
+                }
+              }
+            }
           }
         }
       }

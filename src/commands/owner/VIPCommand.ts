@@ -30,10 +30,6 @@ const plans = {
       name: "view",
       chatInputRun: "chatInputView",
     },
-    {
-      name: "list",
-      chatInputRun: "chatInputList",
-    },
   ],
 })
 export default class VIPCommand extends Subcommand {
@@ -108,17 +104,6 @@ export default class VIPCommand extends Subcommand {
                   .setRequired(true)
               )
           )
-          .addSubcommand((subCommand) =>
-            subCommand
-              .setName("list")
-              .setDescription("List all VIPs")
-              .addNumberOption((option) =>
-                option
-                  .setName("page")
-                  .setDescription("The page number")
-                  .setRequired(false)
-              )
-          )
           .setDefaultMemberPermissions(PermissionFlagsBits.MuteMembers);
       },
       { idHints: [] }
@@ -128,7 +113,6 @@ export default class VIPCommand extends Subcommand {
   public async chatInputAdd(interaction: ChatInputCommandInteraction) {
     const inGameName = interaction.options.getString("ign", true);
     const duration = interaction.options.getNumber("days", false);
-    const discordId = interaction.options.getUser("discord", false)?.id;
     const chatColor = interaction.options.getString("chat-color", false);
     const plan = interaction.options.getString("plan", false);
 
@@ -146,7 +130,6 @@ export default class VIPCommand extends Subcommand {
       this.container.vipManager.updateVIP(
         inGameName,
         duration,
-        discordId,
         chatColor,
         plan
       );
@@ -156,13 +139,7 @@ export default class VIPCommand extends Subcommand {
         content: `Updated VIP: **${inGameName}**`,
       });
     } else {
-      this.container.vipManager.addVIP(
-        inGameName,
-        duration,
-        discordId,
-        chatColor,
-        plan
-      );
+      this.container.vipManager.addVIP(inGameName, duration, chatColor, plan);
 
       return interaction.reply({
         ephemeral: true,
@@ -201,61 +178,16 @@ export default class VIPCommand extends Subcommand {
       });
     }
 
-    const user: User = await this.container.client.users
-      .fetch(vip.discordId)
-      .catch(() => null);
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `VIP | ${vip.id}`,
         iconURL: interaction.guild.iconURL(),
       })
       .setColor(vip.chatColor as ColorResolvable)
-      .addField(
-        "Discord",
-        user ? `${user.toString()} (\`${user.id}\`)` : "None",
-        true
-      )
-      .addField("Expires at", new Date(vip.expiresAt).toLocaleString(), true)
+      .addField("Expires At", new Date(vip.expiresAt).toLocaleString(), true)
       .addField("Plan", plans[vip.plan], true);
 
     return interaction.reply({
-      embeds: [embed],
-    });
-  }
-
-  public async chatInputList(interaction: ChatInputCommandInteraction) {
-    const vipList = this.container.vipManager.listVIPs();
-
-    if (!vipList.length) {
-      return interaction.reply({
-        ephemeral: true,
-        content: "No VIPs found",
-      });
-    }
-
-    let page = interaction.options.getNumber("page", false) || 1;
-
-    const pages = Math.ceil(vipList.length / 10);
-    if (page > pages) page = 1;
-    const vipPage = vipList.slice((page - 1) * 10, page * 10);
-
-    const embed = new EmbedBuilder()
-      .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
-      .setTitle("VIP List")
-      .setDescription(
-        vipPage
-          .map((vip) => {
-            return `**${vip.id}**\nDiscord: ${
-              vip.discordId ? `<@${vip.discordId}>` : "None"
-            }\nExpires at: ${new Date(vip.expiresAt).toLocaleString()}`;
-          })
-          .join("\n\n")
-      )
-      .setImage(process.env.DISCORD_BOT_EMBED_FOOTER_URL)
-      .setFooter({ text: `Page ${page} of ${pages}` });
-
-    return interaction.reply({
-      ephemeral: true,
       embeds: [embed],
     });
   }

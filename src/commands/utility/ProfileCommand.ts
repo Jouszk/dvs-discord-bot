@@ -55,7 +55,11 @@ export default class ProfileCommand extends Command {
       : 0;
 
     const embed = new EmbedBuilder()
-      .setColor(process.env.DISCORD_BOT_THEME as ColorResolvable)
+      .setColor(
+        vipData
+          ? (vipData.chatColor as ColorResolvable)
+          : (process.env.DISCORD_BOT_THEME as ColorResolvable)
+      )
       .setAuthor({
         name: `Profile | ${data.id}`,
         iconURL: interaction.guild.iconURL(),
@@ -76,7 +80,12 @@ export default class ProfileCommand extends Command {
         .setCustomId("claim_vip_plus")
         .setLabel("Claim VIP Plus Benefits")
         .setStyle(ButtonStyle.Primary)
-        .setDisabled(claimEligible ? false : true)
+        .setDisabled(claimEligible ? false : true),
+      new ButtonBuilder()
+        .setCustomId("change_chat_color")
+        .setLabel("Change Global Chat Color")
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(vipData ? false : true)
     );
 
     interaction.reply({

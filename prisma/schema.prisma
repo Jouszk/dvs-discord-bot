@@ -65,7 +65,6 @@ model XPSystem {
 
 model VIPUser {
   id        String   @id
-  discordId String?
   chatColor String   @default("#f1c40f")
   plan      String   @default("VIP_BASIC")
   claimed   Boolean  @default(false)
