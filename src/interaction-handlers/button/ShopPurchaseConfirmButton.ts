@@ -55,7 +55,7 @@ export class ShopPurchaseConfirmButton extends InteractionHandler {
 
     await this.container.db.economyUser.update({
       where: {
-        id: interaction.user.id,
+        id: economy.id,
       },
       data: {
         balance: {
