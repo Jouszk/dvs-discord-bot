@@ -5,49 +5,10 @@ interface VIPPlan {
   value: string;
 }
 
-interface Rules {
-  serverId: string;
-  rules: string[];
-}
-
-export const RULES: Rules[] = [
-  {
-    serverId: "server1",
-    rules: [
-      "REMINDER: This is a solo/duo server, you may NOT team with more than two players, alliance or hire farmbots.",
-      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
-      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
-      "REMINDER: Offline raiding is allowed, however, you risk your base being demolished if it becomes a habit of your team.",
-    ],
-  },
-  {
-    serverId: "server2",
-    rules: [
-      "REMINDER: This is a solo/duo/trio server, you may NOT team with more than three players, alliance or hire farmbots.",
-      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
-      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
-      "REMINDER: Offline raiding is allowed, however, you risk your base being demolished if it becomes a habit of your team.",
-    ],
-  },
-  {
-    serverId: "server3",
-    rules: [
-      "REMINDER: This is a solo-quad server, you may NOT team with more than four players, alliance or hire farmbots.",
-      "REMINDER: Trading is allowed on the server, but should be done inside a safezone to prevent teaming accusations.",
-      "REMINDER: Griefing a base is NOT allowed, unless you have just completed a raid on a base.",
-      "REMINDER: Door camping or attempting to raid a base on a weekday is NOT allowed.",
-    ],
-  },
-];
-
 export const VIP_PLANS: VIPPlan[] = [
   {
     display: "VIP Basic",
     value: "VIP_BASIC",
-  },
-  {
-    display: "VIP Plus",
-    value: "VIP_PLUS",
   },
 ];
 
@@ -57,30 +18,6 @@ export const RUST_ADMINS: RustAdmin[] = [
     discord: "581235801900318741",
     owner: true,
     chatColor: "#48dbfb",
-  },
-  {
-    ign: "Saucey Hub",
-    discord: "1005186019391442944",
-    owner: true,
-    chatColor: "#FFA500",
-  },
-  {
-    ign: "Sixty Fat Guys",
-    discord: "980202628384432248",
-    owner: true,
-    chatColor: "#f1c40f",
-  },
-  {
-    ign: "sirenqxy",
-    discord: "270305277297950730",
-    owner: false,
-    chatColor: "#ff0000",
-  },
-  {
-    ign: "chemosha",
-    discord: "569467126981722112",
-    owner: false,
-    chatColor: "#81007F",
   },
 ];
 
@@ -172,60 +109,6 @@ export const shopPacks: ShopPack[] = [
     price: 2,
     commands: ['kit givetoplayer t1base "{username}"'],
   },
-  {
-    id: 6,
-    name: "Tier 2 Base Pack",
-    price: 5,
-    commands: ['kit givetoplayer t2base "{username}"'],
-  },
-  {
-    id: 7,
-    name: "Tier 3 Base Pack",
-    price: 15,
-    commands: ['kit givetoplayer t3base "{username}"'],
-  },
-  {
-    id: 8,
-    name: "Tier 1 Kit Pack",
-    price: 1,
-    commands: ['kit givetoplayer t1kit "{username}"'],
-  },
-  {
-    id: 10,
-    name: "Tier 2 Kit Pack",
-    price: 3,
-    commands: ['kit givetoplayer t2kit "{username}"'],
-  },
-  {
-    id: 12,
-    name: "Tier 3 Kit Pack",
-    price: 5,
-    commands: ['kit givetoplayer t3kit "{username}"'],
-  },
-  {
-    id: 9,
-    name: "Tier 1 Prototype Kit",
-    price: 1,
-    commands: ['kit givetoplayer t1kit-proto "{username}"'],
-  },
-  {
-    id: 11,
-    name: "Tier 2 M4 Shotgun Kit",
-    price: 3,
-    commands: ['kit givetoplayer t2kit-m4 "{username}"'],
-  },
-  {
-    id: 13,
-    name: "Night OP Kit",
-    price: 7,
-    commands: ['kit givetoplayer nightop "{username}"'],
-  },
-  {
-    id: 16,
-    name: "Test-Gen Turret Bundle",
-    price: 32,
-    commands: ['kit givetoplayer turretgen "{username}"'],
-  },
 ];
 
 // {username} - The username of the user who redeemed the key
@@ -235,74 +118,11 @@ export const keyPresets: KeyPreset[] = [
     commands: ['kit givetoplayer ins "{username}"'],
   },
   {
-    name: "Tier 2 Raid Insurance",
-    commands: ['kit givetoplayer vipins "{username}"'],
-  },
-  {
-    name: "Tier 1 Base Pack",
-    commands: ['kit givetoplayer t1base "{username}"'],
-  },
-  {
-    name: "Tier 2 Base Pack",
-    commands: ['kit givetoplayer t2base "{username}"'],
-  },
-  {
-    name: "Tier 3 Base Pack",
-    commands: ['kit givetoplayer t3base "{username}"'],
-  },
-  {
-    name: "Tier 1 Kit - Thompson",
-    commands: ['kit givetoplayer t1kit "{username}"'],
-  },
-  {
-    name: "Tier 1 Kit - Prototype 17",
-    commands: ['kit givetoplayer t1kit-proto "{username}"'],
-  },
-  {
-    name: "Tier 2 Kit - MP5A4",
-    commands: ['kit givetoplayer t2kit "{username}"'],
-  },
-  {
-    name: "Tier 2 Kit - M4 Shotgun",
-    commands: ['kit givetoplayer t2kit-m4 "{username}"'],
-  },
-  {
-    name: "Tier 3 Kit",
-    commands: ['kit givetoplayer t3kit "{username}"'],
-  },
-  {
-    name: "Night OP Kit",
-    commands: ['kit givetoplayer nightop "{username}"'],
-  },
-  {
-    name: "Test-Gen Turret Bundle",
-    commands: ['kit givetoplayer turretgen "{username}"'],
-  },
-  {
-    name: "Box of Charcoal",
-    commands: ['inventory.giveto "{username}" "charcoal" 144000'],
-  },
-  {
-    name: "Box of Metal Fragments",
-    commands: ['inventory.giveto "{username}" "metal.fragments" 144000'],
-  },
-  {
-    name: "Box of Wood",
-    commands: ['inventory.giveto "{username}" "wood" 144000'],
-  },
-  {
     name: "Auto Turret",
     commands: [
       'inventory.giveto "{username}" "autoturret" 1',
       'inventory.giveto "{username}" "ammo.pistol" 128',
       'inventory.giveto "{username}" "pistol.python" 1',
-    ],
-  },
-  {
-    name: "VIP Plus Bundle",
-    commands: [
-      'kit givetoplayer "{username}" t3base',
-      'inventory.giveto "{username}" "electric.generator.small" "1"',
     ],
   },
 ];
@@ -320,23 +140,11 @@ interface XPSystemConfig {
 
 export const XP_SYSTEM_CONFIG: XPSystemConfig = {
   xpRequiredByLevel: 35,
-  xpMultiplier: 2,
+  xpMultiplier: 1,
   rankRoles: [
     {
       level: 10,
-      roleId: "1199798059727593562",
-    },
-    {
-      level: 25,
-      roleId: "1199798146352549909",
-    },
-    {
-      level: 40,
-      roleId: "1199798227931770950",
-    },
-    {
-      level: 55,
-      roleId: "1225444084458586163",
+      roleId: "",
     },
   ],
 };
